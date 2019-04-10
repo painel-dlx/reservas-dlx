@@ -1,0 +1,48 @@
+@import "calendario-dispon-dias";
+@import "calendario-dispon-infos";
+@import "calendario-dispon-label";
+@import "calendario-dispon-semana";
+@import "calendario-dispon-campo";
+@import "calendario-dispon-dia";
+@import "calendario-dispon-data";
+@import "calendario-dispon-quarto";
+@import "calendario-dispon-status";
+
+.calendario-dispon {
+    // Tamanho
+    width: 100%;
+
+    // Texto
+    font-size: 14px;
+
+    // Visual
+    background: #FFF;
+    box-shadow: 0 0 5px rgba(black, .2);
+    border-radius: 3px;
+    border-collapse: collapse;
+
+    // Tamanho
+    box-sizing: border-box;
+
+    .-semana,
+    .-data,
+    .-qtde {
+        $tm: 28px;
+
+        // Tamanho
+        line-height: $tm;
+        height: $tm;
+        box-sizing: border-box;
+    }
+
+    .-valor {
+        // Tamanho
+        height: 45px;
+        box-sizing: border-box;
+    }
+
+    &:not(:first-child) {
+        // Margens
+        margin-top: 30px;
+    }
+}

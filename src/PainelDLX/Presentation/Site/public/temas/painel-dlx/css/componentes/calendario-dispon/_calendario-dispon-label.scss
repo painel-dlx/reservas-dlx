@@ -1,0 +1,21 @@
+.calendario-dispon-label {
+    // Tamanho
+    width: 100%;
+    box-sizing: border-box;
+
+    // Texto
+    font-size: 11px;
+    color: #32909F;
+    font-weight: 600;
+
+    // Margens
+    padding: 0 8px;
+
+    // Visual
+    border-top: 1px solid #DDD;
+
+    &::first-line {
+        // Texto
+        font-size: 14px;
+    }
+}

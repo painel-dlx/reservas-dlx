@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Direcionar o usuário para o Painel DLX
+    RewriteCond %{SCRIPT_FILENAME} !-d
+    RewriteCond %{SCRIPT_FILENAME} !-f
+
+    # Regra para levar o usuário ao conteúdo do Painel DLX
+    RewriteRule ^(.*)$ index.php?task=/$1&ambiente=paineldlx-dev [QSA,L]
+    # Regra para levar o usuário ao conteúdo do Painel DLX
+    RewriteRule ^$ index.php?task=/&ambiente=paineldlx-dev [QSA,L]
+</IfModule>

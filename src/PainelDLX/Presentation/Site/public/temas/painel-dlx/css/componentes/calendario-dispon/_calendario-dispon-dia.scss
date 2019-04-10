@@ -1,0 +1,33 @@
+.calendario-dispon-dia {
+    // Visual
+    border-top: 1px solid #DDD;
+
+    &.-Mon,
+    &.-Tue,
+    &.-Wed,
+    &.-Thu,
+    &.-Fri {
+        &:nth-child(odd) {
+            // Visual
+            background: #EFEFEF;
+        }
+
+        &:nth-child(even) {
+            // Visual
+            background: #E7E7E7;
+        }
+    }
+
+    &.-Sat,
+    &.-Sun {
+        &:nth-child(odd) {
+            // Visual
+            background: rgba(lightsalmon, .3);
+        }
+
+        &:nth-child(even) {
+            // Visual
+            background: rgba(lightsalmon, .4);
+        }
+    }
+}

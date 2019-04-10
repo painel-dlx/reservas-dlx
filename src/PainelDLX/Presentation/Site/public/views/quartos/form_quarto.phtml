@@ -1,0 +1,106 @@
+<?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2018 PHP DLX
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Vilex\VileX;
+
+/**
+ * @var Vilex $this
+ */
+
+/** @var Quarto $quarto */
+$quarto = $this->getAtributo('quarto');
+?>
+
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+
+<form id="form-quarto" method="post" action="<?php echo $this->getAtributo('form-action') ?>">
+    <?php if ($quarto->getId()) : ?>
+        <input type="hidden" name="id" value="<?php echo $quarto->getId() ?>">
+    <?php endif; ?>
+
+    <fieldset class="form-grupo">
+        <legend class="form-titulo">Geral</legend>
+
+        <p class="form-paragr">
+            <label for="txt-nome" class="form-rotulo form-controle-alias">Nome:</label>
+            <input type="text" name="nome" id="txt-nome" value="<?php echo $quarto->getNome() ?>" maxlength="50" class="form-controle" required>
+        </p>
+
+        <p class="form-paragr">
+            <label for="txt-descricao" class="form-rotulo form-controle-descricao">Descrição</label>
+            <textarea name="descricao" id="txt-descricao" class="form-controle form-controle-textarea" style="height: 120px"><?php echo $quarto->getDescricao() ?></textarea>
+        </p>
+    </fieldset>
+
+    <fieldset class="form-grupo">
+        <legend class="form-titulo">Configurações</legend>
+
+        <p class="form-paragr">
+            <label for="num-max-hospedes" class="form-rotulo">Qtde máx de hóspedes:</label>
+            <input type="number" name="max_hospedes" id="num-max-hospedes" value="<?php echo $quarto->getMaxHospedes() ?>" min="1" max="10" class="form-controle form-controle-numero" required>
+        </p>
+
+        <p class="form-paragr">
+            <label for="num-qtde" class="form-rotulo">Qtde de quartos disponíveis:</label>
+            <input type="number" name="qtde" id="num-qtde" value="<?php echo $quarto->getQtde() ?>" min="1" max="99" class="form-controle form-controle-numero" required>
+        </p>
+
+        <p class="form-paragr">
+            <label for="num-tamanho-m2" class="form-rotulo">Tamanho do quarto:</label>
+            <input type="number" name="tamanho_m2" id="num-tamanho-m2" value="<?php echo $quarto->getTamanhoM2() ?>" min="5" max="999" class="form-controle form-controle-numero" required>
+        </p>
+
+        <p class="form-paragr">
+            <label for="moeda-valor-min" class="form-rotulo form-controle-moeda">Valor Min.:</label>
+            <input type="number" name="valor_min" id="moeda-valor-min" value="<?php echo $quarto->getValorMin() ?>" min="1.00" max="9999.00" step="0.01" class="form-controle form-controle-numero" required>
+        </p>
+
+        <p class="form-paragr">
+            <label for="txt-link" class="form-rotulo form-controle-link">Link para acesso no site:</label>
+            <input type="text" name="link" id="txt-link" value="<?php echo $quarto->getLink() ?>" max="60" class="form-controle" required>
+        </p>
+    </fieldset>
+
+    <p class="form-botoes">
+        <button type="submit" class="botao-salvar">Salvar</button>
+    </p>
+</form>
+[/CORPO]
+
+[SCRIPTS]
+<script>
+    $('#form-quarto').formAjax({
+        func_depois: function(retorno) {
+            alert(retorno.mensagem);
+
+            if (retorno.retorno === 'sucesso') {
+                window.location = '/painel-dlx/apart-hotel/quartos'
+            }
+        }
+    });
+</script>
+[/SCRIPTS]

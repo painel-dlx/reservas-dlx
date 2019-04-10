@@ -1,0 +1,24 @@
+{
+    "name": "dlepera88-php/reservas-dlx",
+    "version": "0.1-dev",
+    "license": "MIT",
+    "require-dev": {
+        "phpunit/phpunit": "^7.5"
+    },
+    "require": {
+        "dlepera88-php/painel-dlx": "^2.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Reservas\\PainelDLX\\": "src/PainelDLX/",
+            "Reservas\\Website\\": "src/Website/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PainelDLX\\Testes\\": "vendor/dlepera88-php/painel-dlx/tests",
+            "Reservas\\PainelDLX\\Tests\\": "tests/PainelDLX/",
+            "Reservas\\Website\\Tests\\": "tests/Website/"
+        }
+    }
+}

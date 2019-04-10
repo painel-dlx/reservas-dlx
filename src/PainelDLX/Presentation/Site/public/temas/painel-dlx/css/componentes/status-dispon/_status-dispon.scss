@@ -1,0 +1,36 @@
+.status-dispon {
+    // Texto
+    color: transparent;
+
+    // Tamanho
+    width: 14px;
+    height: 14px;
+
+    // Visual
+    display: inline-block;
+
+    &::before {
+        // Texto
+        font-family: 'icomoon';
+    }
+
+    &.-publicado {
+        &::before {
+            // Conteúdo
+            content: '\ea10';
+
+            // Texto
+            color: green;
+        }
+    }
+
+    &.-nao-publicado {
+        &::before {
+            // Conteúdo
+            content: '\ea0f';
+
+            // Texto
+            color: #900;
+        }
+    }
+}

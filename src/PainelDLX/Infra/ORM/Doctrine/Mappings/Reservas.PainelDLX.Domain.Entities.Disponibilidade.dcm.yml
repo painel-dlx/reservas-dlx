@@ -1,0 +1,37 @@
+Reservas\PainelDLX\Domain\Entities\Disponibilidade:
+    type: entity
+    table: dlx_reservas_disponibilidade
+    repositoryClass: Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories\DisponibilidadeRepository
+    id:
+        id:
+            type: integer
+            id: true
+            nullable: false
+            generator:
+                strategy: auto
+            column: dispon_id
+    fields:
+        dia:
+            type: date
+            nullable: false
+            column: dispon_dia
+        qtde:
+            type: integer
+            nullable: false
+            column: dispon_qtde
+    manyToOne:
+        quarto:
+            targetEntity: Quarto
+            joinColumns:
+                dispon_quarto:
+                    referencedColumnName: quarto_id
+    oneToMany:
+        valores:
+            targetEntity: DisponValor
+            mappedBy: dispon
+            cascade:
+                - persist
+                - merge
+            joinColumns:
+                dispon_id:
+                    referencedColumnName: dispon_id

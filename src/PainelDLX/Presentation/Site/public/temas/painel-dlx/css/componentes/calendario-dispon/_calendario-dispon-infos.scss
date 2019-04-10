@@ -1,0 +1,15 @@
+.calendario-dispon-infos {
+    // Flex
+    display: flex;
+
+    .calendario-dispon-labels {
+        // Flex
+        flex: 10%;
+        flex-grow: 0;
+    }
+
+    .calendario-dispon-dias {
+        // Flex
+        flex: 90%;
+    }
+}

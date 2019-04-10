@@ -1,0 +1,50 @@
+.calendario-dispon-campo {
+    // Texto
+    text-align: center;
+
+    // Alinhamento
+    vertical-align: middle;
+
+    // Posicionamento
+    position: relative;
+
+    &:not(:last-of-type) {
+        // Visual
+        border-bottom: 1px solid #DDD;
+    }
+
+    input {
+        // Posicionamento
+        position: relative;
+        top: 50%;
+
+        // Transformar
+        transform: translateY(-50%);
+
+        // Texto
+        text-align: center;
+
+        // Visual
+        border: 1px solid #dfdfdf;
+
+        // Tamanho
+        height: 22px;
+
+        &:focus {
+            // Visual
+            outline: none;
+        }
+
+        &.-salvo {
+            // Visual
+            background: #f7ffea;
+            border-color: rgba(green, .15);
+        }
+
+        &.-pendente {
+            // Visual
+            background: #fcefef;
+            border-color: rgba(red, .15);
+        }
+    }
+}
