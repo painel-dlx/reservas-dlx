@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\SalvarQuarto;
 
 use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Tests\ReservasTestCase;
+use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 
 class SalvarQuartoCommandTest extends ReservasTestCase

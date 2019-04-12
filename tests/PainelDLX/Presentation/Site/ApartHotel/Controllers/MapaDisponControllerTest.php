@@ -32,7 +32,7 @@ use Exception;
 use PainelDLX\Application\Factories\CommandBusFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\MapaDisponController;
-use Reservas\PainelDLX\Tests\ReservasTestCase;
+use Reservas\Tests\ReservasTestCase;
 use SechianeX\Factories\SessionFactory;
 use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;

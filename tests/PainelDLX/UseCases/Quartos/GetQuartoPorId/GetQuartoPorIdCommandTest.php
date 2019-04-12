@@ -25,7 +25,7 @@
 
 namespace Reservas\PainelDLX\Tests\UseCases\Quartos\GetQuartoPorId;
 
-use Reservas\PainelDLX\Tests\ReservasTestCase;
+use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 
 class GetQuartoPorIdCommandTest extends ReservasTestCase

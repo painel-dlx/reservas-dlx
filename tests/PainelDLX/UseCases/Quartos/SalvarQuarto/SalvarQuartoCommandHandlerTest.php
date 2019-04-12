@@ -28,7 +28,7 @@ namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\SalvarQuarto;
 use DLX\Infra\EntityManagerX;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
-use Reservas\PainelDLX\Tests\ReservasTestCase;
+use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 

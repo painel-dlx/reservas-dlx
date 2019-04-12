@@ -1,0 +1,101 @@
+<?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2018 PHP DLX
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Vilex\VileX;
+
+/**
+ * @var Vilex $this
+ */
+
+$lista_quartos = $this->getAtributo('lista-quartos');
+?>
+
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+
+<p class="mensagem-usuario -atencao">
+    Atenção! Caso já exista uma configuração de disponibilidade para a data informada, a mesma será atualizada.
+</p>
+
+<form id="form-dispon-periodo" method="post" action="/painel-dlx/apart-hotel/disponibilidade/salvar-periodo">
+    <p class="form-paragr">
+        <label for="sel-quarto" class="form-rotulo">Quarto:</label>
+        <select id="sel-quarto" name="quarto_id" class="form-controle form-controle-select" required>
+            <option value="">Selecione um quarto</option>
+
+            <?php
+            /** @var Quarto $quarto */
+            foreach ($lista_quartos as $quarto) : ?>
+                <option value="<?php echo $quarto->getId() ?>">
+                    <?php echo $quarto->getNome() ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </p>
+
+    <p class="form-paragr">
+        <span class="form-rotulo">Período:</span>
+
+        <label for="data-inicial">De</label>&nbsp;
+        <input type="date" name="data_inicial" id="data-inicial" min="<?php echo date('Y-m-d') ?>" class="form-controle form-controle-data" required>
+
+        &nbsp;<label for="data-final">até</label>&nbsp;
+        <input type="date" name="data_final" id="data-final" min="<?php echo date('Y-m-d') ?>" class="form-controle form-controle-data" required>
+    </p>
+
+    <div id="config-quarto" class="dispon-config-quarto"></div>
+
+    <p class="form-botoes">
+        <button type="submit" class="botao-salvar">Salvar</button>
+    </p>
+</form>
+[/CORPO]
+
+[SCRIPTS]
+<script>
+    $('#sel-quarto').on('change', function () {
+        var $this = $(this);
+        var quarto_id = $this.val();
+
+        $.get(
+            '/painel-dlx/apart-hotel/disponibilidade/configuracoes-quarto',
+            {id: quarto_id, 'pg-mestra': 'vazio-master'},
+            function (html) { $('#config-quarto').html(html); }
+        );
+    });
+
+    $('#form-dispon-periodo').formAjax({
+        func_depois: function(retorno) {
+            alert(retorno.mensagem);
+
+            if (retorno.retorno === 'sucesso') {
+                window.location = '/painel-dlx/apart-hotel/disponibilidade'
+            }
+        }
+    });
+</script>
+[/SCRIPTS]

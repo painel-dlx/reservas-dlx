@@ -1,0 +1,11 @@
+.dispon-config-quarto {
+    // Visual
+    display: flex;
+
+    > * {
+        &:not(:last-child) {
+            // Margens
+            margin-right: 10px;
+        }
+    }
+}

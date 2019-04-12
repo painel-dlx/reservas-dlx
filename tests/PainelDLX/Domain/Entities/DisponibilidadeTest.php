@@ -29,7 +29,8 @@ use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Tests\ReservasTestCase;
+use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
+use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class DisponibilidadeTest
@@ -44,7 +45,7 @@ class DisponibilidadeTest extends ReservasTestCase
      */
     public function test__construct(): Disponibilidade
     {
-        $quarto = new Quarto('Teste', 10, 100);
+        $quarto = new Quarto('Teste', 10, 10);
         $hoje = new DateTime();
         $qtde_dispon = mt_rand(1, 10);
 
@@ -61,19 +62,9 @@ class DisponibilidadeTest extends ReservasTestCase
 
     /**
      * @param Disponibilidade $dispon
-     * @covers ::addValor
-     * @depends test__construct
-     */
-    public function test_AddValor_deve_criar_um_DisponValor(Disponibilidade $dispon)
-    {
-        $dispon->addValor(1, 12.34);
-        $this->assertCount(1, $dispon->getValores());
-    }
-
-    /**
-     * @param Disponibilidade $dispon
      * @covers ::getValorPorQtdePessoas
      * @depends test__construct
+     * @throws \Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException
      */
     public function test_GetValorPorQtdePessoas_deve_retornar_valor_ref_qtde_pessoas(Disponibilidade $dispon)
     {
@@ -154,9 +145,23 @@ class DisponibilidadeTest extends ReservasTestCase
      * @covers ::isPublicado
      * @depends test__construct
      */
-    public function test_IsPublicado_deve_retornar_false_quando_alguma_das_regras_nao_forem_cumpridas(Disponibilidade $dispon)
+    public function test_IsPublicado_deve_retornar_false_quando_quantidade_for_0(Disponibilidade $dispon)
     {
         $dispon->setQtde(0);
+        $this->assertFalse($dispon->isPublicado());
+    }
+
+    /**
+     * @param Disponibilidade $dispon
+     * @covers ::isPublicado
+     * @depends test__construct
+     * @throws ValorMenorQueMinimoQuartoException
+     */
+    public function test_IsPublicado_deve_retornar_false_quando_tiver_algum_valor_menor_que_minimo(Disponibilidade $dispon)
+    {
+        $dispon->setQtde(1);
+        $dispon->addValor(1, 1);
+
         $this->assertFalse($dispon->isPublicado());
     }
 }

@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
 use Reservas\PainelDLX\Domain\Entities\DisponValor;
 use PHPUnit\Framework\TestCase;
-use Reservas\PainelDLX\Tests\ReservasTestCase;
+use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class DisponValorTest

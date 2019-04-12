@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Tests;
+namespace Reservas\Tests;
 
 
 use PainelDLX\Application\Services\PainelDLX;

@@ -185,6 +185,7 @@ class MapaDisponController extends SiteController
         } catch (UserException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
+            $json['publicado'] = false;
         }
 
         return new JsonResponse($json);

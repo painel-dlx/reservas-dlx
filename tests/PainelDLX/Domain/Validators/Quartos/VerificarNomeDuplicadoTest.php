@@ -29,7 +29,7 @@ use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Exceptions\NomeQuartoUtilizadoException;
 use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
 use Reservas\PainelDLX\Domain\Validators\Quartos\VerificarNomeDuplicado;
-use Reservas\PainelDLX\Tests\ReservasTestCase;
+use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class VerificarNomeDuplicadoTest

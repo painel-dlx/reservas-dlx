@@ -1,0 +1,12 @@
+.filtro-registros-mapa {
+    // Visual
+    display: flex;
+
+    // Margens
+    margin: 0;
+
+    *:not(:last-child) {
+        // Margens
+        margin-right: 10px;
+    }
+}

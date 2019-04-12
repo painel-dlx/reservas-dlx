@@ -30,6 +30,8 @@ use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
+use Reservas\PainelDLX\Domain\Validators\Disponibilidade\ValidarValoresDisponValidator;
 
 /**
  * Class Disponibilidade
@@ -148,6 +150,7 @@ class Disponibilidade extends Entity
      * @param int $qtde_pessoas
      * @param float $valor
      * @return Disponibilidade
+     * @throws ValorMenorQueMinimoQuartoException
      */
     public function addValor(int $qtde_pessoas, float $valor): self
     {
@@ -178,6 +181,7 @@ class Disponibilidade extends Entity
      * @param int $qtde_pessoas
      * @param float $valor
      * @return Disponibilidade
+     * @throws ValorMenorQueMinimoQuartoException
      */
     public function setValorPorQtdePessoas(int $qtde_pessoas, float $valor): self
     {
@@ -212,14 +216,21 @@ class Disponibilidade extends Entity
      */
     public function isPublicado(): bool
     {
+        $max_hospedes = $this->getQuarto()->getMaxHospedes();
+        $valor_min = $this->getQuarto()->getValorMin();
+
         if ($this->getValores()->count() > 0) {
-            for ($i = 1; $i <= $this->getQuarto()->getMaxHospedes(); $i++) {
+            for ($i = 1; $i <= $max_hospedes; $i++) {
                 if (!$this->hasValorPorQtdePessoas($i)) {
                     return false;
                 }
             }
 
-            return $this->getQtde() > 0;
+            $has_valor_invalido = $this->getValores()->exists(function ($key, DisponValor $dispon_valor) use ($valor_min) {
+                return $valor_min > $dispon_valor->getValor();
+            });
+
+            return $this->getQtde() > 0 && !$has_valor_invalido;
         }
 
         return false;

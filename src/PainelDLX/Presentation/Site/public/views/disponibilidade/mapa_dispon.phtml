@@ -46,31 +46,36 @@ $filtro = $this->getAtributo('filtro');
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
 
-<form id="form-filtro-mapa">
-    <label>
-        <input type="date" name="data_inicial" id="dt-data-inicial" value="<?php echo $filtro['data_inicial'] ?>" class="form-controle form-controle-data" required>
-    </label>
+<div class="menu-opcoes">
+    <form id="form-filtro-mapa" class="filtro-registros-mapa">
+        <label>
+            <input type="date" name="data_inicial" id="dt-data-inicial" value="<?php echo $filtro['data_inicial'] ?>"
+                   class="form-controle form-controle-data" required>
+        </label>
 
-    <label>
-        <input type="date" name="data_final" id="dt-data-final" value="<?php echo $filtro['data_final'] ?>" class="form-controle form-controle-data" required>
-    </label>
+        <label>
+            <input type="date" name="data_final" id="dt-data-final" value="<?php echo $filtro['data_final'] ?>"
+                   class="form-controle form-controle-data" required>
+        </label>
 
-    <label>
-        <select name="quarto" id="sel-quarto" class="form-controle form-controle-select">
-            <option value="">Todos os quartos</option>
+        <label>
+            <select name="quarto" id="sel-quarto" class="form-controle form-controle-select">
+                <option value="">Todos os quartos</option>
 
-            <?php
-            /** @var Quarto $quarto */
-            foreach ($lista_quartos as $quarto) : ?>
-                <option value="<?php echo $quarto->getId() ?>"<?php echo (int)$filtro['quarto'] === $quarto->getId() ? ' selected' : '' ?>>
-                    <?php echo $quarto->getNome() ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </label>
+                <?php
+                /** @var Quarto $quarto */
+                foreach ($lista_quartos as $quarto) : ?>
+                    <option value="<?php echo $quarto->getId() ?>"<?php echo (int)$filtro['quarto'] === $quarto->getId() ? ' selected' : '' ?>>
+                        <?php echo $quarto->getNome() ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+    </form>
 
-    <button type="submit" class="botao-buscar">Filtrar</button>
-</form>
+    <button type="submit" form="form-filtro-mapa" class="botao-buscar">Filtrar</button>
+    <a href="/painel-dlx/apart-hotel/disponibilidade/editar-por-periodo" class="link-inserir">Disponibilidade por período</a>
+</div>
 
 <?php if (count($quartos) < 0) : ?>
     <p class="sem-registros">Nenhuma disponibilidade encontrada.</p>
@@ -164,16 +169,16 @@ foreach ($quartos as $lista_dispon) :
 
                 $inputs.removeClass('-pendente');
                 $inputs.addClass('-salvo');
+            }
 
-                var $status = $form.find('.status-dispon');
+            var $status = $form.find('.status-dispon');
 
-                if (json.publicado) {
-                    $status.removeClass('-nao-publicado');
-                    $status.addClass('-publicado');
-                } else {
-                    $status.removeClass('-publicado');
-                    $status.addClass('-nao-publicado');
-                }
+            if (json.publicado) {
+                $status.removeClass('-nao-publicado');
+                $status.addClass('-publicado');
+            } else {
+                $status.removeClass('-publicado');
+                $status.addClass('-nao-publicado');
             }
         }
     });

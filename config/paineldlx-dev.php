@@ -52,6 +52,11 @@ return [
         'dir' => [
             'src/PainelDLX/Infra/ORM/Doctrine/Mappings',
             'src/PainelDLX/Infra/ORM/Doctrine/Repositories',
+
+            // todo: colocar isso no outro arquivo de configuração
+            'src/Website/Infra/ORM/Doctrine/Mappings',
+            'src/Website/Infra/ORM/Doctrine/Repositories',
+
             "{$dir_painel_dlx}src/Infra/ORM/Doctrine/Mappings",
             "{$dir_painel_dlx}src/Infra/ORM/Doctrine/Repositories"
         ],

@@ -29,6 +29,7 @@ namespace Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories;
 use DateTime;
 use DLX\Infra\ORM\Doctrine\Repositories\EntityRepository;
 use Doctrine\DBAL\ParameterType;
+use Exception;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
@@ -59,5 +60,93 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Salvar disponibilidade por período
+     * @param DateTime $data_inicial
+     * @param DateTime $data_final
+     * @param Quarto $quarto
+     * @param int $qtde
+     * @param array $valores
+     * @return bool
+     * @throws \Throwable
+     */
+    public function salvarDisponPorPeriodo(DateTime $data_inicial, DateTime $data_final, Quarto $quarto, int $qtde, array $valores): bool
+    {
+        $update_dispon = '
+            update
+                dlx_reservas_disponibilidade
+            set
+                dispon_qtde = :qtde
+            where
+                dispon_quarto = :quarto_id
+                and dispon_dia between :data_inicial and :data_final
+        ';
+
+        $delete_dispon_valor = '
+            delete
+                v
+            from
+                dlx_reservas_disponibilidade d 
+            inner join 
+                reservas_disponibilidade_valores v on v.dispon_id = d.dispon_id
+            where 
+                d.dispon_quarto = :quarto_id
+                and d.dispon_dia between :data_inicial and :data_final
+        ';
+
+        $insert_dispon_valor = '
+            insert into reservas_disponibilidade_valores (dispon_id, qtde_pessoas, valor)
+                select 
+                    dispon_id,
+                    :qtde_pessoas,
+                    :valor
+                from
+                    dlx_reservas_disponibilidade
+                where
+                    dispon_quarto = :quarto_id
+                    and dispon_dia between :data_inicial and :data_final
+        ';
+
+        try {
+            $this->_em->beginTransaction();
+
+            $con = $this->_em->getConnection();
+
+            // Atualizar as disponibilidades
+            $sql = $con->prepare($update_dispon);
+            $sql->bindValue(':qtde', $qtde, ParameterType::INTEGER);
+            $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
+            $sql->bindValue(':data_inicial', $data_inicial->format('Y-m-d'), ParameterType::STRING);
+            $sql->bindValue(':data_final', $data_final->format('Y-m-d'), ParameterType::STRING);
+            $sql->execute();
+
+            // Excluir os valores atuais
+            $sql = $con->prepare($delete_dispon_valor);
+            $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
+            $sql->bindValue(':data_inicial', $data_inicial->format('Y-m-d'));
+            $sql->bindValue(':data_final', $data_final->format('Y-m-d'));
+            $sql->execute();
+
+            // Reinserir os valore atualizados
+            $sql = $con->prepare($insert_dispon_valor);
+
+            foreach ($valores as $qtde_pessoas => $valor) {
+                $sql->bindValue(':qtde_pessoas', $qtde_pessoas, ParameterType::INTEGER);
+                $sql->bindValue(':valor', $valor);
+                $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
+                $sql->bindValue(':data_inicial', $data_inicial->format('Y-m-d'));
+                $sql->bindValue(':data_final', $data_final->format('Y-m-d'));
+                $sql->execute();
+            }
+
+            $this->_em->commit();
+        } catch (Exception $e) {
+            $this->_em->rollback();
+            throw $e;
+        }
+
+        return true;
     }
 }

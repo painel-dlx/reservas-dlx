@@ -43,4 +43,21 @@ interface DisponibilidadeRepositoryInterface extends EntityRepositoryInterface
         DateTime $data_final,
         ?Quarto $quarto
     ): array;
+
+    /**
+     * Salvar disponibilidade por período
+     * @param DateTime $data_inicial
+     * @param DateTime $data_final
+     * @param Quarto $quarto
+     * @param int $qtde
+     * @param array $valores
+     * @return bool
+     */
+    public function salvarDisponPorPeriodo(
+        DateTime $data_inicial,
+        DateTime $data_final,
+        Quarto $quarto,
+        int $qtde,
+        array $valores
+    ): bool;
 }

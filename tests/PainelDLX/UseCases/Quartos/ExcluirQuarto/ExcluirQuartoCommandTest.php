@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\ExcluirQuarto;
 
 use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Tests\ReservasTestCase;
+use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommand;
 
 class ExcluirQuartoCommandTest extends ReservasTestCase
