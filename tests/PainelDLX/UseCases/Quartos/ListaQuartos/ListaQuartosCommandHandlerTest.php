@@ -32,25 +32,37 @@ use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommandHandler;
 
+/**
+ * Class ListaQuartosCommandHandlerTest
+ * @package Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\ListaQuartos
+ * @coversDefaultClass \Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommandHandler
+ */
 class ListaQuartosCommandHandlerTest extends ReservasTestCase
 {
-    /** @var ListaQuartosCommandHandler */
-    private $handler;
-
-    protected function setUp()
+    /**
+     * @return ListaQuartosCommandHandler
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function test__construct(): ListaQuartosCommandHandler
     {
-        parent::setUp();
-
         /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
-        $this->handler = new ListaQuartosCommandHandler($quarto_repository);
+        $handler = new ListaQuartosCommandHandler($quarto_repository);
+
+        $this->assertInstanceOf(ListaQuartosCommandHandler::class, $handler);
+
+        return $handler;
     }
 
-
-    public function test_Handle_deve_retornar_array_com_Quartos()
+    /**
+     * @param ListaQuartosCommandHandler $handler
+     * @covers ::handle
+     * @depends test__construct
+     */
+    public function test_Handle_deve_retornar_array_com_Quartos(ListaQuartosCommandHandler $handler)
     {
         $command = new ListaQuartosCommand([], [], 100);
-        $lista_quartos = $this->handler->handle($command);
+        $lista_quartos = $handler->handle($command);
 
         $this->assertIsArray($lista_quartos);
 

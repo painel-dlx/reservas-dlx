@@ -1,0 +1,185 @@
+<?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2018 PHP DLX
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
+use Vilex\VileX;
+
+/**
+ * @var VileX $this
+ */
+
+/** @var Reserva|null $reserva */
+$reserva = $this->getAtributo('reserva');
+?>
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+
+<div class="layout-barra-lateral">
+    <aside class="barra-lateral">
+        <div class="info-reserva">
+            <div class="info-reserva-linha">
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Reserva:</span>
+                    # <?php echo $reserva->getId() ?>
+                </p>
+            </div>
+
+            <div class="info-reserva-linha">
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Checkin:</span>
+                    <?php echo $reserva->getCheckin()->format('d/m/Y') ?>
+                </p>
+
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Checkout:</span>
+                    <?php echo $reserva->getCheckin()->format('d/m/Y') ?>
+                </p>
+            </div>
+
+            <div class="info-reserva-linha">
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Adultos:</span>
+                    <?php echo $reserva->getAdultos() ?>
+                </p>
+
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Crianças:</span>
+                    <?php echo $reserva->getCriancas() ?>
+                </p>
+            </div>
+
+            <div class="info-reserva-linha">
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Status:</span>
+                    <span class="status-reserva -<?php echo strtolower($reserva->getStatus()) ?>">
+                        <?php echo $reserva->getStatus() ?>
+                    </span>
+                </p>
+            </div>
+
+            <?php if ($reserva->isPedente()) : ?>
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado info-reserva-botoes">
+                        <button type="button" onclick="popupConfirmarReserva('confirmar', <?php echo $reserva->getId() ?>)" class="botao-salvar">Confirmar</button>
+                        ou
+                        <button type="button" onclick="popupConfirmarReserva('cancelar', <?php echo $reserva->getId() ?>)" class="botao-cancelar">Cancelar</button>
+                    </p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </aside>
+
+    <div id="detalhe-reserva">
+        <details class="detalhe-registro" open>
+            <summary class="detalhe-registro-titulo">Hóspede / Cliente</summary>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">Nome:</span>
+                <?php echo $reserva->getHospede() ?>
+            </p>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">CPF:</span>
+                <?php echo $reserva->getCpf() ?>
+            </p>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">Telefone:</span>
+                <?php echo $reserva->getTelefone() ?>
+            </p>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">Email:</span>
+                <?php echo $reserva->getEmail() ?>
+            </p>
+        </details>
+
+        <details class="detalhe-registro" open>
+            <summary class="detalhe-registro-titulo">Outras Informações</summary>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">Valor:</span>
+                <?php echo 'R$ ' . number_format($reserva->getValor(), 2, ',', '') ?>
+            </p>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">Origem:</span>
+                <?php echo $reserva->getOrigem() ?>
+            </p>
+        </details>
+
+        <details class="detalhe-registro" open>
+            <summary class="detalhe-registro-titulo">Histórico</summary>
+
+            <?php
+            /** @var ReservaHistorico $historico */
+            foreach ($reserva->getHistorico() as $historico) : ?>
+                <p class="detalhe-registro-paragr">
+                    <?php echo $historico ?>
+                </p>
+            <?php endforeach; ?>
+        </details>
+    </div>
+</div>
+
+<div id="popup-confirmar-reserva" class="popup-modal" style="display: none;"></div>
+[/CORPO]
+
+[SCRIPTS]
+<script>
+    function popupConfirmarReserva(acao, reserva_id) {
+        $.get(
+            '/painel-dlx/apart-hotel/reservas/' + acao + '-reserva',
+            {id: reserva_id, 'pg-mestra': 'conteudo-master'},
+            function (html) {
+                $('#popup-confirmar-reserva')
+                    .html(html)
+                    .show();
+
+                $(window).on('keyup.__confirmarReserva', function (evt) {
+                    var kc = evt.keycode || evt.which;
+
+                    if (kc === 27) {
+                        fecharPopupConfirmarReserva();
+                    }
+                });
+            },
+            'html'
+        );
+    }
+
+    /**
+     * Fechar o popup de confirmação / cancelamento
+     */
+    function fecharPopupConfirmarReserva() {
+        $('#popup-confirmar-reserva').fadeOut('fast', function () {
+            $(this).html('');
+            $(window).off('keyup.__confirmarReserva');
+        });
+    }
+</script>
+[/SCRIPTS]

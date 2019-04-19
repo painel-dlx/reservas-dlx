@@ -80,6 +80,5 @@ class SalvarDisponPeriodoCommandHandlerTest extends ReservasTestCase
         $return = $handler->handle($command);
 
         $this->assertIsBool($return);
-        $this->markTestIncomplete();
     }
 }

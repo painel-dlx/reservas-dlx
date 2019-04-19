@@ -1,0 +1,68 @@
+.info-reserva {
+    // Visual
+    background: #FFF;
+    border-radius: 4px;
+    box-shadow: 0 0 3px rgba(black, .1);
+
+    // Margens
+    padding: 4px 10px;
+
+    // Tamanho
+    width: 100%;
+    box-sizing: border-box;
+
+    &-botoes {
+        $mg-bloco-vert: 10px;
+        $mg-btn-vert: 5px;
+
+        // Texto
+        text-align: center;
+
+        // Margens
+        padding-top: $mg-bloco-vert;
+        margin-top: $mg-bloco-vert;
+
+        // Visual
+        border-top: 1px solid #e9e9e9;
+
+        > .botao-salvar,
+        > .botao-cancelar {
+            // Visual
+            display: block;
+
+            // Margens
+            margin: auto;
+        }
+
+        > .botao-salvar {
+            // Margens
+            margin-bottom: $mg-btn-vert;
+        }
+
+        > .botao-cancelar {
+            // Margens
+            margin-top: $mg-btn-vert;
+        }
+    }
+
+    &-rotulo {
+        // Visual
+        display: block;
+
+        // Texto
+        color: #32909F;
+    }
+
+    &-linha {
+        // Visual
+        display: flex;
+    }
+
+    &-dado {
+        // Flex
+        flex: 50%;
+
+        // Margens
+        margin: 5px 0;
+    }
+}

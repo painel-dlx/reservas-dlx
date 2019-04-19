@@ -1,0 +1,39 @@
+.status-reserva {
+    // Visual
+    display: inline-block;
+    border-radius: 75px;
+
+    // Margens
+    padding: 3px 7px;
+
+    // Tamanho
+    width: 120px;
+    box-sizing: border-box;
+
+    // Texto
+    text-align: center;
+
+    &.-pendente {
+        // Visual
+        background: #EEE;
+
+        // Texto
+        color: #777;
+    }
+
+    &.-confirmada {
+        // Visual
+        background: rgba(#8EC1AB, .25);
+
+        // Texto
+        color: #32909F;
+    }
+
+    &.-cancelada {
+        // Visual
+        background: rgba(#900, .25);
+
+        // Texto
+        color: #900;
+    }
+}

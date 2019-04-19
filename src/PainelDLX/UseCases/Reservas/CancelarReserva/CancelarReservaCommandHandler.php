@@ -23,30 +23,39 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\MapaDisponController;
+namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-];
+use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+
+class CancelarReservaCommandHandler
+{
+    /**
+     * @var ReservaRepositoryInterface
+     */
+    private $reserva_repository;
+
+    /**
+     * CancelarReservaCommandHandler constructor.
+     * @param ReservaRepositoryInterface $reserva_repository
+     */
+    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    {
+        $this->reserva_repository = $reserva_repository;
+    }
+
+    /**
+     * @param CancelarReservaCommand $command
+     * @return Reserva
+     */
+    public function handle(CancelarReservaCommand $command): Reserva
+    {
+        $reserva = $command->getReserva();
+        $reserva->cancelada($command->getMotivo());
+
+        $this->reserva_repository->update($reserva);
+
+        return $reserva;
+    }
+}

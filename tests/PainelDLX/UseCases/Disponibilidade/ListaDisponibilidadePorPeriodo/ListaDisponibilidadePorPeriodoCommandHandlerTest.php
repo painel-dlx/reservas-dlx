@@ -27,6 +27,7 @@ namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Disponibilidade\ListaDispo
 
 use DateTime;
 use DLX\Infra\EntityManagerX;
+use Exception;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
@@ -44,24 +45,24 @@ class ListaDisponibilidadePorPeriodoCommandHandlerTest extends ReservasTestCase
     /**
      * @return array
      * @throws \Doctrine\ORM\ORMException
-     * @throws \Exception
+     * @throws Exception
      */
-    public function gerarHandler(): array
+    public function test__construct(): ListaDisponibilidadePorPeriodoCommandHandler
     {
-        self::setUp();
-
         /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
         $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
         $handler = new ListaDisponibilidadePorPeriodoCommandHandler($disponibilidade_repository);
 
-        return [[$handler]];
+        $this->assertInstanceOf(ListaDisponibilidadePorPeriodoCommandHandler::class, $handler);
+
+        return $handler;
     }
 
     /**
      * @param ListaDisponibilidadePorPeriodoCommandHandler $handler
-     * @dataProvider gerarHandler
      * @covers ::handle
-     * @throws \Exception
+     * @depends test__construct
+     * @throws Exception
      */
     public function test_Handle(ListaDisponibilidadePorPeriodoCommandHandler $handler)
     {

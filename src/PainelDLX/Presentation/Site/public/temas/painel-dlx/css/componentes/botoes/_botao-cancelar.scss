@@ -1,0 +1,14 @@
+@import "botao";
+
+.botao-cancelar {
+    @extend .botao;
+
+    // Visual
+    background: #ca3133;
+    border-bottom-color: #962626;
+
+    &:hover {
+        // Visual
+        background: #bc3335;
+    }
+}

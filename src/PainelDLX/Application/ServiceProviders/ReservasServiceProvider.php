@@ -32,14 +32,17 @@ use League\Container\ServiceProvider\AbstractServiceProvider;
 use PainelDLX\Infra\ORM\Doctrine\Services\RepositoryFactory;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
 
 class ReservasServiceProvider extends AbstractServiceProvider
 {
     protected $provides = [
         QuartoRepositoryInterface::class,
-        DisponibilidadeRepositoryInterface::class
+        DisponibilidadeRepositoryInterface::class,
+        ReservaRepositoryInterface::class,
     ];
 
     /**
@@ -63,6 +66,11 @@ class ReservasServiceProvider extends AbstractServiceProvider
         $container->add(
             DisponibilidadeRepositoryInterface::class,
             RepositoryFactory::create(Disponibilidade::class)
+        );
+
+        $container->add(
+            ReservaRepositoryInterface::class,
+            RepositoryFactory::create(Reserva::class)
         );
     }
 }

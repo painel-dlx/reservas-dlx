@@ -23,30 +23,31 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\MapaDisponController;
+use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
+use Vilex\VileX;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
+/**
+ * @var VileX $this
+ */
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-];
+/** @var Reserva|null $reserva */
+$reserva = $this->getAtributo('reserva');
+?>
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+
+<form id="form-cancelar-reserva" action="/painel-dlx/apart-hotel/reservas/confirmar-reserva" method="post">
+    <input type="hidden" name="id" value="<?php echo $reserva->getId() ?>">
+
+    <p class="form-paragr">
+        <label for="txt-motivo" class="form-rotulo">Motivo:</label>
+        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea"></textarea>
+    </p>
+
+    <p class="form-botoes">
+        <button class="botao-salvar">Confirmar</button>
+    </p>
+</form>
+[/CORPO]

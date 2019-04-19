@@ -41,23 +41,27 @@ use Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\
  */
 class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
 {
-    /** @var GetDisponibilidadePorDataQuartoCommandHandler */
-    private $handler;
-
-    protected function setUp()
+    /**
+     * @return GetDisponibilidadePorDataQuartoCommandHandler
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function test__construct(): GetDisponibilidadePorDataQuartoCommandHandler
     {
-        parent::setUp();
-
         /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
         $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
-        $this->handler = new GetDisponibilidadePorDataQuartoCommandHandler($disponibilidade_repository);
+        $handler = new GetDisponibilidadePorDataQuartoCommandHandler($disponibilidade_repository);
+
+        $this->assertInstanceOf(GetDisponibilidadePorDataQuartoCommandHandler::class, $handler);
+
+        return $handler;
     }
 
     /**
      * @throws \Exception
      * @covers ::handle
+     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_null_quando_nao_encontrar_no_bd()
+    public function test_Handle_deve_retornar_null_quando_nao_encontrar_no_bd(GetDisponibilidadePorDataQuartoCommandHandler $handler)
     {
         $quarto = new Quarto('Teste', 10, 10);
         $quarto->setId(0);
@@ -65,7 +69,7 @@ class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
         $data = new DateTime();
 
         $command = new GetDisponibilidadePorDataQuartoCommand($quarto, $data);
-        $disponibilidade = $this->handler->handle($command);
+        $disponibilidade = $handler->handle($command);
 
         $this->assertNull($disponibilidade);
     }
@@ -73,8 +77,9 @@ class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
     /**
      * @throws \Exception
      * @covers ::handle
+     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_Disponibilidade_quando_encontrar_no_bd()
+    public function test_Handle_deve_retornar_Disponibilidade_quando_encontrar_no_bd(GetDisponibilidadePorDataQuartoCommandHandler $handler)
     {
         $query = '
             select
@@ -99,7 +104,7 @@ class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
         $data = new DateTime();
 
         $command = new GetDisponibilidadePorDataQuartoCommand($quarto, $data);
-        $disponibilidade = $this->handler->handle($command);
+        $disponibilidade = $handler->handle($command);
 
         $this->assertInstanceOf(Disponibilidade::class, $disponibilidade);
     }

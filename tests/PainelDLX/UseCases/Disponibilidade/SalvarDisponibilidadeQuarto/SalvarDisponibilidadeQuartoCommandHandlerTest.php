@@ -27,6 +27,8 @@ namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Disponibilidade\SalvarDisp
 
 use DateTime;
 use DLX\Infra\EntityManagerX;
+use Doctrine\DBAL\ParameterType;
+use Exception;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
@@ -44,18 +46,6 @@ use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
  */
 class SalvarDisponibilidadeQuartoCommandHandlerTest extends ReservasTestCase
 {
-    /** @var SalvarDisponibilidadeQuartoCommandHandler */
-    private $handler;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
-        $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
-        $this->handler = new SalvarDisponibilidadeQuartoCommandHandler($disponibilidade_repository);
-    }
-
     /**
      * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException
      * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException
@@ -64,37 +54,75 @@ class SalvarDisponibilidadeQuartoCommandHandlerTest extends ReservasTestCase
      * @throws \Reservas\PainelDLX\Domain\Exceptions\LinkQuartoUtilizadoException
      * @throws \Reservas\PainelDLX\Domain\Exceptions\NomeQuartoUtilizadoException
      * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function gerarQuarto()
+    public function gerarQuarto(): Quarto
     {
-        parent::setUp();
-
         /** @var QuartoRepositoryInterface $quarto_repository */
-        $quarto = new Quarto('Teste 1234', 1, 10);
-        $quarto->setLink('/teste/teste');
-        $quarto->setTamanhoM2(mt_rand(10, 90));
-
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
 
-        $command = new SalvarQuartoCommand($quarto);
-        $quarto = (new SalvarQuartoCommandHandler($quarto_repository))->handle($command);
+        $query = '
+            insert into dlx_reservas_quartos (quarto_nome, quarto_descricao, quarto_maxhospedes, quarto_qtde, quarto_valor_min, quarto_tamanho_m2, quarto_link)
+                values (?, ?, ?, ?, ?, ?, ?) 
+        ';
 
-        return [[$quarto]];
+        $con = EntityManagerX::getInstance()->getConnection();
+
+        $sql = $con->prepare($query);
+        $sql->bindValue(1, 'Teste 1234', ParameterType::STRING);
+        $sql->bindValue(2, '', ParameterType::STRING);
+        $sql->bindValue(3, 3, ParameterType::INTEGER);
+        $sql->bindValue(4, 5, ParameterType::INTEGER);
+        $sql->bindValue(5, 12.34);
+        $sql->bindValue(6, 30, ParameterType::INTEGER);
+        $sql->bindValue(7, '/teste/teste/1234', ParameterType::INTEGER);
+        $sql->execute();
+
+        $id = $con->lastInsertId();
+
+        /** @var Quarto|null $quarto */
+        $quarto = $quarto_repository->find($id);
+
+        return $quarto;
+    }
+
+    /**
+     * @return SalvarDisponibilidadeQuartoCommandHandler
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function test__construct(): SalvarDisponibilidadeQuartoCommandHandler
+    {
+        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
+        $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
+        $handler = new SalvarDisponibilidadeQuartoCommandHandler($disponibilidade_repository);
+
+        $this->assertInstanceOf(SalvarDisponibilidadeQuartoCommandHandler::class, $handler);
+
+        return $handler;
     }
 
     /**
      * @covers ::handle
-     * @param Quarto $quarto
-     * @throws \Exception
-     * @dataProvider gerarQuarto
+     * @param SalvarDisponibilidadeQuartoCommandHandler $handler
+     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException
+     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException
+     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \PainelDLX\Application\Services\Exceptions\AmbienteNaoInformadoException
+     * @throws \Reservas\PainelDLX\Domain\Exceptions\LinkQuartoUtilizadoException
+     * @throws \Reservas\PainelDLX\Domain\Exceptions\NomeQuartoUtilizadoException
+     * @throws \Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException
+     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_Disponibilidade(Quarto $quarto)
+    public function test_Handle_deve_retornar_Disponibilidade(SalvarDisponibilidadeQuartoCommandHandler $handler)
     {
+        $quarto = $this->gerarQuarto();
+
         $disponibilidade = new Disponibilidade($quarto, new DateTime(), 10);
-        $disponibilidade->setValor(12.34);
+        $disponibilidade->addValor(1, 12.34);
 
         $command = new SalvarDisponibilidadeQuartoCommand($disponibilidade);
-        $disponibilidade = $this->handler->handle($command);
+        $disponibilidade = $handler->handle($command);
 
         $this->assertInstanceOf(Disponibilidade::class, $disponibilidade);
         $this->assertNotNull($disponibilidade->getId());

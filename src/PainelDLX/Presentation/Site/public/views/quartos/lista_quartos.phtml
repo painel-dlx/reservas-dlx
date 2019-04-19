@@ -30,7 +30,7 @@ use Vilex\VileX;
  * @var VileX $this
  */
 
-$lista_quartos = $this->getAtributo('lista-quartos');
+$lista_reservas = $this->getAtributo('lista-quartos');
 $filtro = $this->getAtributo('filtro');
 ?>
 [CORPO]
@@ -84,14 +84,14 @@ $filtro = $this->getAtributo('filtro');
     </thead>
 
     <tbody>
-    <?php if (!count($lista_quartos)) : ?>
+    <?php if (!count($lista_reservas)) : ?>
         <tr>
             <td colspan="6" class="sem-registros">Nenhum quarto encontrado.</td>
         </tr>
     <?php endif;
 
     /** @var Quarto $quarto */
-    foreach ($lista_quartos as $quarto) : ?>
+    foreach ($lista_reservas as $quarto) : ?>
         <tr>
             <td headers="quarto-id"><?php echo $quarto->getId() ?></td>
             <td headers="noem">

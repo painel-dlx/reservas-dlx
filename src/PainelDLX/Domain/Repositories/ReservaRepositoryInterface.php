@@ -23,30 +23,11 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\MapaDisponController;
+namespace Reservas\PainelDLX\Domain\Repositories;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
+use DLX\Domain\Repositories\EntityRepositoryInterface;
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-];
+interface ReservaRepositoryInterface extends EntityRepositoryInterface
+{
+
+}

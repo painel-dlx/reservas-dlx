@@ -26,32 +26,48 @@
 namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\SalvarQuarto;
 
 use DLX\Infra\EntityManagerX;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
+use Exception;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 
+/**
+ * Class SalvarQuartoCommandHandlerTest
+ * @package Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\SalvarQuarto
+ * @coversDefaultClass \Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler
+ */
 class SalvarQuartoCommandHandlerTest extends ReservasTestCase
 {
-    /** @var SalvarQuartoCommandHandler */
-    private $handler;
-
-    protected function setUp()
+    /**
+     * @return SalvarQuartoCommandHandler
+     * @throws ORMException
+     */
+    public function test__construct(): SalvarQuartoCommandHandler
     {
-        parent::setUp();
-
         /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
-        $this->handler = new SalvarQuartoCommandHandler($quarto_repository);
+        $handler = new SalvarQuartoCommandHandler($quarto_repository);
+
+        $this->assertInstanceOf(SalvarQuartoCommandHandler::class, $handler);
+
+        return $handler;
     }
 
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
+     * @param SalvarQuartoCommandHandler $handler
+     * @return Quarto
+     * @throws DBALException
+     * @throws ORMException
+     * @throws Exception
+     * @covers ::handle
+     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_Quarto_com_ID_gerado(): Quarto
+    public function test_Handle_deve_retornar_Quarto_com_ID_gerado(SalvarQuartoCommandHandler $handler): Quarto
     {
         $quarto = new Quarto('Teste de Quarto', 5, 100);
         $quarto
@@ -59,7 +75,7 @@ class SalvarQuartoCommandHandlerTest extends ReservasTestCase
             ->setLink('teste/teste-url');
 
         $command = new SalvarQuartoCommand($quarto);
-        $this->handler->handle($command);
+        $handler->handle($command);
 
         $this->assertNotNull($quarto->getId());
         $this->assertIsInt($quarto->getId());
@@ -76,20 +92,23 @@ class SalvarQuartoCommandHandlerTest extends ReservasTestCase
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
+     * @param SalvarQuartoCommandHandler $handler
+     * @throws DBALException
+     * @throws ORMException
+     * @covers ::handle
+     * @depends test__construct
      */
-    public function test_Handle_deve_alterar_informacoes_no_BD()
+    public function test_Handle_deve_alterar_informacoes_no_BD(SalvarQuartoCommandHandler $handler)
     {
         /** @var Quarto $quarto */
-        $quarto = $this->test_Handle_deve_retornar_Quarto_com_ID_gerado();
+        $quarto = $this->test_Handle_deve_retornar_Quarto_com_ID_gerado($handler);
 
         // Alterar algumas informações do quarto
         $nome = 'QUARTO TESTE UNITÁRIO';
         $quarto->setNome($nome);
 
         $command = new SalvarQuartoCommand($quarto);
-        $this->handler->handle($command);
+        $handler->handle($command);
 
         /** @var Quarto $quarto_atualizado */
         $quarto_atualizado = EntityManagerX::getRepository(Quarto::class)->find($quarto->getId());

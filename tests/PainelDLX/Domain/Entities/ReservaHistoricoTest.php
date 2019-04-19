@@ -23,30 +23,33 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\MapaDisponController;
+namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
+use DateTime;
+use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
+use Reservas\Tests\ReservasTestCase;
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-];
+/**
+ * Class ReservaHistoricoTest
+ * @package Reservas\PainelDLX\Tests\Domain\Entities
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Entities\ReservaHistorico
+ */
+class ReservaHistoricoTest extends ReservasTestCase
+{
+    /**
+     * @return ReservaHistorico
+     */
+    public function test__construct(): ReservaHistorico
+    {
+        $status = 'Confirmada';
+        $motivo = 'Teste de motivo para confirmar uma reserva.';
+        $historico = new ReservaHistorico($status, $motivo);
+
+        $this->assertInstanceOf(ReservaHistorico::class, $historico);
+        $this->assertEquals($status, $historico->getStatus());
+        $this->assertEquals($motivo, $historico->getMotivo());
+        $this->assertEquals(new DateTime(), $historico->getData(), '', .1);
+
+        return $historico;
+    }
+}

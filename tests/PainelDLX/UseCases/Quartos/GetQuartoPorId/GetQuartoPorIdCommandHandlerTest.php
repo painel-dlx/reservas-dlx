@@ -32,27 +32,37 @@ use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler;
 
+/**
+ * Class GetQuartoPorIdCommandHandlerTest
+ * @package Reservas\PainelDLX\Tests\UseCases\Quartos\GetQuartoPorId
+ * @coversDefaultClass  \Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler
+ */
 class GetQuartoPorIdCommandHandlerTest extends ReservasTestCase
 {
-    /** @var GetQuartoPorIdCommandHandler */
-    private $handler;
-
-    protected function setUp()
+    /**
+     * @return GetQuartoPorIdCommandHandler
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function test__construct():GetQuartoPorIdCommandHandler
     {
-        parent::setUp();
-
         /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
+        $handler = new GetQuartoPorIdCommandHandler($quarto_repository);
 
-        $this->handler = new GetQuartoPorIdCommandHandler($quarto_repository);
+        $this->assertInstanceOf(GetQuartoPorIdCommandHandler::class, $handler);
+
+        return $handler;
     }
 
 
     /**
+     * @param GetQuartoPorIdCommandHandler $handler
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\ORM\ORMException
+     * @covers ::handle
+     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_Quarto_se_encontrar_no_BD()
+    public function test_Handle_deve_retornar_Quarto_se_encontrar_no_BD(GetQuartoPorIdCommandHandler $handler)
     {
         $query = '
             select
@@ -77,18 +87,20 @@ class GetQuartoPorIdCommandHandlerTest extends ReservasTestCase
         }
 
         $command = new GetQuartoPorIdCommand($quarto_id);
-        $quarto = $this->handler->handle($command);
+        $quarto = $handler->handle($command);
 
         $this->assertInstanceOf(Quarto::class, $quarto);
     }
 
     /**
-     *
+     * @param GetQuartoPorIdCommandHandler $handler
+     * @covers ::handle
+     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_null_se_encontrar_Quarto_no_BD()
+    public function test_Handle_deve_retornar_null_se_encontrar_Quarto_no_BD(GetQuartoPorIdCommandHandler $handler)
     {
         $command = new GetQuartoPorIdCommand(0);
-        $quarto = $this->handler->handle($command);
+        $quarto = $handler->handle($command);
 
         $this->assertNull($quarto);
     }

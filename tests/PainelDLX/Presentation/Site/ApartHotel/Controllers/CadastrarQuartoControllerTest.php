@@ -29,10 +29,12 @@ use DLX\Core\CommandBus\CommandBusAdapter;
 use DLX\Core\Configure;
 use DLX\Infra\EntityManagerX;
 use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
+use Exception;
 use League\Tactician\Container\ContainerLocator;
 use League\Tactician\Handler\CommandHandlerMiddleware;
 use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
 use League\Tactician\Handler\MethodNameInflector\HandleInflector;
+use PainelDLX\Application\Factories\CommandBusFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\CadastrarQuartoController;
 use Reservas\Tests\ReservasTestCase;
@@ -41,56 +43,59 @@ use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
+/**
+ * Class CadastrarQuartoControllerTest
+ * @package Reservas\PainelDLX\Tests\PainelDLX\Presentation\Site\ApartHotel\Controllers
+ * @coversDefaultClass \Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\CadastrarQuartoController
+ */
 class CadastrarQuartoControllerTest extends ReservasTestCase
 {
-    /** @var CadastrarQuartoController */
-    private $controller;
-
     /**
-     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException
-     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException
+     * @return CadastrarQuartoController
      * @throws \Doctrine\ORM\ORMException
-     * @throws \PainelDLX\Application\Services\Exceptions\AmbienteNaoInformadoException
      * @throws \SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException
      * @throws \SechianeX\Exceptions\SessionAdapterNaoEncontradoException
      */
-    protected function setUp()
+    public function test__construct(): CadastrarQuartoController
     {
-        parent::setUp();
-
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $this->controller = new CadastrarQuartoController(
+        $command_bus = CommandBusFactory::create($this->container, Configure::get('app', 'mapping'));
+
+        $controller = new CadastrarQuartoController(
             new VileX(),
-            CommandBusAdapter::create(new CommandHandlerMiddleware(
-                new ClassNameExtractor,
-                new ContainerLocator($this->container, Configure::get('app', 'mapping')),
-                new HandleInflector
-            )),
+            $command_bus(),
             $session,
             new DoctrineTransaction(EntityManagerX::getInstance())
         );
+
+        $this->assertInstanceOf(CadastrarQuartoController::class, $controller);
+
+        return $controller;
     }
 
     /**
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
+     * @param CadastrarQuartoController $controller
+     * @covers ::formNovoQuarto
+     * @depends test__construct
+     * @throws Exception
      */
-    public function test_FormNovoQuarto_deve_retornar_HtmlResponse()
+    public function test_FormNovoQuarto_deve_retornar_HtmlResponse(CadastrarQuartoController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
 
         /** @var ServerRequestInterface $request */
-        $response = $this->controller->formNovoQuarto($request);
+        $response = $controller->formNovoQuarto($request);
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     /**
-     *
+     * @param CadastrarQuartoController $controller
+     * @covers ::salvarNovoQuarto
+     * @depends test__construct
      */
-    public function test_SalvarNovoQuarto_deve_retornar_JsonResponse()
+    public function test_SalvarNovoQuarto_deve_retornar_JsonResponse(CadastrarQuartoController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
@@ -104,7 +109,7 @@ class CadastrarQuartoControllerTest extends ReservasTestCase
         ]);
 
         /** @var ServerRequestInterface $request */
-        $response = $this->controller->salvarNovoQuarto($request);
+        $response = $controller->salvarNovoQuarto($request);
         $this->assertInstanceOf(JsonResponse::class, $response);
     }
 }

@@ -33,6 +33,7 @@ use League\Tactician\Container\ContainerLocator;
 use League\Tactician\Handler\CommandHandlerMiddleware;
 use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
 use League\Tactician\Handler\MethodNameInflector\HandleInflector;
+use PainelDLX\Application\Factories\CommandBusFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\ListaQuartosController;
 use Reservas\Tests\ReservasTestCase;
@@ -41,11 +42,13 @@ use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
+/**
+ * Class ListaQuartosControllerTest
+ * @package Reservas\PainelDLX\Tests\PainelDLX\Presentation\Site\ApartHotel\Controllers
+ * @coversDefaultClass \Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\ListaQuartosController
+ */
 class ListaQuartosControllerTest extends ReservasTestCase
 {
-    /** @var ListaQuartosController */
-    private $controller;
-
     /**
      * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException
      * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException
@@ -54,23 +57,23 @@ class ListaQuartosControllerTest extends ReservasTestCase
      * @throws \SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException
      * @throws \SechianeX\Exceptions\SessionAdapterNaoEncontradoException
      */
-    protected function setUp()
+    public function test__construct(): ListaQuartosController
     {
-        parent::setUp();
-
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $this->controller = new ListaQuartosController(
+        $command_bus = CommandBusFactory::create($this->container, Configure::get('app', 'mapping'));
+
+        $controller = new ListaQuartosController(
             new VileX(),
-            CommandBusAdapter::create(new CommandHandlerMiddleware(
-                new ClassNameExtractor,
-                new ContainerLocator($this->container, Configure::get('app', 'mapping')),
-                new HandleInflector
-            )),
+            $command_bus(),
             $session,
             new DoctrineTransaction(EntityManagerX::getInstance())
         );
+
+        $this->assertInstanceOf(ListaQuartosController::class, $controller);
+
+        return $controller;
     }
 
     /**
@@ -107,11 +110,14 @@ class ListaQuartosControllerTest extends ReservasTestCase
     }
 
     /**
+     * @param ListaQuartosController $controller
      * @throws \Vilex\Exceptions\ContextoInvalidoException
      * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
      * @throws \Vilex\Exceptions\ViewNaoEncontradaException
+     * @covers ::listaQuartos
+     * @depends test__construct
      */
-    public function test_ListaQuartos_deve_retornar_HtmlResponse()
+    public function test_ListaQuartos_deve_retornar_HtmlResponse(ListaQuartosController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getQueryParams')->willReturn([
@@ -120,22 +126,22 @@ class ListaQuartosControllerTest extends ReservasTestCase
         ]);
 
         /** @var ServerRequestInterface $request */
-        $response = $this->controller->listaQuartos($request);
+        $response = $controller->listaQuartos($request);
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     /**
      * @dataProvider getQuartos
-     */
+     *
     public function test_ExcluirQuarto_deve_retornar_JsonResponse_sucesso(int $quarto_id)
     {
         $this->markTestSkipped('a exception do doctrine está fechando o EntityManager');
 
-        $request = $this->createMock(ServerRequestInterface::class);
+        /* $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn(['id' => $quarto_id]);
 
-        /** @var ServerRequestInterface $request */
+        /** @var ServerRequestInterface $request *
         $response = $this->controller->excluirQuarto($request);
-        $this->assertInstanceOf(JsonResponse::class, $response);
-    }
+        $this->assertInstanceOf(JsonResponse::class, $response); *
+    } */
 }

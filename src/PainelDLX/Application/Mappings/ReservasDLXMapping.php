@@ -42,6 +42,14 @@ use Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
+use Reservas\PainelDLX\UseCases\Reservas\CancelarReserva\CancelarReservaCommand;
+use Reservas\PainelDLX\UseCases\Reservas\CancelarReserva\CancelarReservaCommandHandler;
+use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
+use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommandHandler;
+use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
+use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
+use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommand;
+use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommandHandler;
 
 class ReservasDLXMapping
 {
@@ -54,6 +62,10 @@ class ReservasDLXMapping
         ListaDisponibilidadePorPeriodoCommand::class => ListaDisponibilidadePorPeriodoCommandHandler::class,
         SalvarDisponibilidadeQuartoCommand::class => SalvarDisponibilidadeQuartoCommandHandler::class,
         SalvarDisponPeriodoCommand::class => SalvarDisponPeriodoCommandHandler::class,
+        GetReservaPorIdCommand::class => GetReservaPorIdCommandHandler::class,
+        ListaReservasCommand::class => ListaReservasCommandHandler::class,
+        ConfirmarReservaCommand::class => ConfirmarReservaCommandHandler::class,
+        CancelarReservaCommand::class => CancelarReservaCommandHandler::class,
     ];
 
     /**

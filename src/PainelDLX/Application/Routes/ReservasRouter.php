@@ -27,70 +27,75 @@ namespace Reservas\PainelDLX\Application\Routes;
 
 
 use PainelDLX\Application\Middlewares\Autorizacao;
+use PainelDLX\Application\Middlewares\DefinePaginaMestra;
 use PainelDLX\Application\Middlewares\VerificarLogon;
 use PainelDLX\Application\Routes\PainelDLXRouter;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\CadastrarQuartoController;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\EditarQuartoController;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\ListaQuartosController;
+use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\DetalheReservaController;
+use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\ListaReservasController;
 
-class QuartosRouter extends PainelDLXRouter
+class ReservasRouter extends PainelDLXRouter
 {
 
     /**
      * Registrar todas as rotas
-     * @throws \Exception
      */
     public function registrar(): void
     {
         $router = $this->getRouter();
         $verificar_logon = new VerificarLogon($this->session);
+        $define_pagina_mestra = new DefinePaginaMestra($this->painel_dlx->getServerRequest(), $this->session);
 
         $router->get(
-            '/painel-dlx/apart-hotel/quartos',
-            [ListaQuartosController::class, 'listaQuartos']
+            '/painel-dlx/apart-hotel/reservas',
+            [ListaReservasController::class, 'listaReservas']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('VER_LISTA_QUARTOS')
-        );
-
-        $router->post(
-            '/painel-dlx/apart-hotel/quartos/excluir',
-            [ListaQuartosController::class, 'excluirQuarto']
-        )->middlewares(
-            $verificar_logon,
-            new Autorizacao('EXCLUIR_QUARTO')
+            new Autorizacao('VER_LISTA_RESERVAS'),
+            $define_pagina_mestra
         );
 
         $router->get(
-            '/painel-dlx/apart-hotel/quartos/novo',
-            [CadastrarQuartoController::class, 'formNovoQuarto']
+            '/painel-dlx/apart-hotel/reservas/detalhe',
+            [ListaReservasController::class, 'detalhesReserva']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('CADASTRAR_NOVO_QUARTO')
+            new Autorizacao('VER_DETALHES_RESERVAS'),
+            $define_pagina_mestra
+        );
+
+
+        $router->get(
+            '/painel-dlx/apart-hotel/reservas/confirmar-reserva',
+            [DetalheReservaController::class, 'formConfirmarReserva']
+        )->middlewares(
+            $verificar_logon,
+            new Autorizacao('CONFIRMAR_RESERVAS'),
+            $define_pagina_mestra
         );
 
         $router->post(
-            '/painel-dlx/apart-hotel/quartos/salvar-novo',
-            [CadastrarQuartoController::class, 'salvarNovoQuarto']
+            '/painel-dlx/apart-hotel/reservas/confirmar-reserva',
+            [DetalheReservaController::class, 'confirmarReserva']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('CADASTRAR_NOVO_QUARTO')
+            new Autorizacao('CONFIRMAR_RESERVAS')
         );
 
         $router->get(
-            '/painel-dlx/apart-hotel/quartos/editar',
-            [EditarQuartoController::class, 'formEditarQuarto']
+            '/painel-dlx/apart-hotel/reservas/cancelar-reserva',
+            [DetalheReservaController::class, 'formCancelarReserva']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('EDITAR_QUARTO')
+            new Autorizacao('CANCELAR_RESERVAS'),
+            $define_pagina_mestra
         );
 
         $router->post(
-            '/painel-dlx/apart-hotel/quartos/atualizar-informacoes',
-            [EditarQuartoController::class, 'editarInformacoesQuarto']
+            '/painel-dlx/apart-hotel/reservas/cancelar-reserva',
+            [DetalheReservaController::class, 'cancelarReserva']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('EDITAR_QUARTO')
+            new Autorizacao('CANCELAR_RESERVAS')
         );
     }
 }

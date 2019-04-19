@@ -34,25 +34,37 @@ use Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommandHandle
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 
+/**
+ * Class ExcluirQuartoCommandHandlerTest
+ * @package Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\ExcluirQuarto
+ * @coversDefaultClass \Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommandHandler
+ */
 class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
 {
-    /** @var ExcluirQuartoCommandHandler */
-    private $handler;
-
-    protected function setUp()
+    /**
+     * @return ExcluirQuartoCommandHandler
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function test__construct(): ExcluirQuartoCommandHandler
     {
-        parent::setUp();
-
         /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
-        $this->handler = new ExcluirQuartoCommandHandler($quarto_repository);
+        $handler = new ExcluirQuartoCommandHandler($quarto_repository);
+
+        $this->assertInstanceOf(ExcluirQuartoCommandHandler::class, $handler);
+
+        return $handler;
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @param ExcluirQuartoCommandHandler $handler
      * @throws \Doctrine\ORM\ORMException
+     * @throws \Reservas\PainelDLX\Domain\Exceptions\LinkQuartoUtilizadoException
+     * @throws \Reservas\PainelDLX\Domain\Exceptions\NomeQuartoUtilizadoException
+     * @covers ::handle
+     * @depends test__construct
      */
-    public function test_Handle_retorna_true_caso_consiga_excluir_Quarto()
+    public function test_Handle_retorna_true_caso_consiga_excluir_Quarto(ExcluirQuartoCommandHandler $handler)
     {
         /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
@@ -67,17 +79,20 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
 
         // Excluir o quarto
         $command = new ExcluirQuartoCommand($quarto);
-        $retorno = $this->handler->handle($command);
+        $retorno = $handler->handle($command);
 
         $this->assertTrue($retorno);
         $this->assertNull($quarto->getId());
     }
 
     /**
+     * @param ExcluirQuartoCommandHandler $handler
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\ORM\ORMException
+     * @covers ::handle
+     * @depends test__construct
      */
-    public function test_Handle_deve_setar_registro_como_deletado_quando_tem_erro_constraint()
+    public function test_Handle_deve_setar_registro_como_deletado_quando_tem_erro_constraint(ExcluirQuartoCommandHandler $handler)
     {
         // Encontrar um quarto qualquer que tenha reserva para excluir (marcar como deletado)
         $query = '
@@ -106,7 +121,7 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
         /** @var Quarto $quarto */
         $quarto = EntityManagerX::getRepository(Quarto::class)->find($quarto_id);
         $command = new ExcluirQuartoCommand($quarto);
-        $this->handler->handle($command);
+        $handler->handle($command);
 
         // EntityManagerX::commit();
 
