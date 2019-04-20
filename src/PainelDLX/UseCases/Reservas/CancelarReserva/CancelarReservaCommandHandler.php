@@ -52,7 +52,7 @@ class CancelarReservaCommandHandler
     public function handle(CancelarReservaCommand $command): Reserva
     {
         $reserva = $command->getReserva();
-        $reserva->cancelada($command->getMotivo());
+        $reserva->cancelada($command->getMotivo(), $command->getUsuario());
 
         $this->reserva_repository->update($reserva);
 

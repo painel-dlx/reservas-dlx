@@ -27,6 +27,7 @@ namespace Reservas\PainelDLX\Tests\UseCases\Reservas\ConfirmarReserva;
 
 use DateTime;
 use Exception;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
@@ -48,9 +49,10 @@ class ConfirmarReservaCommandTest extends TestCase
         $quarto = new Quarto('Teste', 1, 10);
         $checkin = new DateTime();
         $checkout = (new DateTime())->modify('+3 days');
+        $usuario = new Usuario('Usuário de Teste', 'teste@unitario.com');
 
         $reserva = new Reserva($quarto, $checkin, $checkout, 1);
-        $command = new ConfirmarReservaCommand($reserva, 'Teste');
+        $command = new ConfirmarReservaCommand($reserva, $usuario, 'Teste');
 
         $this->assertInstanceOf(ConfirmarReservaCommand::class, $command);
 
@@ -65,6 +67,16 @@ class ConfirmarReservaCommandTest extends TestCase
     public function test_GetReserva(ConfirmarReservaCommand $command)
     {
         $this->assertInstanceOf(Reserva::class, $command->getReserva());
+    }
+
+    /**
+     * @param ConfirmarReservaCommand $command
+     * @covers ::getUsuario
+     * @depends test__construct
+     */
+    public function testGetUsuario(ConfirmarReservaCommand $command)
+    {
+        $this->assertInstanceOf(Usuario::class, $command->getUsuario());
     }
 
     /**

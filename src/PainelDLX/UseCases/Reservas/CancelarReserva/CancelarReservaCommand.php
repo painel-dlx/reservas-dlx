@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
 
 
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 
 /**
@@ -43,15 +44,21 @@ class CancelarReservaCommand
      * @var string
      */
     private $motivo;
+    /**
+     * @var Usuario
+     */
+    private $usuario;
 
     /**
      * ConfirmarReservaCommand constructor.
      * @param Reserva $reserva
+     * @param Usuario $usuario
      * @param string $motivo
      */
-    public function __construct(Reserva $reserva, string $motivo)
+    public function __construct(Reserva $reserva, Usuario $usuario, string $motivo)
     {
         $this->reserva = $reserva;
+        $this->usuario = $usuario;
         $this->motivo = $motivo;
     }
 
@@ -69,5 +76,13 @@ class CancelarReservaCommand
     public function getMotivo(): string
     {
         return $this->motivo;
+    }
+
+    /**
+     * @return Usuario
+     */
+    public function getUsuario(): Usuario
+    {
+        return $this->usuario;
     }
 }

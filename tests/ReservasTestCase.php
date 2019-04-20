@@ -26,17 +26,62 @@
 namespace Reservas\Tests;
 
 
+use DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException;
+use DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException;
+use DLX\Infra\EntityManagerX;
+use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\ORM\ORMException;
+use PainelDLX\Application\Services\Exceptions\AmbienteNaoInformadoException;
 use PainelDLX\Application\Services\PainelDLX;
-use PainelDLX\Testes\PainelDLXTests;
+use PainelDLX\Testes\TestCase\IniciarPainelDLX;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PHPUnit\Framework\TestCase;
 
-class ReservasTestCase extends PainelDLXTests
+class ReservasTestCase extends TestCase
 {
+    use IniciarPainelDLX;
+
+    /**
+     * @throws AmbienteNaoInformadoException
+     * @throws ArquivoConfiguracaoNaoEncontradoException
+     * @throws ArquivoConfiguracaoNaoInformadoException
+     * @throws ORMException
+     */
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        PainelDLX::$dir = 'vendor/dlepera88-php/painel-dlx';
+        self::start();
+        self::$painel_dlx->adicionarDiretorioInclusao(getcwd() .'/' . PainelDLX::$dir);
+    }
+
+    /**
+     * @throws ArquivoConfiguracaoNaoEncontradoException
+     * @throws ArquivoConfiguracaoNaoInformadoException
+     * @throws AmbienteNaoInformadoException
+     * @throws ORMException
+     */
     protected function setUp()
     {
         parent::setUp();
 
-        unset($_ENV['paineldlx-dev']);
-        PainelDLX::$dir = 'vendor/dlepera88-php/painel-dlx';
-        $this->painel_dlx->init();
+        if (in_array(TesteComTransaction::class, get_declared_traits())) {
+            EntityManagerX::beginTransaction();
+        }
+    }
+
+    /**
+     * @throws MappingException
+     * @throws ORMException
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        if (in_array(TesteComTransaction::class, get_declared_traits())) {
+            if (EntityManagerX::getInstance()->getConnection()->isTransactionActive()) {
+                EntityManagerX::rollback();
+            }
+        }
     }
 }

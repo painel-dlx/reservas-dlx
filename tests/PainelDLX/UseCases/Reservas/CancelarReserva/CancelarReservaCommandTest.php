@@ -27,6 +27,7 @@ namespace Reservas\PainelDLX\Tests\UseCases\Reservas\CancelarReserva;
 
 use DateTime;
 use Exception;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use PHPUnit\Framework\TestCase;
@@ -48,9 +49,10 @@ class CancelarReservaCommandTest extends TestCase
         $quarto = new Quarto('Teste', 1, 10);
         $checkin = new DateTime();
         $checkout = (new DateTime())->modify('+3 days');
+        $usuario = new Usuario('Teste', 'teste@gmail.com');
 
         $reserva = new Reserva($quarto, $checkin, $checkout, 1);
-        $command = new CancelarReservaCommand($reserva, 'Teste');
+        $command = new CancelarReservaCommand($reserva, $usuario, 'Teste');
 
         $this->assertInstanceOf(CancelarReservaCommand::class, $command);
 
@@ -65,6 +67,16 @@ class CancelarReservaCommandTest extends TestCase
     public function test_GetReserva(CancelarReservaCommand $command)
     {
         $this->assertInstanceOf(Reserva::class, $command->getReserva());
+    }
+
+    /**
+     * @param CancelarReservaCommand $command
+     * @covers ::getUsuario
+     * @depends test__construct
+     */
+    public function test_GetUsuario(CancelarReservaCommand $command)
+    {
+        $this->assertInstanceOf(Usuario::class, $command->getUsuario());
     }
 
     /**

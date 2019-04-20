@@ -29,6 +29,7 @@ use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use Exception;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
@@ -42,6 +43,8 @@ use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
  */
 class SalvarQuartoCommandHandlerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
      * @return SalvarQuartoCommandHandler
      * @throws ORMException

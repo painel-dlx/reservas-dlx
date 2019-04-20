@@ -61,7 +61,7 @@ class ListaReservasControllerTest extends ReservasTestCase
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create($this->container, Configure::get('app', 'mapping'));
+        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
 
         $controller = new ListaReservasController(
             new VileX(),
@@ -107,8 +107,6 @@ class ListaReservasControllerTest extends ReservasTestCase
      */
     public function test_DetalhesReserva_deve_retornar_HtmlResponse(ListaReservasController $controller)
     {
-        $this->markTestSkipped('O TestCase não está encontrando o arquivo Yaml do Usuario');
-
         $query = '
             select
                 *

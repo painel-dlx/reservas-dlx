@@ -28,8 +28,13 @@ namespace Reservas\PainelDLX\Tests\Presentation\Site\ApartHotel\Controllers;
 use DLX\Core\Configure;
 use DLX\Infra\EntityManagerX;
 use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
 use Exception;
 use PainelDLX\Application\Factories\CommandBusFactory;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\DetalheReservaController;
 use Reservas\Tests\ReservasTestCase;
@@ -38,6 +43,7 @@ use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
 use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class DetalheReservaControllerTest
@@ -46,10 +52,12 @@ use Zend\Diactoros\Response\HtmlResponse;
  */
 class DetalheReservaControllerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
      * @return int
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws DBALException
+     * @throws ORMException
      */
     public function getRandomReserva(): int
     {
@@ -71,14 +79,21 @@ class DetalheReservaControllerTest extends ReservasTestCase
      * @return DetalheReservaController
      * @throws SessionAdapterInterfaceInvalidaException
      * @throws SessionAdapterNaoEncontradoException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws DBALException
+     * @throws ORMException
      */
     public function test__construct(): DetalheReservaController
     {
+        // $usuario = UsuarioTesteHelper::criarDB('Cliente Apart Hotel', 'cliente@gmail.com', '123456');
+
+        /** @var Usuario|null $usuario */
+        $usuario = EntityManagerX::getRepository(Usuario::class)->find(2);
+
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
+        $session->set('usuario-logado', $usuario);
 
-        $command_bus = CommandBusFactory::create($this->container, Configure::get('app', 'mapping'));
+        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
 
         $controller = new DetalheReservaController(
             new VileX(),
@@ -132,8 +147,8 @@ class DetalheReservaControllerTest extends ReservasTestCase
 
     /**
      * @param DetalheReservaController $controller
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws DBALException
+     * @throws ORMException
      * @covers ::confimarReserva
      * @depends test__construct
      */
@@ -150,13 +165,13 @@ class DetalheReservaControllerTest extends ReservasTestCase
         /** @var ServerRequestInterface $request */
 
         $response = $controller->confimarReserva($request);
-        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertInstanceOf(JsonResponse::class, $response);
     }
 
     /**
      * @param DetalheReservaController $controller
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws DBALException
+     * @throws ORMException
      * @covers ::cancelarReserva
      * @depends test__construct
      */
@@ -173,6 +188,6 @@ class DetalheReservaControllerTest extends ReservasTestCase
         /** @var ServerRequestInterface $request */
 
         $response = $controller->cancelarReserva($request);
-        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertInstanceOf(JsonResponse::class, $response);
     }
 }

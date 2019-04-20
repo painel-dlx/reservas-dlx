@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\ExcluirQuarto;
 
 use DLX\Infra\EntityManagerX;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
@@ -41,6 +42,8 @@ use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
  */
 class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
      * @return ExcluirQuartoCommandHandler
      * @throws \Doctrine\ORM\ORMException

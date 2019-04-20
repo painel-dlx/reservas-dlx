@@ -35,6 +35,7 @@ use League\Tactician\Handler\CommandHandlerMiddleware;
 use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
 use League\Tactician\Handler\MethodNameInflector\HandleInflector;
 use PainelDLX\Application\Factories\CommandBusFactory;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\CadastrarQuartoController;
 use Reservas\Tests\ReservasTestCase;
@@ -50,6 +51,8 @@ use Zend\Diactoros\Response\JsonResponse;
  */
 class CadastrarQuartoControllerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
      * @return CadastrarQuartoController
      * @throws \Doctrine\ORM\ORMException
@@ -61,7 +64,7 @@ class CadastrarQuartoControllerTest extends ReservasTestCase
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create($this->container, Configure::get('app', 'mapping'));
+        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
 
         $controller = new CadastrarQuartoController(
             new VileX(),

@@ -27,6 +27,8 @@ namespace Reservas\PainelDLX\Tests\UseCases\Reservas\CancelarReserva;
 
 use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\ParameterType;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Reservas\CancelarReserva\CancelarReservaCommand;
@@ -40,6 +42,8 @@ use Reservas\Tests\ReservasTestCase;
  */
 class CancelarReservaCommandHandlerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
      * @return CancelarReservaCommandHandler
      * @throws \Doctrine\ORM\ORMException
@@ -114,9 +118,12 @@ class CancelarReservaCommandHandlerTest extends ReservasTestCase
         /** @var Reserva $reserva */
         $reserva = EntityManagerX::getRepository(Reserva::class)->find($id);
 
-        $command = new CancelarReservaCommand($reserva, 'Reserva cancelada.');
+        /** @var Usuario $usuario */
+        $usuario = EntityManagerX::getRepository(Usuario::class)->find(2);
+
+        $command = new CancelarReservaCommand($reserva, $usuario, 'Reserva cancelada.');
         $handler->handle($command);
 
-        $this->assertTrue($reserva->isConfirmada());
+        $this->assertTrue($reserva->isCancelada());
     }
 }

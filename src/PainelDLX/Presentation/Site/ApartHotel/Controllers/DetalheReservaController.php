@@ -29,6 +29,7 @@ namespace Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers;
 use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
 use League\Tactician\CommandBus;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -173,9 +174,12 @@ class DetalheReservaController extends SiteController
             /** @covers GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($id));
 
-            $this->transaction->transactional(function () use ($reserva, $motivo) {
+            /** @var Usuario|null $usuario */
+            $usuario = $this->session->get('usuario-logado');
+
+            $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
                 /** @covers ConfirmarReservaCommandHandler */
-                $this->command_bus->handle(new ConfirmarReservaCommand($reserva, $motivo));
+                $this->command_bus->handle(new ConfirmarReservaCommand($reserva, $usuario, $motivo));
             });
 
             $json['retorno'] = 'sucesso';
@@ -211,9 +215,12 @@ class DetalheReservaController extends SiteController
             /** @covers GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($id));
 
-            $this->transaction->transactional(function () use ($reserva, $motivo) {
+            /** @var Usuario $usuario */
+            $usuario = $this->session->get('usuario-logado');
+
+            $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
                 /** @covers CancelarReservaCommandHandler */
-                $this->command_bus->handle(new CancelarReservaCommand($reserva, $motivo));
+                $this->command_bus->handle(new CancelarReservaCommand($reserva, $usuario, $motivo));
             });
 
             $json['retorno'] = 'sucesso';

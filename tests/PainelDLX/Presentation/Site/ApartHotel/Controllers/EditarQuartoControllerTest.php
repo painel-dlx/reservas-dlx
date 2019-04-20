@@ -29,60 +29,70 @@ use DLX\Core\CommandBus\CommandBusAdapter;
 use DLX\Core\Configure;
 use DLX\Infra\EntityManagerX;
 use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
+use Exception;
 use League\Tactician\Container\ContainerLocator;
 use League\Tactician\Handler\CommandHandlerMiddleware;
 use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
 use League\Tactician\Handler\MethodNameInflector\HandleInflector;
+use PainelDLX\Application\Factories\CommandBusFactory;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\EditarQuartoController;
 use Reservas\Tests\ReservasTestCase;
+use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
+use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
+use Vilex\Exceptions\ContextoInvalidoException;
+use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
+use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
+/**
+ * Class EditarQuartoControllerTest
+ * @package Reservas\PainelDLX\Tests\PainelDLX\Presentation\Site\ApartHotel\Controllers
+ * @coversDefaultClass \Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\EditarQuartoController
+ */
 class EditarQuartoControllerTest extends ReservasTestCase
 {
-    /** @var EditarQuartoController */
-    private $controller;
+    use TesteComTransaction;
 
     /**
-     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException
-     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \PainelDLX\Application\Services\Exceptions\AmbienteNaoInformadoException
-     * @throws \SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException
-     * @throws \SechianeX\Exceptions\SessionAdapterNaoEncontradoException
+     * @return EditarQuartoController
+     * @throws ORMException
+     * @throws SessionAdapterInterfaceInvalidaException
+     * @throws SessionAdapterNaoEncontradoException
      */
-    protected function setUp()
+    public function test__construct(): EditarQuartoController
     {
-        parent::setUp();
-
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $this->controller = new EditarQuartoController(
+        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
+
+        $controller = new EditarQuartoController(
             new VileX(),
-            CommandBusAdapter::create(new CommandHandlerMiddleware(
-                new ClassNameExtractor,
-                new ContainerLocator($this->container, Configure::get('app', 'mapping')),
-                new HandleInflector
-            )),
+            $command_bus(),
             $session,
             new DoctrineTransaction(EntityManagerX::getInstance())
         );
+
+        $this->assertInstanceOf(EditarQuartoController::class, $controller);
+
+        return $controller;
     }
 
     /**
      * @return mixed[]
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Exception
+     * @throws DBALException
+     * @throws ORMException
+     * @throws Exception
      */
-    public function getQuartosAtivos()
+    public function getQuartoRandom()
     {
-        self::setUp();
-
         $query = '
             select
                 quarto_id
@@ -91,40 +101,50 @@ class EditarQuartoControllerTest extends ReservasTestCase
             where
                 quarto_publicar = 1
                 and quarto_delete = 0
+            order by 
+                rand()
+            limit 1
         ';
 
         $sql = EntityManagerX::getInstance()->getConnection()->prepare($query);
         $sql->execute();
 
-        $ids = $sql->fetchAll();
-
-        self::tearDown();
-
-        return $ids;
+        return $sql->fetchColumn();
     }
 
     /**
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
-     * @dataProvider getQuartosAtivos
+     * @param EditarQuartoController $controller
+     * @throws ContextoInvalidoException
+     * @throws DBALException
+     * @throws ORMException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     * @covers ::formEditarQuarto
+     * @depends test__construct
      */
-    public function test_FormEditarQuarto_deve_retornar_HtmlResponse(int $quarto_id)
+    public function test_FormEditarQuarto_deve_retornar_HtmlResponse(EditarQuartoController $controller)
     {
+        $quarto_id = $this->getQuartoRandom();
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getQueryParams')->willReturn(['id' => $quarto_id]);
 
         /** @var ServerRequestInterface $request */
-        $response = $this->controller->formEditarQuarto($request);
+        $response = $controller->formEditarQuarto($request);
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     /**
-     * @param int $quarto_id
-     * @dataProvider getQuartosAtivos
+     * @param EditarQuartoController $controller
+     * @throws DBALException
+     * @throws ORMException
+     * @covers ::editarInformacoesQuarto
+     * @depends test__construct
      */
-    public function test_EditarInformacoesQuarto_deve_retornar_JsonResponse(int $quarto_id)
+    public function test_EditarInformacoesQuarto_deve_retornar_JsonResponse(EditarQuartoController $controller)
     {
+        $quarto_id = $this->getQuartoRandom();
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
             'id' => $quarto_id,
@@ -138,7 +158,7 @@ class EditarQuartoControllerTest extends ReservasTestCase
         ]);
 
         /** @var ServerRequestInterface $request */
-        $response = $this->controller->editarInformacoesQuarto($request);
+        $response = $controller->editarInformacoesQuarto($request);
         $this->assertInstanceOf(JsonResponse::class, $response);
     }
 }

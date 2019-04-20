@@ -26,16 +26,16 @@
 namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto;
 
 use DateTime;
-use PainelDLX\Testes\PainelDLXTests;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommand;
+use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class GetDisponibilidadePorDataQuartoCommandTest
  * @package Reservas\PainelDLX\Tests\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto
  * @coversDefaultClass \Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommand
  */
-class GetDisponibilidadePorDataQuartoCommandTest extends PainelDLXTests
+class GetDisponibilidadePorDataQuartoCommandTest extends ReservasTestCase
 {
     /**
      * @covers ::__construct

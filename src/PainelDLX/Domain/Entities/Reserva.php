@@ -30,6 +30,7 @@ use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 
 /**
  * Class Reserva
@@ -352,12 +353,14 @@ class Reserva extends Entity
     /**
      * @param string $status
      * @param string $motivo
+     * @param Usuario $usuario
      * @return Reserva
      */
-    public function addHistorico(string $status, string $motivo): self
+    public function addHistorico(string $status, string $motivo, Usuario $usuario): self
     {
         $historico = new ReservaHistorico($status, $motivo);
         $historico->setReserva($this);
+        $historico->setUsuario($usuario);
 
         $this->historico->add($historico);
 
@@ -394,12 +397,13 @@ class Reserva extends Entity
     /**
      * Seta a reserva como confirmada.
      * @param string $motivo
+     * @param Usuario $usuario
      * @return Reserva
      */
-    public function confirmada(string $motivo): self
+    public function confirmada(string $motivo, Usuario $usuario): self
     {
         $this->setStatus(self::STATUS_CONFIRMADA);
-        $this->addHistorico(self::STATUS_CONFIRMADA, $motivo);
+        $this->addHistorico(self::STATUS_CONFIRMADA, $motivo, $usuario);
         return $this;
     }
 
@@ -408,10 +412,10 @@ class Reserva extends Entity
      * @param string $motivo
      * @return Reserva
      */
-    public function cancelada(string $motivo): self
+    public function cancelada(string $motivo, Usuario $usuario): self
     {
         $this->setStatus(self::STATUS_CANCELADA);
-        $this->addHistorico(self::STATUS_CANCELADA, $motivo);
+        $this->addHistorico(self::STATUS_CANCELADA, $motivo, $usuario);
         return $this;
     }
 }

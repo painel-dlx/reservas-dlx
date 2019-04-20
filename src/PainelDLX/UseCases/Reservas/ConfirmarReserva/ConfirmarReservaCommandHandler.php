@@ -52,7 +52,7 @@ class ConfirmarReservaCommandHandler
     public function handle(ConfirmarReservaCommand $command): Reserva
     {
         $reserva = $command->getReserva();
-        $reserva->confirmada($command->getMotivo());
+        $reserva->confirmada($command->getMotivo(), $command->getUsuario());
 
         $this->reserva_repository->update($reserva);
 

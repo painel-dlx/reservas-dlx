@@ -62,7 +62,7 @@ class ListaQuartosControllerTest extends ReservasTestCase
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create($this->container, Configure::get('app', 'mapping'));
+        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
 
         $controller = new ListaQuartosController(
             new VileX(),

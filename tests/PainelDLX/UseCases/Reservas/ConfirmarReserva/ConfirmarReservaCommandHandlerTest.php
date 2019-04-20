@@ -27,6 +27,8 @@ namespace Reservas\PainelDLX\Tests\UseCases\Reservas\ConfirmarReserva;
 
 use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\ParameterType;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
@@ -40,6 +42,8 @@ use Reservas\Tests\ReservasTestCase;
  */
 class ConfirmarReservaCommandHandlerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
      * @return ConfirmarReservaCommandHandler
      * @throws \Doctrine\ORM\ORMException
@@ -114,7 +118,10 @@ class ConfirmarReservaCommandHandlerTest extends ReservasTestCase
         /** @var Reserva $reserva */
         $reserva = EntityManagerX::getRepository(Reserva::class)->find($id);
 
-        $command = new ConfirmarReservaCommand($reserva, 'Reserva confirmada.');
+        /** @var Usuario $usuario */
+        $usuario = EntityManagerX::getRepository(Usuario::class)->find(2);
+
+        $command = new ConfirmarReservaCommand($reserva, $usuario, 'Reserva confirmada.');
         $handler->handle($command);
 
         $this->assertTrue($reserva->isConfirmada());

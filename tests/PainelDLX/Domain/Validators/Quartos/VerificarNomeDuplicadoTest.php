@@ -44,9 +44,10 @@ class VerificarNomeDuplicadoTest extends ReservasTestCase
      */
     public function test_Executar_deve_lancar_uma_excecao_quando_o_nome_ja_estiver_sendo_utilizado()
     {
-        /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
         $quarto_repository->method('existsOutroQuartoComMesmoNome')->willReturn(true);
+
+        /** @var QuartoRepositoryInterface $quarto_repository */
 
         $this->expectException(NomeQuartoUtilizadoException::class);
 
@@ -60,9 +61,10 @@ class VerificarNomeDuplicadoTest extends ReservasTestCase
      */
     public function test_Executar_deve_retornar_true_quando_o_nome_estiver_disponivel()
     {
-        /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
         $quarto_repository->method('existsOutroQuartoComMesmoNome')->willReturn(false);
+
+        /** @var QuartoRepositoryInterface $quarto_repository */
 
         $quarto = new Quarto('Teste de quarto', 1, 10);
         $is_disponivel = (new VerificarNomeDuplicado($quarto_repository))->executar($quarto);

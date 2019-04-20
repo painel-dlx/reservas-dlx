@@ -30,6 +30,7 @@ use DLX\Infra\EntityManagerX;
 use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
 use Exception;
 use PainelDLX\Application\Factories\CommandBusFactory;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\MapaDisponController;
 use Reservas\Tests\ReservasTestCase;
@@ -45,6 +46,8 @@ use Zend\Diactoros\Response\JsonResponse;
  */
 class MapaDisponControllerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
      * @return MapaDisponController
      * @throws \SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException
@@ -57,7 +60,7 @@ class MapaDisponControllerTest extends ReservasTestCase
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create($this->container, Configure::get('app', 'mapping'));
+        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
 
         $controller = new MapaDisponController(
             new VileX(),

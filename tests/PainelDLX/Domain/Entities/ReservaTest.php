@@ -27,6 +27,12 @@ namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
 use DateTime;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
+use Exception;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use PHPUnit\Framework\TestCase;
@@ -40,9 +46,10 @@ use Reservas\Tests\ReservasTestCase;
  */
 class ReservaTest extends ReservasTestCase
 {
+    use TesteComTransaction;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function test__construct(): Reserva
     {
@@ -65,15 +72,18 @@ class ReservaTest extends ReservasTestCase
 
     /**
      * @param Reserva $reserva
+     * @throws DBALException
+     * @throws ORMException
      * @covers ::addHistorico
      * @depends test__construct
      */
     public function test_AddHistorico_deve_adicionar_um_historico_a_reserva(Reserva $reserva)
     {
+        $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
         $status = 'Cancelada';
         $motivo = 'Teste de motivo para cancelamento.';
 
-        $reserva->addHistorico($status, $motivo);
+        $reserva->addHistorico($status, $motivo, $usuario);
 
         $hasHistoricoAdicionado = $reserva->getHistorico()->exists(function ($key, ReservaHistorico $reserva_historico) use ($reserva, $status, $motivo) {
             return $reserva_historico->getStatus() === $status
@@ -86,12 +96,15 @@ class ReservaTest extends ReservasTestCase
 
     /**
      * @param Reserva $reserva
+     * @throws DBALException
+     * @throws ORMException
      * @covers ::confirmada
      * @depends test__construct
      */
     public function test_Confirmada_seta_Reserva_como_confirmada(Reserva $reserva)
     {
-        $reserva->confirmada('Reserva foi paga via digitação de cartão.');
+        $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
+        $reserva->confirmada('Reserva foi paga via digitação de cartão.', $usuario);
 
         $has_historico_confirmada = $reserva->getHistorico()->exists(function ($key, ReservaHistorico $reserva_historico) {
             return $reserva_historico->getStatus() === Reserva::STATUS_CONFIRMADA;
@@ -104,12 +117,15 @@ class ReservaTest extends ReservasTestCase
 
     /**
      * @param Reserva $reserva
+     * @throws DBALException
+     * @throws ORMException
      * @covers ::cancelada
      * @depends test__construct
      */
     public function test_Cancelada_seta_Reserva_como_cancelada(Reserva $reserva)
     {
-        $reserva->cancelada('Reserva foi paga via digitação de cartão.');
+        $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
+        $reserva->cancelada('Reserva foi paga via digitação de cartão.', $usuario);
 
         $has_historico_cancelada = $reserva->getHistorico()->exists(function ($key, ReservaHistorico $reserva_historico) {
             return $reserva_historico->getStatus() === Reserva::STATUS_CANCELADA;

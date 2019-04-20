@@ -44,9 +44,10 @@ class VerificarLinkUtilizadoTest extends TestCase
      */
     public function test_Executar_deve_lancar_uma_excecao_quando_o_link_ja_estiver_sendo_utilizado()
     {
-        /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
         $quarto_repository->method('existsOutroQuartoComMesmoLink')->willReturn(true);
+
+        /** @var QuartoRepositoryInterface $quarto_repository */
 
         $this->expectException(LinkQuartoUtilizadoException::class);
 
@@ -60,9 +61,10 @@ class VerificarLinkUtilizadoTest extends TestCase
      */
     public function test_Executar_deve_retornar_true_quando_o_link_estiver_disponivel()
     {
-        /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
         $quarto_repository->method('existsOutroQuartoComMesmoLink')->willReturn(false);
+
+        /** @var QuartoRepositoryInterface $quarto_repository */
 
         $quarto = new Quarto('Teste', 1, 10);
         $quarto->setLink('/teste/teste-url');
