@@ -50,6 +50,8 @@ use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
 use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommand;
 use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommandHandler;
+use Reservas\PainelDLX\UseCases\Reservas\SalvarReserva\SalvarReservaCommand;
+use Reservas\PainelDLX\UseCases\Reservas\SalvarReserva\SalvarReservaCommandHandler;
 
 class ReservasDLXMapping
 {
@@ -66,6 +68,7 @@ class ReservasDLXMapping
         ListaReservasCommand::class => ListaReservasCommandHandler::class,
         ConfirmarReservaCommand::class => ConfirmarReservaCommandHandler::class,
         CancelarReservaCommand::class => CancelarReservaCommandHandler::class,
+        SalvarReservaCommand::class => SalvarReservaCommandHandler::class,
     ];
 
     /**

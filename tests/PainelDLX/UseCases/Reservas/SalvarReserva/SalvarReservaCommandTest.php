@@ -23,31 +23,45 @@
  * SOFTWARE.
  */
 
+namespace Reservas\PainelDLX\Tests\UseCases\Reservas\SalvarReserva;
+
+use DateTime;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
-use Vilex\VileX;
+use Reservas\PainelDLX\UseCases\Reservas\SalvarReserva\SalvarReservaCommand;
+use Reservas\Tests\ReservasTestCase;
 
 /**
- * @var VileX $this
+ * Class SalvarReservaCommandTest
+ * @package Reservas\PainelDLX\Tests\UseCases\Reservas\ReservarQuarto
+ * @coversDefaultClass \Reservas\PainelDLX\UseCases\Reservas\SalvarReserva\SalvarReservaCommand
  */
+class SalvarReservaCommandTest extends ReservasTestCase
+{
+    /**
+     * @return SalvarReservaCommand
+     */
+    public function test__construct(): SalvarReservaCommand
+    {
+        $quarto = new Quarto('Teste', 1, 10);
+        $data_inicial = new DateTime();
+        $data_final = (clone $data_inicial)->modify('+3 days');
+        $reserva = new Reserva($quarto, $data_inicial, $data_final, 1);
 
-/** @var Reserva|null $reserva */
-$reserva = $this->getAtributo('reserva');
-?>
-[CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+        $command = new SalvarReservaCommand($reserva);
 
-<form id="form-cancelar-reserva" action="/painel-dlx/apart-hotel/reservas/confirmar-reserva" method="post">
-    <input type="hidden" name="id" value="<?php echo $reserva->getId() ?>">
+        $this->assertInstanceOf(SalvarReservaCommand::class, $command);
 
-    <p class="form-paragr">
-        <label for="txt-motivo" class="form-rotulo">Motivo:</label>
-        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea"></textarea>
-    </p>
+        return $command;
+    }
 
-    <p class="form-botoes">
-        <button type="submit" class="botao-salvar">Confirmar</button>
-    </p>
-</form>
-[/CORPO]
+    /**
+     * @param SalvarReservaCommand $command
+     * @covers ::getReserva
+     * @depends test__construct
+     */
+    public function test_GetReserva(SalvarReservaCommand $command)
+    {
+        $this->assertInstanceOf(Reserva::class, $command->getReserva());
+    }
+}

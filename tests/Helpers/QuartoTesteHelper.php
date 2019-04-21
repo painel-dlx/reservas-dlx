@@ -23,31 +23,39 @@
  * SOFTWARE.
  */
 
+namespace Reservas\Tests\Helpers;
+
+
+use DLX\Infra\EntityManagerX;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
-use Vilex\VileX;
 
-/**
- * @var VileX $this
- */
+class QuartoTesteHelper
+{
+    /**
+     * @return Quarto
+     * @throws DBALException
+     * @throws ORMException
+     */
+    public static function getRandom(): Quarto
+    {
+        $query = '
+            select
+                quarto_id
+            from
+                dlx_reservas_quartos
+            order by 
+                rand()
+            limit 1
+        ';
 
-/** @var Reserva|null $reserva */
-$reserva = $this->getAtributo('reserva');
-?>
-[CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+        $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query);
+        $id = $sql->fetchColumn();
 
-<form id="form-cancelar-reserva" action="/painel-dlx/apart-hotel/reservas/confirmar-reserva" method="post">
-    <input type="hidden" name="id" value="<?php echo $reserva->getId() ?>">
+        /** @var Quarto|null $quarto */
+        $quarto = EntityManagerX::getRepository(Quarto::class)->find($id);
 
-    <p class="form-paragr">
-        <label for="txt-motivo" class="form-rotulo">Motivo:</label>
-        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea"></textarea>
-    </p>
-
-    <p class="form-botoes">
-        <button type="submit" class="botao-salvar">Confirmar</button>
-    </p>
-</form>
-[/CORPO]
+        return $quarto;
+    }
+}

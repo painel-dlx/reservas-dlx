@@ -29,9 +29,12 @@ use DLX\Core\Configure;
 use DLX\Infra\EntityManagerX;
 use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
 use Doctrine\ORM\ORMException;
+use Exception;
 use PainelDLX\Application\Factories\CommandBusFactory;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\ListaReservasController;
+use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\SalvarReservaController;
+use Reservas\Tests\Helpers\QuartoTesteHelper;
 use Reservas\Tests\ReservasTestCase;
 use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
 use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
@@ -41,59 +44,85 @@ use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Diactoros\Response\JsonResponse;
 
 /**
- * Class ListaReservasControllerTest
+ * Class SalvarReservaControllerTest
  * @package Reservas\PainelDLX\Tests\Presentation\Site\ApartHotel\Controllers
- * @coversDefaultClass \Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\ListaReservasController
+ * @coversDefaultClass \Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\SalvarReservaController
  */
-class ListaReservasControllerTest extends ReservasTestCase
+class SalvarReservaControllerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
-     * @return ListaReservasController
+     * @return SalvarReservaController
      * @throws ORMException
      * @throws SessionAdapterInterfaceInvalidaException
      * @throws SessionAdapterNaoEncontradoException
      */
-    public function test__construct(): ListaReservasController
+    public function test__construct(): SalvarReservaController
     {
-        $session = SessionFactory::createPHPSession();
-        $session->set('vilex:pagina-mestra', 'painel-dlx-master');
-
         $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
 
-        $controller = new ListaReservasController(
+        $controller = new SalvarReservaController(
             new VileX(),
             $command_bus(),
-            $session,
+            SessionFactory::createPHPSession(),
             new DoctrineTransaction(EntityManagerX::getInstance())
         );
 
-        $this->assertInstanceOf(ListaReservasController::class, $controller);
+        $this->assertInstanceOf(SalvarReservaController::class, $controller);
 
         return $controller;
     }
 
     /**
-     * @param ListaReservasController $controller
+     * @param SalvarReservaController $controller
      * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
      * @throws ViewNaoEncontradaException
-     * @covers ::listaReservas
+     * @throws PaginaMestraNaoEncontradaException
+     * @covers ::formReservarQuarto
      * @depends test__construct
      */
-    public function test_ListaReservas_deve_retornar_HtmlResponse(ListaReservasController $controller)
+    public function test_FormReservarQuarto_deve_retornar_HtmlResponse(SalvarReservaController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->method('getQueryParams')->willReturn([
-            'campos' => [],
-            'busca' => ''
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->formReservarQuarto($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    /**
+     * @param SalvarReservaController $controller
+     * @throws Exception
+     * @covers ::criarReserva
+     * @depends test__construct
+     */
+    public function test_CriarReserva_deve_retornar_JsonResponse(SalvarReservaController $controller)
+    {
+        $quarto = QuartoTesteHelper::getRandom();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getParsedBody')->willReturn([
+            'quarto' => $quarto->getId(),
+            'checkin' => '2019-01-01',
+            'checkout' => '2019-01-04',
+            'adultos' => 1,
+            'criancas' => 0,
+            'hospede' => 'Nome do Cliente',
+            'cpf' => '000.000.000-00',
+            'telefone' => '(00) 9 0000-0000',
+            'email' => 'cliente@gmail.com'
         ]);
 
         /** @var ServerRequestInterface $request */
 
-        $response = $controller->listaReservas($request);
+        $response = $controller->criarReserva($request);
 
-        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertInstanceOf(JsonResponse::class, $response);
     }
 }

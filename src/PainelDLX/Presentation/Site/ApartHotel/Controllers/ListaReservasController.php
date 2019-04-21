@@ -127,40 +127,4 @@ class ListaReservasController extends SiteController
 
         return $this->view->render();
     }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
-     * todo: transferir esse método para DetalheReservaController
-     */
-    public function detalhesReserva(ServerRequestInterface $request): ResponseInterface
-    {
-        $get = filter_var_array($request->getQueryParams(), [
-            'id' => FILTER_VALIDATE_INT
-        ]);
-
-        try {
-            /** @var Reserva|null $reserva */
-            /** @covers GetReservaPorIdCommandHandler */
-            $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($get['id']));
-
-            // Atributos
-            $this->view->setAtributo('titulo-pagina', "Reserva #{$reserva->getId()}");
-            $this->view->setAtributo('reserva', $reserva);
-
-            // Views
-            $this->view->addTemplate('det_reserva');
-        } catch (UserException $e) {
-            $this->view->addTemplate('../mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
-                'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
-            ]);
-        }
-
-        return $this->view->render();
-    }
 }

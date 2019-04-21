@@ -23,31 +23,42 @@
  * SOFTWARE.
  */
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+namespace Reservas\PainelDLX\UseCases\Reservas\SalvarReserva;
+
+
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
-use Vilex\VileX;
+use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
 
-/**
- * @var VileX $this
- */
+class SalvarReservaCommandHandler
+{
+    /**
+     * @var ReservaRepositoryInterface
+     */
+    private $reserva_repository;
 
-/** @var Reserva|null $reserva */
-$reserva = $this->getAtributo('reserva');
-?>
-[CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+    /**
+     * ReservarQuartoCommandHandler constructor.
+     * @param ReservaRepositoryInterface $reserva_repository
+     */
+    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    {
+        $this->reserva_repository = $reserva_repository;
+    }
 
-<form id="form-cancelar-reserva" action="/painel-dlx/apart-hotel/reservas/confirmar-reserva" method="post">
-    <input type="hidden" name="id" value="<?php echo $reserva->getId() ?>">
+    /**
+     * @param SalvarReservaCommand $command
+     * @return Reserva
+     */
+    public function handle(SalvarReservaCommand $command): Reserva
+    {
+        $reserva = $command->getReserva();
 
-    <p class="form-paragr">
-        <label for="txt-motivo" class="form-rotulo">Motivo:</label>
-        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea"></textarea>
-    </p>
+        if (is_null($reserva->getId())) {
+            $this->reserva_repository->create($command->getReserva());
+        } else {
+            $this->reserva_repository->update($command->getReserva());
+        }
 
-    <p class="form-botoes">
-        <button type="submit" class="botao-salvar">Confirmar</button>
-    </p>
-</form>
-[/CORPO]
+        return $reserva;
+    }
+}

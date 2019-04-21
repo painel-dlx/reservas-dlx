@@ -33,7 +33,6 @@ use Doctrine\ORM\ORMException;
 use Exception;
 use PainelDLX\Application\Factories\CommandBusFactory;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\DetalheReservaController;
@@ -41,6 +40,9 @@ use Reservas\Tests\ReservasTestCase;
 use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
 use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
+use Vilex\Exceptions\ContextoInvalidoException;
+use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
+use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
@@ -109,6 +111,43 @@ class DetalheReservaControllerTest extends ReservasTestCase
 
     /**
      * @param DetalheReservaController $controller
+     * @throws DBALException
+     * @throws ORMException
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     * @covers ::detalhesReserva
+     * @depends test__construct
+     */
+    public function test_DetalhesReserva_deve_retornar_HtmlResponse(DetalheReservaController $controller)
+    {
+        $query = '
+            select
+                *
+            from
+                dlx_reservas_cadastro
+            order by 
+                rand()
+            limit 1
+        ';
+
+        $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query);
+        $id = $sql->fetchColumn();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getQueryParams')->willReturn([
+            'id' => $id
+        ]);
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->detalhesReserva($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    /**
+     * @param DetalheReservaController $controller
      * @throws Exception
      * @covers ::formConfirmarReserva
      * @depends test__construct
@@ -149,7 +188,7 @@ class DetalheReservaControllerTest extends ReservasTestCase
      * @param DetalheReservaController $controller
      * @throws DBALException
      * @throws ORMException
-     * @covers ::confimarReserva
+     * @covers ::confirmarReserva
      * @depends test__construct
      */
     public function test_ConfimarReserva_deve_retornar_JsonResponse(DetalheReservaController $controller)
@@ -164,7 +203,7 @@ class DetalheReservaControllerTest extends ReservasTestCase
 
         /** @var ServerRequestInterface $request */
 
-        $response = $controller->confimarReserva($request);
+        $response = $controller->confirmarReserva($request);
         $this->assertInstanceOf(JsonResponse::class, $response);
     }
 

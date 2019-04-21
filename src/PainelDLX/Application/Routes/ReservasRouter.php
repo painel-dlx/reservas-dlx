@@ -32,6 +32,7 @@ use PainelDLX\Application\Middlewares\VerificarLogon;
 use PainelDLX\Application\Routes\PainelDLXRouter;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\DetalheReservaController;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\ListaReservasController;
+use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\SalvarReservaController;
 
 class ReservasRouter extends PainelDLXRouter
 {
@@ -55,14 +56,31 @@ class ReservasRouter extends PainelDLXRouter
         );
 
         $router->get(
+            '/painel-dlx/apart-hotel/reservas/reservar-quarto',
+            [SalvarReservaController::class, 'formReservarQuarto']
+        )->middlewares(
+            $verificar_logon,
+            $define_pagina_mestra,
+            new Autorizacao('RESERVAR_QUARTOS')
+        );
+
+        $router->post(
+            '/painel-dlx/apart-hotel/reservas/salvar-reserva',
+            [SalvarReservaController::class, 'criarReserva']
+        )->middlewares(
+            $verificar_logon,
+            $define_pagina_mestra,
+            new Autorizacao('RESERVAR_QUARTOS')
+        );
+
+        $router->get(
             '/painel-dlx/apart-hotel/reservas/detalhe',
-            [ListaReservasController::class, 'detalhesReserva']
+            [DetalheReservaController::class, 'detalhesReserva']
         )->middlewares(
             $verificar_logon,
             new Autorizacao('VER_DETALHES_RESERVAS'),
             $define_pagina_mestra
         );
-
 
         $router->get(
             '/painel-dlx/apart-hotel/reservas/confirmar-reserva',

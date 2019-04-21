@@ -23,31 +23,37 @@
  * SOFTWARE.
  */
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+namespace Reservas\PainelDLX\UseCases\Reservas\SalvarReserva;
+
+
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
-use Vilex\VileX;
 
 /**
- * @var VileX $this
+ * Class ReservarQuartoCommand
+ * @package Reservas\PainelDLX\UseCases\Reservas\ReservarQuarto
+ * @covers ReservarQuartoCommandTest
  */
+class SalvarReservaCommand
+{
+    /**
+     * @var Reserva
+     */
+    private $reserva;
 
-/** @var Reserva|null $reserva */
-$reserva = $this->getAtributo('reserva');
-?>
-[CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+    /**
+     * ReservarQuartoCommand constructor.
+     * @param Reserva $reserva
+     */
+    public function __construct(Reserva $reserva)
+    {
+        $this->reserva = $reserva;
+    }
 
-<form id="form-cancelar-reserva" action="/painel-dlx/apart-hotel/reservas/confirmar-reserva" method="post">
-    <input type="hidden" name="id" value="<?php echo $reserva->getId() ?>">
-
-    <p class="form-paragr">
-        <label for="txt-motivo" class="form-rotulo">Motivo:</label>
-        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea"></textarea>
-    </p>
-
-    <p class="form-botoes">
-        <button type="submit" class="botao-salvar">Confirmar</button>
-    </p>
-</form>
-[/CORPO]
+    /**
+     * @return Reserva
+     */
+    public function getReserva(): Reserva
+    {
+        return $this->reserva;
+    }
+}

@@ -50,6 +50,13 @@ $reserva = $this->getAtributo('reserva');
 
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Quarto:</span>
+                    <?php echo $reserva->getQuarto() ?>
+                </p>
+            </div>
+
+            <div class="info-reserva-linha">
+                <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Checkin:</span>
                     <?php echo $reserva->getCheckin()->format('d/m/Y') ?>
                 </p>
@@ -74,6 +81,11 @@ $reserva = $this->getAtributo('reserva');
 
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Valor:</span>
+                    R$ <?php echo number_format($reserva->getValor(), 2, ',', '') ?>
+                </p>
+
+                <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Status:</span>
                     <span class="status-reserva -<?php echo strtolower($reserva->getStatus()) ?>">
                         <?php echo $reserva->getStatus() ?>
@@ -81,11 +93,14 @@ $reserva = $this->getAtributo('reserva');
                 </p>
             </div>
 
-            <?php if ($reserva->isPedente()) : ?>
+            <?php if ($reserva->isPendente() || $reserva->isConfirmada()) : ?>
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado info-reserva-botoes">
-                        <button type="button" onclick="popupConfirmarReserva('confirmar', <?php echo $reserva->getId() ?>)" class="botao-salvar">Confirmar</button>
-                        ou
+                        <?php if ($reserva->isPendente()) : ?>
+                            <button type="button" onclick="popupConfirmarReserva('confirmar', <?php echo $reserva->getId() ?>)" class="botao-salvar">Confirmar</button>
+                            ou
+                        <?php endif; ?>
+
                         <button type="button" onclick="popupConfirmarReserva('cancelar', <?php echo $reserva->getId() ?>)" class="botao-cancelar">Cancelar</button>
                     </p>
                 </div>
@@ -159,6 +174,15 @@ $reserva = $this->getAtributo('reserva');
                 $('#popup-confirmar-reserva')
                     .html(html)
                     .show();
+
+                $('#form-confirmar-reserva, #form-cancelar-reserva').formAjax({
+                    func_depois: function (json) {
+                        if (json.retorno === 'sucesso') {
+                            alert(json.mensagem);
+                            window.location.reload();
+                        }
+                    }
+                });
 
                 $(window).on('keyup.__confirmarReserva', function (evt) {
                     var kc = evt.keycode || evt.which;

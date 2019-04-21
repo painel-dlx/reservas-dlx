@@ -6,7 +6,8 @@
         "phpunit/phpunit": "^7.5"
     },
     "require": {
-        "dlepera88-php/painel-dlx": "^2.1"
+        "dlepera88-php/painel-dlx": "^2.1",
+        "dlepera88-jquery/jquery-mascara": "^1.0"
     },
     "autoload": {
         "psr-4": {

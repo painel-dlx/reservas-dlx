@@ -29,6 +29,7 @@ namespace Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers;
 use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
 use League\Tactician\CommandBus;
+use PainelDLX\Application\UseCases\Usuarios\GetUsuarioPeloId\GetUsuarioPeloIdCommand;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
@@ -39,6 +40,9 @@ use Reservas\PainelDLX\UseCases\Reservas\CancelarReserva\CancelarReservaCommandH
 use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
 use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use SechianeX\Contracts\SessionInterface;
+use Vilex\Exceptions\ContextoInvalidoException;
+use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
+use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -84,9 +88,9 @@ class DetalheReservaController extends SiteController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
      */
     public function formConfirmarReserva(ServerRequestInterface $request): ResponseInterface
     {
@@ -119,9 +123,47 @@ class DetalheReservaController extends SiteController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     */
+    public function detalhesReserva(ServerRequestInterface $request): ResponseInterface
+    {
+        $get = filter_var_array($request->getQueryParams(), [
+            'id' => FILTER_VALIDATE_INT
+        ]);
+
+        try {
+            /** @var Reserva|null $reserva */
+            /** @covers GetReservaPorIdCommandHandler */
+            $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($get['id']));
+
+            // Atributos
+            $this->view->setAtributo('titulo-pagina', "Reserva #{$reserva->getId()}");
+            $this->view->setAtributo('reserva', $reserva);
+
+            // Views
+            $this->view->addTemplate('det_reserva');
+
+            // JS
+            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
+        } catch (UserException $e) {
+            $this->view->addTemplate('../mensagem_usuario');
+            $this->view->setAtributo('mensagem', [
+                'tipo' => 'erro',
+                'mensagem' => $e->getMessage()
+            ]);
+        }
+
+        return $this->view->render();
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
      */
     public function formCancelarReserva(ServerRequestInterface $request): ResponseInterface
     {
@@ -156,7 +198,7 @@ class DetalheReservaController extends SiteController
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      */
-    public function confimarReserva(ServerRequestInterface $request): ResponseInterface
+    public function confirmarReserva(ServerRequestInterface $request): ResponseInterface
     {
         $post = filter_var_array($request->getParsedBody(), [
             'id' => FILTER_VALIDATE_INT,
@@ -174,8 +216,11 @@ class DetalheReservaController extends SiteController
             /** @covers GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($id));
 
+            /** @var Usuario|null $usuario_logado */
+            $usuario_logado = $this->session->get('usuario-logado');
+
             /** @var Usuario|null $usuario */
-            $usuario = $this->session->get('usuario-logado');
+            $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
 
             $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
                 /** @covers ConfirmarReservaCommandHandler */
@@ -215,8 +260,11 @@ class DetalheReservaController extends SiteController
             /** @covers GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($id));
 
-            /** @var Usuario $usuario */
-            $usuario = $this->session->get('usuario-logado');
+            /** @var Usuario|null $usuario_logado */
+            $usuario_logado = $this->session->get('usuario-logado');
+
+            /** @var Usuario|null $usuario */
+            $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
 
             $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
                 /** @covers CancelarReservaCommandHandler */

@@ -41,13 +41,19 @@ $reserva = $this->getAtributo('reserva');
 <form id="form-cancelar-reserva" action="/painel-dlx/apart-hotel/reservas/cancelar-reserva" method="post">
     <input type="hidden" name="id" value="<?php echo $reserva->getId() ?>">
 
+    <p class="mensagem-usuario -atencao">
+        ATENÇÃO! Essa ação não pode ser defeita.<br>
+        Deseja realmente cancelar essa reserva?
+    </p>
+
     <p class="form-paragr">
         <label for="txt-motivo" class="form-rotulo">Motivo:</label>
-        <textarea name="motivo" id="txt-motivo" class="form-controle" required></textarea>
+        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea" required></textarea>
     </p>
 
     <p class="form-botoes">
-        <button class="botao-cancelar">Cancelar</button>
+        <button type="button" class="botao-salvar">Não quero cancelar a reserva</button>
+        <button type="submit" class="botao-cancelar">Sim, desejo cancelar a reserva</button>
     </p>
 </form>
 [/CORPO]

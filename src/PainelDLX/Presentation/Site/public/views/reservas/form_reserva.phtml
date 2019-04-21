@@ -1,0 +1,133 @@
+<?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2018 PHP DLX
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
+use Vilex\VileX;
+
+/**
+ * @var VileX $this
+ */
+
+/** @var Reserva|null $reserva */
+$reserva = $this->getAtributo('reserva');
+/** @var Quarto[] $lista_quartos */
+$lista_quartos = $this->getAtributo('lista-quartos');
+?>
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+
+<form id="form-reserva" action="/painel-dlx/apart-hotel/reservas/salvar-reserva" method="post">
+    <div class="layout-barra-lateral">
+        <aside class="barra-lateral">
+            <div class="info-reserva">
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <label for="sel-quarto" class="info-reserva-rotulo">Quarto:</label>
+                        <select name="quarto" id="sel-quarto" class="form-controle form-controle-select" required>
+                            <option value="">Selecione um quarto</option>
+
+                            <?php foreach ($lista_quartos as $quarto) : ?>
+                                <option value="<?php echo $quarto->getId() ?>">
+                                    <?php echo $quarto->getNome() ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </p>
+                </div>
+
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <label for="dt-checkin" class="info-reserva-rotulo">Checkin:</label>
+                        <input type="date" name="checkin" id="dt-checkin" min="<?php echo date('Y-m-d') ?>" class="form-controle form-controle-data" required>
+                    </p>
+                </div>
+
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <label for="dt-checkout" class="info-reserva-rotulo">Checkout:</label>
+                        <input type="date" name="checkout" id="dt-checkout" min="<?php echo date('Y-m-d') ?>" class="form-controle form-controle-data" required>
+                    </p>
+                </div>
+
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <label for="num-adultos" class="info-reserva-rotulo">Adultos:</label>
+                        <input type="number" name="adultos" id="num-adultos" value="2" min="1" max="999" class="form-controle form-controle-numero" required>
+                    </p>
+
+                    <p class="info-reserva-dado">
+                        <label for="num-criancas" class="info-reserva-rotulo">Crianças:</label>
+                        <input type="number" name="criancas" id="num-criancas" value="0" min="0" max="999" class="form-controle form-controle-numero" required>
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <fieldset class="form-grupo">
+            <legend class="form-titulo">Hóspede</legend>
+
+            <p class="from-paragr">
+                <label for="txt-hospede" class="form-rotulo form-controle-usuario">Nome do Hóspede:</label>
+                <input type="text" name="hospede" id="txt-hospede" class="form-controle form-controle-texto" required>
+            </p>
+
+            <p class="form-paragr">
+                <label for="txt-cpf" class="form-rotulo">CPF:</label>
+                <input type="text" name="cpf" id="txt-cpf" data-mask="000.000.000-00" class="form-controle form-controle-cpf" required>
+            </p>
+
+            <p class="form-paragr">
+                <label for="txt-telefone" class="form-rotulo form-controle-telefone">Telefone:</label>
+                <input type="tel" name="telefone" id="txt-telefone" data-mask="(00) 0 0000-0000" class="form-controle">
+            </p>
+
+            <p class="form-paragr">
+                <label for="txt-email" class="form-rotulo form-controle-email">Email:</label>
+                <input type="email" name="email" id="txt-email" class="form-controle">
+            </p>
+
+            <p class="form-botoes">
+                <button type="submit" class="botao-salvar">Salvar Reserva</button>
+            </p>
+        </fieldset>
+    </div>
+</form>
+[/CORPO]
+
+[SCRIPTS]
+<script>
+    $('#form-reserva').formAjax({
+        func_depois: function (json) {
+            alert(json.mensagem);
+
+            if (json.retorno === 'sucesso') {
+                window.location = '/painel-dlx/apart-hotel/reservas/detalhe?id=' + json.reserva_id
+            }
+        }
+    });
+</script>
+[/SCRIPTS]

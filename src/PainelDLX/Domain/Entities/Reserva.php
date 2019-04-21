@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\Domain\Entities;
 
 
+use DateInterval;
 use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -64,7 +65,7 @@ class Reserva extends Entity
     /** @var int */
     private $adultos;
     /** @var int */
-    private $criancas;
+    private $criancas = 0;
     /** @var float */
     private $valor;
     /** @var string */
@@ -371,7 +372,7 @@ class Reserva extends Entity
      * Verifica se a reserva está pendente
      * @return bool
      */
-    public function isPedente(): bool
+    public function isPendente(): bool
     {
         return $this->getStatus() === self::STATUS_PENDENTE;
     }

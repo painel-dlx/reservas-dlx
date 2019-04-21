@@ -83,5 +83,7 @@ class ReservasTestCase extends TestCase
                 EntityManagerX::rollback();
             }
         }
+
+        EntityManagerX::getInstance()->clear();
     }
 }
