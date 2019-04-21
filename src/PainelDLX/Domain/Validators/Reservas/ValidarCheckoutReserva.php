@@ -23,44 +23,36 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
+namespace Reservas\PainelDLX\Domain\Validators\Reservas;
 
 
+use Reservas\PainelDLX\Domain\Contracts\ReservaValidatorInterface;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
+use Reservas\PainelDLX\Domain\Exceptions\DataCheckoutMenorCheckinException;
 
-class CancelarReservaCommandHandler
+/**
+ * Class ValidarCheckoutReserva
+ * @package Reservas\PainelDLX\Domain\Validators\Reservas
+ * @covers ValidarCheckoutReservaTest
+ */
+class ValidarCheckoutReserva implements ReservaValidatorInterface
 {
-    /**
-     * @var ReservaRepositoryInterface
-     */
-    private $reserva_repository;
 
     /**
-     * CancelarReservaCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
+     * Valida uma determinada regra sobre reserva
+     * @param Reserva $reserva
+     * @return bool
+     * @throws DataCheckoutMenorCheckinException
      */
-    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    public function validar(Reserva $reserva): bool
     {
-        $this->reserva_repository = $reserva_repository;
-    }
+        $dt_diff = $reserva->getCheckin()->diff($reserva->getCheckout());
+        $dt_diff = (int)$dt_diff->format('%R%a');
 
-    /**
-     * @param CancelarReservaCommand $command
-     * @return Reserva
-     */
-    public function handle(CancelarReservaCommand $command): Reserva
-    {
-        $reserva = $command->getReserva();
+        if ($dt_diff < 1) {
+            throw new DataCheckoutMenorCheckinException($reserva->getCheckin(), $reserva->getCheckout());
+        }
 
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CANCELAR);
-        $validator->validar($reserva);
-
-        $reserva->cancelada($command->getMotivo(), $command->getUsuario());
-        $this->reserva_repository->update($reserva);
-
-        return $reserva;
+        return true;
     }
 }

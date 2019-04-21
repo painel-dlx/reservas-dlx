@@ -23,44 +23,21 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
+namespace Reservas\PainelDLX\Domain\Exceptions;
 
 
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
+use DateTime;
+use DLX\Core\Exceptions\UserException;
 
-class CancelarReservaCommandHandler
+class DataCheckoutMenorCheckinException extends UserException
 {
     /**
-     * @var ReservaRepositoryInterface
+     * DataCheckoutMenorCheckinException constructor.
+     * @param DateTime $checkin
+     * @param DateTime $checkout
      */
-    private $reserva_repository;
-
-    /**
-     * CancelarReservaCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
-     */
-    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    public function __construct(DateTime $checkin, DateTime $checkout)
     {
-        $this->reserva_repository = $reserva_repository;
-    }
-
-    /**
-     * @param CancelarReservaCommand $command
-     * @return Reserva
-     */
-    public function handle(CancelarReservaCommand $command): Reserva
-    {
-        $reserva = $command->getReserva();
-
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CANCELAR);
-        $validator->validar($reserva);
-
-        $reserva->cancelada($command->getMotivo(), $command->getUsuario());
-        $this->reserva_repository->update($reserva);
-
-        return $reserva;
+        parent::__construct("A data de checkin {$checkin->format('d/m/Y')} deve ser anterior a data de checkout {$checkout->format('d/m/Y')}.");
     }
 }

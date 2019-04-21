@@ -23,44 +23,42 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
+namespace Reservas\PainelDLX\Domain\Validators;
 
 
+use Reservas\PainelDLX\Domain\Contracts\ReservaValidatorInterface;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
 
-class CancelarReservaCommandHandler
+/**
+ * Class ReservaValidator
+ * @package Reservas\PainelDLX\Domain\Validators
+ */
+class ReservaValidator extends AbstractValidator implements ReservaValidatorInterface
 {
     /**
-     * @var ReservaRepositoryInterface
+     * ReservaValidator constructor.
+     * @param array $validators
      */
-    private $reserva_repository;
-
-    /**
-     * CancelarReservaCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
-     */
-    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    public function __construct(array $validators)
     {
-        $this->reserva_repository = $reserva_repository;
+        $this->setValidators($validators);
     }
 
     /**
-     * @param CancelarReservaCommand $command
-     * @return Reserva
+     * Valida uma determinada regra sobre reserva
+     * @param Reserva $reserva
+     * @return bool
      */
-    public function handle(CancelarReservaCommand $command): Reserva
+    public function validar(Reserva $reserva): bool
     {
-        $reserva = $command->getReserva();
+        foreach ($this->getValidators() as $nomeValidator) {
+            $validator = new $nomeValidator;
 
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CANCELAR);
-        $validator->validar($reserva);
+            if ($validator instanceof ReservaValidatorInterface) {
+                $validator->validar($reserva);
+            }
+        }
 
-        $reserva->cancelada($command->getMotivo(), $command->getUsuario());
-        $this->reserva_repository->update($reserva);
-
-        return $reserva;
+        return true;
     }
 }

@@ -23,44 +23,17 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
+namespace Reservas\PainelDLX\Domain\Contracts;
 
 
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
 
-class CancelarReservaCommandHandler
+interface ReservaValidatorInterface
 {
     /**
-     * @var ReservaRepositoryInterface
+     * Valida uma determinada regra sobre reserva
+     * @param Reserva $reserva
+     * @return bool
      */
-    private $reserva_repository;
-
-    /**
-     * CancelarReservaCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
-     */
-    public function __construct(ReservaRepositoryInterface $reserva_repository)
-    {
-        $this->reserva_repository = $reserva_repository;
-    }
-
-    /**
-     * @param CancelarReservaCommand $command
-     * @return Reserva
-     */
-    public function handle(CancelarReservaCommand $command): Reserva
-    {
-        $reserva = $command->getReserva();
-
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CANCELAR);
-        $validator->validar($reserva);
-
-        $reserva->cancelada($command->getMotivo(), $command->getUsuario());
-        $this->reserva_repository->update($reserva);
-
-        return $reserva;
-    }
+    public function validar(Reserva $reserva): bool;
 }

@@ -23,44 +23,40 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
+namespace Reservas\PainelDLX\Domain\Validators;
 
 
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
-
-class CancelarReservaCommandHandler
+abstract class AbstractValidator
 {
-    /**
-     * @var ReservaRepositoryInterface
-     */
-    private $reserva_repository;
+    private $validators = [];
 
     /**
-     * CancelarReservaCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
+     * @return array
      */
-    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    public function getValidators(): array
     {
-        $this->reserva_repository = $reserva_repository;
+        return $this->validators;
     }
 
     /**
-     * @param CancelarReservaCommand $command
-     * @return Reserva
+     * @param array $validators
+     * @return AbstractValidator
      */
-    public function handle(CancelarReservaCommand $command): Reserva
+    public function setValidators(array $validators): AbstractValidator
     {
-        $reserva = $command->getReserva();
+        $this->validators = $validators;
+        return $this;
+    }
 
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CANCELAR);
-        $validator->validar($reserva);
+    /**
+     * @param string $validator
+     * @return AbstractValidator
+     */
+    public function addValidator(string $validator): self
+    {
+        $this->validators[] = $validator;
+        array_unique($this->validators);
 
-        $reserva->cancelada($command->getMotivo(), $command->getUsuario());
-        $this->reserva_repository->update($reserva);
-
-        return $reserva;
+        return $this;
     }
 }

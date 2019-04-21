@@ -23,44 +23,36 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
+namespace Reservas\PainelDLX\Domain\Validators\Reservas;
 
 
+use Reservas\PainelDLX\Domain\Contracts\ReservaValidatorInterface;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
+use Reservas\PainelDLX\Domain\Exceptions\CheckinAnteriorHojeException;
+use Reservas\PainelDLX\Domain\Exceptions\ReservaJaCanceladaException;
+use Reservas\PainelDLX\Tests\Domain\Validators\Reservas\ValidarCancelarReservaTest;
 
-class CancelarReservaCommandHandler
+/**
+ * Class ValidarCancelarReserva
+ * @package Reservas\PainelDLX\Domain\Validators\Reservas
+ * @covers ValidarCancelarReservaTest
+ */
+class ValidarCancelarReserva implements ReservaValidatorInterface
 {
-    /**
-     * @var ReservaRepositoryInterface
-     */
-    private $reserva_repository;
 
     /**
-     * CancelarReservaCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
+     * Valida uma determinada regra sobre reserva
+     * @param Reserva $reserva
+     * @return bool
+     * @throws ReservaJaCanceladaException
+     * @throws CheckinAnteriorHojeException
      */
-    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    public function validar(Reserva $reserva): bool
     {
-        $this->reserva_repository = $reserva_repository;
-    }
+        if ($reserva->isCancelada()) {
+            throw new ReservaJaCanceladaException($reserva->getId());
+        }
 
-    /**
-     * @param CancelarReservaCommand $command
-     * @return Reserva
-     */
-    public function handle(CancelarReservaCommand $command): Reserva
-    {
-        $reserva = $command->getReserva();
-
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CANCELAR);
-        $validator->validar($reserva);
-
-        $reserva->cancelada($command->getMotivo(), $command->getUsuario());
-        $this->reserva_repository->update($reserva);
-
-        return $reserva;
+        return true;
     }
 }

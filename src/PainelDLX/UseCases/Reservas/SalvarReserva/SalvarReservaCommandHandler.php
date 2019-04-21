@@ -28,6 +28,8 @@ namespace Reservas\PainelDLX\UseCases\Reservas\SalvarReserva;
 
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
+use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
 
 class SalvarReservaCommandHandler
 {
@@ -52,6 +54,9 @@ class SalvarReservaCommandHandler
     public function handle(SalvarReservaCommand $command): Reserva
     {
         $reserva = $command->getReserva();
+
+        $validator = new ReservaValidator(ReservaValidatorsEnum::SALVAR);
+        $validator->validar($reserva);
 
         if (is_null($reserva->getId())) {
             $this->reserva_repository->create($command->getReserva());
