@@ -22,6 +22,7 @@ Reservas\PainelDLX\Domain\Entities\Disponibilidade:
     manyToOne:
         quarto:
             targetEntity: Quarto
+            inversedBy: dispon
             joinColumns:
                 dispon_quarto:
                     referencedColumnName: quarto_id

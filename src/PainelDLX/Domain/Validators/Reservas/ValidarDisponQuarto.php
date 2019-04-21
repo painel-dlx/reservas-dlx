@@ -23,44 +23,42 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva;
+namespace Reservas\PainelDLX\Domain\Validators\Reservas;
 
 
+use Reservas\PainelDLX\Domain\Contracts\ReservaValidatorInterface;
+use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
+use Reservas\PainelDLX\Domain\Exceptions\QuartoNaoDisponivelException;
 
-class ConfirmarReservaCommandHandler
+/**
+ * Class ValidarDisponQuarto
+ * @package Reservas\PainelDLX\Domain\Validators\Reservas
+ * @covers ValidarDisponQuarto
+ */
+class ValidarDisponQuarto implements ReservaValidatorInterface
 {
-    /**
-     * @var ReservaRepositoryInterface
-     */
-    private $reserva_repository;
 
     /**
-     * ConfirmarReservaCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
+     * Valida uma determinada regra sobre reserva
+     * @param Reserva $reserva
+     * @return bool
+     * @throws QuartoNaoDisponivelException
      */
-    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    public function validar(Reserva $reserva): bool
     {
-        $this->reserva_repository = $reserva_repository;
-    }
+        $dispon_quarto = $reserva->getQuarto()->getDispon($reserva->getCheckin(), $reserva->getCheckout());
 
-    /**
-     * @param ConfirmarReservaCommand $command
-     * @return Reserva
-     */
-    public function handle(ConfirmarReservaCommand $command): Reserva
-    {
-        $reserva = $command->getReserva();
+        if ($dispon_quarto->count() < 1) {
+            throw new QuartoNaoDisponivelException($reserva->getCheckin());
+        }
 
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CONFIRMAR);
-        $validator->validar($reserva);
+        $dispon_quarto->map(function (Disponibilidade $dispon) {
+            if (!$dispon->isPublicado()) {
+                throw new QuartoNaoDisponivelException($dispon->getDia());
+            }
+        });
 
-        $reserva->confirmada($command->getMotivo(), $command->getUsuario());
-        $this->reserva_repository->update($reserva);
-
-        return $reserva;
+        return true;
     }
 }

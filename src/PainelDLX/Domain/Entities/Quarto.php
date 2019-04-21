@@ -26,7 +26,12 @@
 namespace Reservas\PainelDLX\Domain\Entities;
 
 
+use DateTime;
 use DLX\Domain\Entities\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 
 class Quarto extends Entity
 {
@@ -50,6 +55,8 @@ class Quarto extends Entity
     private $publicar = true;
     /** @var bool */
     private $deletado = false;
+    /** @var Collection */
+    private $dispon;
 
     /**
      * Quarto constructor.
@@ -62,6 +69,7 @@ class Quarto extends Entity
         $this->nome = $nome;
         $this->qtde = $qtde;
         $this->valor_min = $valor_min;
+        $this->dispon = new ArrayCollection();
     }
 
     public function __toString()
@@ -246,6 +254,36 @@ class Quarto extends Entity
     public function setDeletado(bool $deletado): Quarto
     {
         $this->deletado = $deletado;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDispon(DateTime $checkin, DateTime $chekcout): Collection
+    {
+        $criteria = Criteria::create();
+        $criteria->andWhere(Criteria::expr()->gte('dia', $checkin));
+        $criteria->andWhere(Criteria::expr()->lte('dia', $chekcout));
+
+        return $this->dispon->matching($criteria);
+    }
+
+    /**
+     * @param DateTime $data
+     * @param int $qtde
+     * @param array $valores
+     * @throws ValorMenorQueMinimoQuartoException
+     */
+    public function addDispon(DateTime $data, int $qtde, array $valores)
+    {
+        $dispon = new Disponibilidade($this, $data, $qtde);
+
+        foreach ($valores as $qtde => $valor) {
+            $dispon->setValorPorQtdePessoas($qtde, $valor);
+        }
+
+        $this->dispon->add($dispon);
         return $this;
     }
 }

@@ -23,44 +23,20 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva;
+namespace Reservas\PainelDLX\Domain\Exceptions;
 
 
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
+use DateTime;
+use DLX\Core\Exceptions\UserException;
 
-class ConfirmarReservaCommandHandler
+class QuartoNaoDisponivelException extends UserException
 {
     /**
-     * @var ReservaRepositoryInterface
+     * QuartoNaoDisponivelException constructor.
+     * @param DateTime $data_indisponivel
      */
-    private $reserva_repository;
-
-    /**
-     * ConfirmarReservaCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
-     */
-    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    public function __construct(DateTime $data_indisponivel)
     {
-        $this->reserva_repository = $reserva_repository;
-    }
-
-    /**
-     * @param ConfirmarReservaCommand $command
-     * @return Reserva
-     */
-    public function handle(ConfirmarReservaCommand $command): Reserva
-    {
-        $reserva = $command->getReserva();
-
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CONFIRMAR);
-        $validator->validar($reserva);
-
-        $reserva->confirmada($command->getMotivo(), $command->getUsuario());
-        $this->reserva_repository->update($reserva);
-
-        return $reserva;
+        parent::__construct("Esse quarto não está disponível para a data {$data_indisponivel->format('d/m/Y')}.");
     }
 }

@@ -30,6 +30,7 @@ use Reservas\PainelDLX\Domain\Validators\Reservas\ValidarCancelarReserva;
 use Reservas\PainelDLX\Domain\Validators\Reservas\ValidarCheckinReserva;
 use Reservas\PainelDLX\Domain\Validators\Reservas\ValidarCheckoutReserva;
 use Reservas\PainelDLX\Domain\Validators\Reservas\ValidarConfirmarReserva;
+use Reservas\PainelDLX\Domain\Validators\Reservas\ValidarDisponQuarto;
 
 class ReservaValidatorsEnum
 {
@@ -40,7 +41,8 @@ class ReservaValidatorsEnum
 
     const CONFIRMAR = [
         ValidarCheckinReserva::class,
-        ValidarConfirmarReserva::class
+        ValidarConfirmarReserva::class,
+        ValidarDisponQuarto::class
     ];
 
     const CANCELAR = [

@@ -50,3 +50,11 @@ Reservas\PainelDLX\Domain\Entities\Quarto:
             type: boolean
             nullable: false
             column: quarto_delete
+    oneToMany:
+        dispon:
+            targetEntity: Disponibilidade
+            orderBy: { dia: desc }
+            mappedBy: quarto
+            joinColumns:
+                quarto_id:
+                    referencedColumnName: dispon_quarto

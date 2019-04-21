@@ -63,7 +63,7 @@ $reserva = $this->getAtributo('reserva');
 
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Checkout:</span>
-                    <?php echo $reserva->getCheckin()->format('d/m/Y') ?>
+                    <?php echo $reserva->getCheckout()->format('d/m/Y') ?>
                 </p>
             </div>
 
@@ -177,8 +177,9 @@ $reserva = $this->getAtributo('reserva');
 
                 $('#form-confirmar-reserva, #form-cancelar-reserva').formAjax({
                     func_depois: function (json) {
+                        alert(json.mensagem);
+
                         if (json.retorno === 'sucesso') {
-                            alert(json.mensagem);
                             window.location.reload();
                         }
                     }
