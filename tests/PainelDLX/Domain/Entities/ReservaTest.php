@@ -25,6 +25,8 @@
 
 namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
+use DateInterval;
+use DatePeriod;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\DBALException;
@@ -33,10 +35,12 @@ use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
+use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use PHPUnit\Framework\TestCase;
 use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
+use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 use Reservas\Tests\ReservasTestCase;
 
 /**
@@ -98,21 +102,40 @@ class ReservaTest extends ReservasTestCase
      * @param Reserva $reserva
      * @throws DBALException
      * @throws ORMException
+     * @throws ValorMenorQueMinimoQuartoException
      * @covers ::confirmada
      * @depends test__construct
      */
-    public function test_Confirmada_seta_Reserva_como_confirmada(Reserva $reserva)
+    public function test_Confirmada_seta_Reserva_como_confirmada_e_retirar_Disponibilidade(Reserva $reserva)
     {
         $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
+        $quarto = $reserva->getQuarto();
+
+        $dt_interval = new DateInterval('P1D');
+        $dt_periodo = new DatePeriod($reserva->getCheckin(), $dt_interval, $reserva->getCheckout());
+
+        $qtde_quartos_dispon = 1;
+        $qtde_quartos_esperada = $qtde_quartos_dispon - 1;
+
+        /** @var DateTime $data */
+        foreach ($dt_periodo as $data) {
+            $quarto->addDispon($data, $qtde_quartos_dispon, [1 => 10]);
+        }
+
         $reserva->confirmada('Reserva foi paga via digitação de cartão.', $usuario);
 
         $has_historico_confirmada = $reserva->getHistorico()->exists(function ($key, ReservaHistorico $reserva_historico) {
             return $reserva_historico->getStatus() === Reserva::STATUS_CONFIRMADA;
         });
 
+        $has_dispon_invalida = $quarto->getDispon($reserva->getCheckin(), $reserva->getCheckout())->exists(function ($key, Disponibilidade $dispon) use ($qtde_quartos_esperada) {
+            return $dispon->getQtde() !== $qtde_quartos_esperada;
+        });
+
         $this->assertTrue($reserva->isConfirmada());
         $this->assertEquals(Reserva::STATUS_CONFIRMADA, $reserva->getStatus());
         $this->assertTrue($has_historico_confirmada);
+        $this->assertFalse($has_dispon_invalida);
     }
 
     /**

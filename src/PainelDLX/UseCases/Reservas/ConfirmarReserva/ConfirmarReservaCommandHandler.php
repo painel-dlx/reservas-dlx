@@ -61,6 +61,10 @@ class ConfirmarReservaCommandHandler
         $reserva->confirmada($command->getMotivo(), $command->getUsuario());
         $this->reserva_repository->update($reserva);
 
+        // Atualizar disponibilidade
+        // todo: verificar impacto para configurar cascade direto na entiade Reserva
+        $this->reserva_repository->update($reserva->getQuarto());
+
         return $reserva;
     }
 }

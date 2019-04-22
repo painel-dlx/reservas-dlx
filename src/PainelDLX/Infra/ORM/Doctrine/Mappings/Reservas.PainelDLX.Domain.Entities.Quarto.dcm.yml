@@ -54,6 +54,8 @@ Reservas\PainelDLX\Domain\Entities\Quarto:
         dispon:
             targetEntity: Disponibilidade
             orderBy: { dia: desc }
+            cascade:
+                - merge
             mappedBy: quarto
             joinColumns:
                 quarto_id:

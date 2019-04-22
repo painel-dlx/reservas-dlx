@@ -34,7 +34,7 @@ use Reservas\PainelDLX\Domain\Exceptions\QuartoNaoDisponivelException;
 /**
  * Class ValidarDisponQuarto
  * @package Reservas\PainelDLX\Domain\Validators\Reservas
- * @covers ValidarDisponQuarto
+ * @covers ValidarDisponQuartoTest
  */
 class ValidarDisponQuarto implements ReservaValidatorInterface
 {

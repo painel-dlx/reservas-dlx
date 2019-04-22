@@ -405,6 +405,13 @@ class Reserva extends Entity
     {
         $this->setStatus(self::STATUS_CONFIRMADA);
         $this->addHistorico(self::STATUS_CONFIRMADA, $motivo, $usuario);
+
+        // Retirar a disponibilidade do quarto
+        $dispon_quarto = $this->getQuarto()->getDispon($this->getCheckin(), $this->getCheckout());
+        $dispon_quarto->map(function (Disponibilidade $dispon) {
+            $dispon->setQtde($dispon->getQtde() - 1);
+        });
+
         return $this;
     }
 
