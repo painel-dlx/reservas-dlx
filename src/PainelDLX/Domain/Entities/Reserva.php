@@ -26,7 +26,6 @@
 namespace Reservas\PainelDLX\Domain\Entities;
 
 
-use DateInterval;
 use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
