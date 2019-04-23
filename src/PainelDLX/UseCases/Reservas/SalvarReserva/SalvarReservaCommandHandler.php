@@ -54,6 +54,7 @@ class SalvarReservaCommandHandler
     public function handle(SalvarReservaCommand $command): Reserva
     {
         $reserva = $command->getReserva();
+        $reserva->calcularValor();
 
         $validator = new ReservaValidator(ReservaValidatorsEnum::SALVAR);
         $validator->validar($reserva);

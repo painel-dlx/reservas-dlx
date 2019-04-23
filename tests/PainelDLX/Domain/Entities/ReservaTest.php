@@ -32,13 +32,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use Exception;
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use PHPUnit\Framework\TestCase;
 use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
 use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 use Reservas\Tests\ReservasTestCase;
@@ -157,5 +155,50 @@ class ReservaTest extends ReservasTestCase
         $this->assertTrue($reserva->isCancelada());
         $this->assertEquals(Reserva::STATUS_CANCELADA, $reserva->getStatus());
         $this->assertTrue($has_historico_cancelada);
+    }
+
+    /**
+     * @param Reserva $reserva
+     * @covers ::getTotalHospedes
+     * @depends test__construct
+     */
+    public function test_GetTotalHospedes_deve_retornar_a_soma_dos_hospedes_adultos_e_criancas(Reserva $reserva)
+    {
+        $total_hospedes = $reserva->getTotalHospedes();
+        $soma_hospedes = $reserva->getAdultos() + $reserva->getCriancas();
+
+        $this->assertIsInt($total_hospedes);
+        $this->assertEquals($soma_hospedes, $reserva->getTotalHospedes());
+    }
+
+    /**
+     * @param Reserva $reserva
+     * @covers ::calcularValor
+     * @depends test__construct
+     * @throws ValorMenorQueMinimoQuartoException
+     */
+    public function test_CalcularValor_deve_retornar_valor_total_reserva(Reserva $reserva)
+    {
+        $quarto = $reserva->getQuarto();
+
+        $dt_interval = new DateInterval('P1D');
+        $dt_periodo = new DatePeriod($reserva->getCheckin(), $dt_interval, $reserva->getCheckout());
+
+        $qtde_quartos_dispon = 1;
+        $valor_diaria = 10;
+        $valor_total = $valor_diaria * iterator_count($dt_periodo);
+
+        $valores_diarias = [];
+        for($i = 1; $i <= $quarto->getMaxHospedes(); $i++) {
+            $valores_diarias[$i] = $valor_diaria;
+        }
+
+        /** @var DateTime $data */
+        foreach ($dt_periodo as $data) {
+            $quarto->addDispon($data, $qtde_quartos_dispon, $valores_diarias);
+        }
+
+        $reserva->calcularValor();
+        $this->assertEquals($valor_total, $reserva->getValor());
     }
 }

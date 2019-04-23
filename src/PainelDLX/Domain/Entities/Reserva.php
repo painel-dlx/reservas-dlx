@@ -396,6 +396,33 @@ class Reserva extends Entity
     }
 
     /**
+     * Calcula o valor da reserva e seta na propriedade valor
+     * @return Reserva
+     */
+    public function calcularValor(): self
+    {
+        $valor_reserva = 0;
+        $total_hospedes = $this->getTotalHospedes();
+
+        $dispon_quarto = $this->getQuarto()->getDispon($this->getCheckin(), $this->getCheckout());
+        $dispon_quarto->map(function (Disponibilidade $dispon) use (&$valor_reserva, $total_hospedes) {
+            $valor_reserva += (float)$dispon->getValorPorQtdePessoas($total_hospedes);
+        });
+
+        $this->setValor($valor_reserva);
+        return $this;
+    }
+
+    /**
+     * Conta a quantidade total de hóspedes do quarto (adultos + crianças)
+     * @return int
+     */
+    public function getTotalHospedes(): int
+    {
+        return $this->getAdultos() + $this->getCriancas();
+    }
+
+    /**
      * Seta a reserva como confirmada.
      * @param string $motivo
      * @param Usuario $usuario
