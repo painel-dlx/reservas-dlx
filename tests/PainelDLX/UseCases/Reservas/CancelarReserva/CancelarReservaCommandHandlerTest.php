@@ -25,6 +25,7 @@
 
 namespace Reservas\PainelDLX\Tests\UseCases\Reservas\CancelarReserva;
 
+use DateTime;
 use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\ParameterType;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
@@ -68,6 +69,9 @@ class CancelarReservaCommandHandlerTest extends ReservasTestCase
      */
     public function test_Handle(CancelarReservaCommandHandler $handler)
     {
+        $checkin = new DateTime();
+        $checkout = (clone $checkin)->modify('+2 days');
+
         $query = 'insert into dlx_reservas_cadastro (
                                     reserva_quarto,
                                     reserva_hospede, 
@@ -104,8 +108,8 @@ class CancelarReservaCommandHandlerTest extends ReservasTestCase
         $sql->bindValue(':cpf', '000.000.000-00', ParameterType::STRING);
         $sql->bindValue(':telefone', '(00) 0000-0000', ParameterType::STRING);
         $sql->bindValue(':email', 'cliente@gmail.com', ParameterType::STRING);
-        $sql->bindValue(':checkin', '2019-01-01', ParameterType::STRING);
-        $sql->bindValue(':checkout', '2019-01-05', ParameterType::STRING);
+        $sql->bindValue(':checkin', $checkin->format('Y-m-d'), ParameterType::STRING);
+        $sql->bindValue(':checkout', $checkout->format('Y-m-d'), ParameterType::STRING);
         $sql->bindValue(':adultos', 2, ParameterType::INTEGER);
         $sql->bindValue(':criancas', 0, ParameterType::INTEGER);
         $sql->bindValue(':valor', 0, ParameterType::INTEGER);

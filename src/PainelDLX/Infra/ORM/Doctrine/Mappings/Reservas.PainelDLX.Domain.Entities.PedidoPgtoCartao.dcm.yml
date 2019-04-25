@@ -1,6 +1,6 @@
 Reservas\PainelDLX\Domain\Entities\PedidoPgtoCartao:
     type: entity
-    table: dlx_reservas_pedidos
+    table: dlx_reservas_pgto_cartao
     # repositoryClass: Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories\PedidoPgtoCartaoRepository
     id:
         pedido:
@@ -41,3 +41,6 @@ Reservas\PainelDLX\Domain\Entities\PedidoPgtoCartao:
         pedido:
             targetEntity: Pedido
             inversedBy: pgto_cartao
+            joinColumns:
+                pgto_pedido:
+                    referencedColumnName: pedido_id

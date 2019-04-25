@@ -107,7 +107,9 @@ class ReservaTest extends ReservasTestCase
     public function test_Confirmada_seta_Reserva_como_confirmada_e_retirar_Disponibilidade(Reserva $reserva)
     {
         $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
-        $quarto = $reserva->getQuarto();
+        // $quarto = $reserva->getQuarto();
+        $quarto = new Quarto('Outro Teste', 10, 10);
+        $reserva->setQuarto($quarto);
 
         $dt_interval = new DateInterval('P1D');
         $dt_periodo = new DatePeriod($reserva->getCheckin(), $dt_interval, $reserva->getCheckout());
@@ -189,7 +191,7 @@ class ReservaTest extends ReservasTestCase
         $valor_total = $valor_diaria * iterator_count($dt_periodo);
 
         $valores_diarias = [];
-        for($i = 1; $i <= $quarto->getMaxHospedes(); $i++) {
+        for ($i = 1; $i <= $quarto->getMaxHospedes(); $i++) {
             $valores_diarias[$i] = $valor_diaria;
         }
 

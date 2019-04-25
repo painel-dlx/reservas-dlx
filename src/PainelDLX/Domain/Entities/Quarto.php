@@ -277,13 +277,22 @@ class Quarto extends Entity
      */
     public function addDispon(DateTime $data, int $qtde, array $valores)
     {
-        $dispon = new Disponibilidade($this, $data, $qtde);
+        $dispon = $this->dispon->filter(function (Disponibilidade $dispon) use ($data) {
+            return $dispon->getDia()->format('Y-m-d') ===  $data->format('Y-m-d');
+        })->first();
+
+        // Criar uma nova disponibilidade
+        if (!$dispon) {
+            $dispon = new Disponibilidade($this, $data, $qtde);
+            $this->dispon->add($dispon);
+        } else { // Editar uma dispobibilidade existente
+            $dispon->setQtde($qtde);
+        }
 
         foreach ($valores as $qtde => $valor) {
             $dispon->setValorPorQtdePessoas($qtde, $valor);
         }
 
-        $this->dispon->add($dispon);
         return $this;
     }
 }

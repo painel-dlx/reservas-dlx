@@ -1,0 +1,27 @@
+.status-pedido {
+    @extend .status-reserva;
+
+    &.-pendente {
+        // Visual
+        background: #EEE;
+
+        // Texto
+        color: #777;
+    }
+
+    &.-pago {
+        // Visual
+        background: rgba(#8EC1AB, .25);
+
+        // Texto
+        color: #32909F;
+    }
+
+    &.-cancelado {
+        // Visual
+        background: rgba(#900, .25);
+
+        // Texto
+        color: #900;
+    }
+}

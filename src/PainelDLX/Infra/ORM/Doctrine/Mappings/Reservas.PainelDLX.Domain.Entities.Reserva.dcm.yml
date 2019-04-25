@@ -67,6 +67,12 @@ Reservas\PainelDLX\Domain\Entities\Reserva:
             joinColumns:
                 reserva_quarto:
                     referencedColumnName: quarto_id
+        pedido:
+            targetEntity: Pedido
+            inversedBy: reservas
+            joinColumns:
+                reserva_pedido:
+                    referencedColumnName: pedido_id
     oneToMany:
         historico:
             targetEntity: ReservaHistorico

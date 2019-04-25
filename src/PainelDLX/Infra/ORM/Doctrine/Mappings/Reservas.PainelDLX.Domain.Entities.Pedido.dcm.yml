@@ -47,10 +47,24 @@ Reservas\PainelDLX\Domain\Entities\Pedido:
             option:
                 default: Pendente
             column: pedido_status
+        itens:
+            type: object
+            nullable: false
+            column: pedido_itens
     oneToOne:
         pgto_cartao:
             targetEntity: PedidoPgtoCartao
             mappedBy: pedido
-            joinColumn:
+            joinColumns:
                 pedido_id:
                     referencedColumnName: pgto_pedido
+    oneToMany:
+        reservas:
+            targetEntity: Reserva
+            mappedBy: pedido
+            orderBy: { checkin: asc }
+            cascade:
+                - merge
+            joinColumns:
+                pedido_id:
+                    referencedColumnName: reserva_pedido

@@ -1,0 +1,235 @@
+<?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2018 PHP DLX
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Vilex\VileX;
+
+/**
+ * @var VileX $this
+ */
+
+/** @var Pedido $pedido */
+$pedido = $this->getAtributo('pedido');
+?>
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+
+<div class="layout-barra-lateral">
+    <aside class="barra-lateral">
+        <div class="info-reserva">
+            <div class="info-reserva-linha">
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Pedido:</span>
+                    # <?php echo $pedido->getId() ?>
+                </p>
+            </div>
+
+            <div class="info-reserva-linha">
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Valor:</span>
+                    R$ <?php echo number_format($pedido->getValorTotal(), 2, ',', '') ?>
+                </p>
+
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Forma de Pgto:</span>
+                    <?php echo $pedido->getFormaPgto() ?>
+                </p>
+            </div>
+
+            <?php if ($pedido->isPendente() && !is_null($pedido->getPgtoCartao())) : ?>
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <span class="info-reserva-rotulo">Nº cartão:</span>
+                        <?php echo $pedido->getPgtoCartao()->getNumeroCartao() ?>
+                    </p>
+                </div>
+
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <span class="info-reserva-rotulo">Dono Cartão:</span>
+                        <?php echo $pedido->getPgtoCartao()->getDonoCartao() ?>
+                    </p>
+
+                    <p class="info-reserva-dado">
+                        <span class="info-reserva-rotulo">Data de Expiração:</span>
+                        <?php echo $pedido->getPgtoCartao()->getExpiracao() ?>
+                    </p>
+                </div>
+
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <span class="info-reserva-rotulo">Código Segurança:</span>
+                        <?php echo $pedido->getPgtoCartao()->getCodigoSeguranca() ?>
+                    </p>
+
+                    <p class="info-reserva-dado">
+                        <span class="info-reserva-rotulo">Parcelas:</span>
+                        <?php echo "{$pedido->getPgtoCartao()->getQtdeParcelas()}x" ?>
+                    </p>
+                </div>
+            <?php endif; ?>
+
+            <div class="info-reserva-linha">
+                <p class="info-reserva-dado">
+                    <span class="info-reserva-rotulo">Status:</span>
+                    <span class="status-pedido -<?php echo strtolower($pedido->getStatus()) ?>">
+                        <?php echo $pedido->getStatus() ?>
+                    </span>
+                </p>
+            </div>
+
+            <?php if ($pedido->isPendente() || $pedido->isPago()) : ?>
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado info-reserva-botoes">
+                        <?php if ($pedido->isPendente()) : ?>
+                            <button type="button" onclick="popupRegistrarPgto('pago', <?php echo $pedido->getId() ?>)" class="botao-salvar">Confirmar</button>
+                            <!-- ou -->
+                        <?php endif; ?>
+
+                        <!-- button type="button" onclick="popupRegistrarPgto('cancelar', <?php echo $pedido->getId() ?>)" class="botao-cancelar">Cancelar</button -->
+                    </p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </aside>
+
+    <div id="detalhe-pedido">
+        <details class="detalhe-registro" open>
+            <summary class="detalhe-registro-titulo">Hóspede / Cliente</summary>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">Nome:</span>
+                <?php echo $pedido->getNome() ?>
+            </p>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">CPF:</span>
+                <?php echo $pedido->getCpf() ?>
+            </p>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">Telefone:</span>
+                <?php echo $pedido->getTelefone() ?>
+            </p>
+
+            <p class="detalhe-registro-paragr">
+                <span class="detalhe-registro-rotulo">Email:</span>
+                <?php echo $pedido->getEmail() ?>
+            </p>
+        </details>
+
+        <?php if ($pedido->isPendente()) : ?>
+            <details class="detalhe-registro" open>
+                <summary class="detalhe-registro-titulo">Reservas Solicitadas</summary>
+
+                <table id="lista-itens" class="lista-registros">
+                    <thead>
+                    <tr>
+                        <th id="quarto">Quarto</th>
+                        <th id="checkin">Checkin</th>
+                        <th id="checkout">Checkout</th>
+                        <th id="hospedes" style="text-align: center">Qtde Hóspedes</th>
+                        <th id="valor">Valor Diária</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <?php
+                    if (count($pedido->getItens()) < 1) : ?>
+                    <tr>
+                        <td colspan="5">Nenhum item adicionado ao pedido.</td>
+                    </tr>
+                    <?php endif;
+
+                    /** @var stdClass $item */
+                    foreach ($pedido->getItens() as $item) :
+                        $checkin = new DateTime($item->checkin);
+                        $checkout = new DateTime($item->checkout); ?>
+                        <tr>
+                            <td headers="quarto>"><?php echo "{$item->quartoNome} ({$item->quartoID})" ?></td>
+                            <td headers="checkin"><?php echo $checkin->format('d/m/Y') ?></td>
+                            <td headers="checkout"><?php echo $checkout->format('d/m/Y') ?></td>
+                            <td headers="hospedes" style="text-align: center">
+                                <?php printf('%d adultos, %d crianças', $item->adultos, $item->criancas) ?>
+                            </td>
+                            <td headers="valor"><?php echo 'R$ ' . number_format($item->valor, 2, ',', '') ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </details>
+        <?php else : ?>
+            <details class="detalhe-registro" open>
+                <summary class="detalhe-registro-titulo">Reservas Geradas</summary>
+
+                <table id="lista-reservas" class="lista-registros">
+                    <thead>
+                    <tr>
+                        <th id="reserva-id">ID</th>
+                        <th id="quarto">Quarto</th>
+                        <th id="hospede">Hóspede</th>
+                        <th id="periodo">Período</th>
+                        <th id="status">Status</th>
+                        <th id="opcoes">Opções</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <?php if ($pedido->getReservas()->count() < 1) : ?>
+                        <tr>
+                            <td colspan="6" class="sem-registros">Nenhuma reserva encontrada.</td>
+                        </tr>
+                    <?php endif;
+
+                    /** @var Reserva $reserva */
+                    foreach ($pedido->getReservas() as $reserva) : ?>
+                        <tr>
+                            <td headers="reserva-id"><?php echo $reserva->getId() ?></td>
+                            <td headers="quarto"><?php echo $reserva->getQuarto()->getNome() ?></td>
+                            <td headers="hospede"><?php echo $reserva->getHospede() ?></td>
+                            <td headers="periodo">
+                                <?php echo 'De ', $reserva->getCheckin()->format('d/m/Y'),
+                                ' até ', $reserva->getCheckout()->format('d/m/Y') ?>
+                            </td>
+                            <td headers="status">
+                                <span class="status-reserva -<?php echo strtolower($reserva->getStatus()) ?>">
+                                    <?php echo $reserva->getStatus() ?>
+                                </span>
+                            </td>
+                            <td headers="opcoes">
+                                <a href="/painel-dlx/apart-hotel/reservas/detalhe?id=<?php echo $reserva->getId() ?>" class="link-detalhe" title="Detalhes da reserva">
+                                    Detalhe
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </details>
+        <?php endif; ?>
+    </div>
+</div>
+[/CORPO]

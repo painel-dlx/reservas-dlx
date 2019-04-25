@@ -23,31 +23,37 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\PedidosRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
+namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-    PedidosRouter::class,
-];
+use Reservas\PainelDLX\Domain\Entities\Pedido;
+
+/**
+ * Class GerarReservasPedidoCommand
+ * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
+ * @covers GerarReservasPedidoCommandTest
+ */
+class GerarReservasPedidoCommand
+{
+    /**
+     * @var Pedido
+     */
+    private $pedido;
+
+    /**
+     * GerarReservasPedidoCommand constructor.
+     * @param Pedido $pedido
+     */
+    public function __construct(Pedido $pedido)
+    {
+        $this->pedido = $pedido;
+    }
+
+    /**
+     * @return Pedido
+     */
+    public function getPedido(): Pedido
+    {
+        return $this->pedido;
+    }
+}

@@ -23,31 +23,34 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\PedidosRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
+namespace Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-    PedidosRouter::class,
-];
+use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+
+class GetPedidoPorIdCommandHandler
+{
+    /**
+     * @var PedidoRepositoryInterface
+     */
+    private $pedido_repository;
+
+    /**
+     * GetPedidoPorIdCommandHandler constructor.
+     * @param PedidoRepositoryInterface $pedido_repository
+     */
+    public function __construct(PedidoRepositoryInterface $pedido_repository)
+    {
+        $this->pedido_repository = $pedido_repository;
+    }
+
+    /**
+     * @param GetPedidoPorIdCommand $command
+     * @return Pedido|null
+     */
+    public function handle(GetPedidoPorIdCommand $command): ?Pedido
+    {
+        return $this->pedido_repository->find($command->getId());
+    }
+}

@@ -34,6 +34,10 @@ use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto\Salv
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto\SalvarDisponibilidadeQuartoCommandHandler;
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommand;
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommandHandler;
+use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
+use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler;
+use Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
+use Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos\ListaPedidosCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
@@ -69,6 +73,8 @@ class ReservasDLXMapping
         ConfirmarReservaCommand::class => ConfirmarReservaCommandHandler::class,
         CancelarReservaCommand::class => CancelarReservaCommandHandler::class,
         SalvarReservaCommand::class => SalvarReservaCommandHandler::class,
+        ListaPedidosCommand::class => ListaPedidosCommandHandler::class,
+        GetPedidoPorIdCommand::class => GetPedidoPorIdCommandHandler::class,
     ];
 
     /**

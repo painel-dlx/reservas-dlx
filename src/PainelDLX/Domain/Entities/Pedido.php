@@ -27,6 +27,9 @@ namespace Reservas\PainelDLX\Domain\Entities;
 
 
 use DLX\Domain\Entities\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use stdClass;
 
 class Pedido extends Entity
 {
@@ -47,11 +50,20 @@ class Pedido extends Entity
     /** @var float */
     private $valor_total;
     /** @var string */
-    private $formap_pgto = 'digitada';
+    private $forma_pgto = 'digitada';
     /** @var string */
     private $status = 'Pendente';
     /** @var PedidoPgtoCartao|null */
     private $pgto_cartao;
+    /** @var array */
+    private $itens;
+    /** @var Collection */
+    private $reservas;
+
+    public function __construct()
+    {
+        $this->reservas = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -164,18 +176,18 @@ class Pedido extends Entity
     /**
      * @return string
      */
-    public function getFormapPgto(): string
+    public function getFormaPgto(): string
     {
-        return $this->formap_pgto;
+        return $this->forma_pgto;
     }
 
     /**
-     * @param string $formap_pgto
+     * @param string $forma_pgto
      * @return Pedido
      */
-    public function setFormapPgto(string $formap_pgto): Pedido
+    public function setFormaPgto(string $forma_pgto): Pedido
     {
-        $this->formap_pgto = $formap_pgto;
+        $this->forma_pgto = $forma_pgto;
         return $this;
     }
 
@@ -213,5 +225,80 @@ class Pedido extends Entity
     {
         $this->pgto_cartao = $pgto_cartao;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getItens(): array
+    {
+        return $this->itens;
+    }
+
+    /**
+     * @param Quarto $quarto
+     * @param string $checkin
+     * @param string $checkout
+     * @param int $adultos
+     * @param int $criancas
+     * @param float $valor
+     * @return Pedido
+     */
+    public function addItem(Quarto $quarto, string $checkin, string $checkout, int $adultos, int $criancas, float $valor): self
+    {
+        $item = new stdClass();
+        $item->quartoID = $quarto->getId();
+        $item->quartoNome = $quarto->getNome();
+        $item->checkin = $checkin;
+        $item->checkout = $checkout;
+        $item->adultos = $adultos;
+        $item->criancas = $criancas;
+        $item->valor = $valor;
+
+        $this->itens[] = $item;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getReservas(): Collection
+    {
+        return $this->reservas;
+    }
+
+    public function addReserva(Reserva $reserva): self
+    {
+        $reserva->setPedido($this);
+
+        $this->reservas->add($reserva);
+        return $this;
+    }
+
+    /**
+     * Verifica se o pedido está pendente
+     * @return bool
+     */
+    public function isPendente(): bool
+    {
+        return $this->getStatus() === self::STATUS_PENDENTE;
+    }
+
+    /**
+     * Verifica se o pedido está pago / confirmado
+     * @return bool
+     */
+    public function isPago(): bool
+    {
+        return $this->getStatus() === self::STATUS_PAGO;
+    }
+
+    /**
+     * Verifica se o pedido está cancelado
+     * @return bool
+     */
+    public function isCancelado(): bool
+    {
+        return $this->getStatus() === self::STATUS_CANCELADO;
     }
 }

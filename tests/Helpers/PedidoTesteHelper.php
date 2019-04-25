@@ -23,31 +23,49 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\PedidosRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
+namespace Reservas\Tests\Helpers;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-    PedidosRouter::class,
-];
+use DLX\Infra\EntityManagerX;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
+use Reservas\PainelDLX\Domain\Entities\Pedido;
+
+class PedidoTesteHelper
+{
+    /**
+     * @return Pedido|null
+     * @throws DBALException
+     * @throws ORMException
+     */
+    public static function getRandom(): ?Pedido
+    {
+        $id = self::getIdRandom();
+
+        /** @var Pedido $pedido */
+        $pedido = EntityManagerX::getRepository(Pedido::class)->find($id);
+
+        return $pedido;
+    }
+
+    /**
+     * @return int
+     * @throws DBALException
+     * @throws ORMException
+     */
+    public static function getIdRandom(): int
+    {
+        $query = '
+            select
+                pedido_id
+            from
+                dlx_reservas_pedidos
+            order by 
+                rand()
+            limit 1
+        ';
+
+        $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query);
+        return $sql->fetchColumn();
+    }
+}

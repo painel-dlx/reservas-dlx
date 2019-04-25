@@ -23,15 +23,14 @@
  * SOFTWARE.
  */
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Entities\Pedido;
 use Vilex\VileX;
 
 /**
  * @var VileX $this
  */
 
-$lista_reservas = $this->getAtributo('lista-reservas');
+$lista_pedidos = $this->getAtributo('lista-pedidos');
 $filtro = $this->getAtributo('filtro');
 ?>
 [CORPO]
@@ -43,67 +42,67 @@ $filtro = $this->getAtributo('filtro');
             <span class="multi-select-item">Procurar em...</span>
 
             <div class="multi-select-itens">
-                <!-- label class="multi-select-item">
-                    <input type="checkbox" name="campos[]" value="quarto_nome"<?php echo empty($filtro['campos']) || in_array('quarto_nome', $filtro['campos']) ? ' checked' : '' ?>>
-                    Quarto
-                </label -->
-
                 <label class="multi-select-item">
-                    <input type="checkbox" name="campos[]" value="hospede"<?php echo empty($filtro['campos']) || in_array('hospede', $filtro['campos']) ? ' checked' : '' ?>>
-                    Hóspede
+                    <input type="checkbox" name="campos[]" value="nome"<?php echo empty($filtro['campos']) || in_array('nome', $filtro['campos']) ? ' checked' : '' ?>>
+                    Cliente
                 </label>
 
                 <label class="multi-select-item">
-                    <input type="checkbox" name="campos[]" value="status"<?php echo empty($filtro['campos']) || in_array('status', $filtro['campos']) ? ' checked' : '' ?>>
-                    Status
+                    <input type="checkbox" name="campos[]" value="cpf"<?php echo empty($filtro['campos']) || in_array('cpf', $filtro['campos']) ? ' checked' : '' ?>>
+                    CPF
+                </label>
+
+                <label class="multi-select-item">
+                    <input type="checkbox" name="campos[]" value="email"<?php echo empty($filtro['campos']) || in_array('email', $filtro['campos']) ? ' checked' : '' ?>>
+                    Email
                 </label>
             </div>
         </div>
 
-        <input type="search" name="busca" value="<?php echo $filtro['busca'] ?>" placeholder="Encontrar reservas" class="form-controle">
+        <input type="search" name="busca" value="<?php echo $filtro['busca'] ?>" placeholder="Encontrar pedidos" class="form-controle">
     </form>
 
     <button type="submit" form="filtro-registros" class="botao-buscar">Buscar</button>
-    <a href="/painel-dlx/apart-hotel/reservas/reservar-quarto" class="link-inserir">Reservar um quarto</a>
 </nav>
 
-<table id="lista-reservas" class="lista-registros">
+<table id="lista-quartos" class="lista-registros">
     <thead>
     <tr>
-        <th id="reserva-id">ID</th>
-        <th id="quarto">Quarto</th>
-        <th id="hospede">Hóspede</th>
-        <th id="periodo">Período</th>
+        <th id="pedido-id">ID</th>
+        <th id="cliente">Cliente</th>
+        <th id="itens" style="text-align: center">Qtde Itens</th>
+        <th id="valor">Valor</th>
         <th id="status">Status</th>
         <th id="opcoes">Opções</th>
     </tr>
     </thead>
 
     <tbody>
-    <?php if (!count($lista_reservas)) : ?>
+    <?php if (!count($lista_pedidos)) : ?>
         <tr>
-            <td colspan="6" class="sem-registros">Nenhuma reserva encontrada.</td>
+            <td colspan="6" class="sem-registros">Nenhum pedido encontrado.</td>
         </tr>
     <?php endif;
 
-    /** @var Reserva $reserva */
-    foreach ($lista_reservas as $reserva) : ?>
+    /** @var Pedido $pedido */
+    foreach ($lista_pedidos as $pedido) : ?>
         <tr>
-            <td headers="reserva-id"><?php echo $reserva->getId() ?></td>
-            <td headers="quarto"><?php echo $reserva->getQuarto()->getNome() ?></td>
-            <td headers="hospede"><?php echo $reserva->getHospede() ?></td>
-            <td headers="periodo">
-                <?php echo 'De ', $reserva->getCheckin()->format('d/m/Y'),
-                    ' até ', $reserva->getCheckout()->format('d/m/Y') ?>
-
+            <td headers="pedido-id"><?php echo $pedido->getId() ?></td>
+            <td headers="cliente">
+                <?php echo $pedido->getNome() ?><br>
+                <span class="lista-registros-comentario">
+                    <?php echo $pedido->getEmail() ?>
+                </span>
             </td>
+            <td headers="itens" style="text-align: center"><?php echo count($pedido->getItens()) ?></td>
+            <td headers="valor"><?php echo 'R$ ' . number_format($pedido->getValorTotal(), 2, ',', '') ?></td>
             <td headers="status">
-                <span class="status-reserva -<?php echo strtolower($reserva->getStatus()) ?>">
-                    <?php echo $reserva->getStatus() ?>
+                <span class="status-pedido -<?php echo strtolower($pedido->getStatus()) ?>">
+                    <?php echo $pedido->getStatus() ?>
                 </span>
             </td>
             <td headers="opcoes">
-                <a href="/painel-dlx/apart-hotel/reservas/detalhe?id=<?php echo $reserva->getId() ?>" class="link-detalhe" title="Detalhes da reserva">
+                <a href="/painel-dlx/apart-hotel/pedidos/detalhe?id=<?php echo $pedido->getId() ?>" class="link-detalhe" title="Detalhes do pedido">
                     Detalhe
                 </a>
             </td>

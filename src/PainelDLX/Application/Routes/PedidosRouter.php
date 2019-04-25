@@ -26,18 +26,17 @@
 namespace Reservas\PainelDLX\Application\Routes;
 
 
-use PainelDLX\Application\Middlewares\Autorizacao;
 use PainelDLX\Application\Middlewares\DefinePaginaMestra;
 use PainelDLX\Application\Middlewares\VerificarLogon;
 use PainelDLX\Application\Routes\PainelDLXRouter;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\DisponPorPeriodoController;
-use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\MapaDisponController;
+use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\DetalhePedidoController;
+use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\ListaPedidosController;
 
-class DisponibilidadeRouter extends PainelDLXRouter
+class PedidosRouter extends PainelDLXRouter
 {
+
     /**
      * Registrar todas as rotas
-     * @throws \Exception
      */
     public function registrar(): void
     {
@@ -46,49 +45,20 @@ class DisponibilidadeRouter extends PainelDLXRouter
         $verificar_logon = new VerificarLogon($this->session);
         $define_pagina_mestra = new DefinePaginaMestra($this->painel_dlx->getServerRequest(), $this->session);
 
-        $autorizacao_gerenciar_dispon = new Autorizacao('GERENCIAR_DISPONIBILIDADE');
-
         $router->get(
-            '/painel-dlx/apart-hotel/disponibilidade',
-            [MapaDisponController::class, 'calendario']
+            '/painel-dlx/apart-hotel/pedidos',
+            [ListaPedidosController::class, 'listaPedidos']
         )->middlewares(
             $verificar_logon,
-            $autorizacao_gerenciar_dispon,
-            $define_pagina_mestra
-        );
-
-        $router->post(
-            '/painel-dlx/apart-hotel/disponibilidade/salvar',
-            [MapaDisponController::class, 'salvar']
-        )->middlewares(
-            $verificar_logon,
-            $autorizacao_gerenciar_dispon
-        );
-
-        $router->get(
-            '/painel-dlx/apart-hotel/disponibilidade/editar-por-periodo',
-            [DisponPorPeriodoController::class, 'formDisponPorPeriodo']
-        )->middlewares(
-            $verificar_logon,
-            $autorizacao_gerenciar_dispon,
             $define_pagina_mestra
         );
 
         $router->get(
-            '/painel-dlx/apart-hotel/disponibilidade/configuracoes-quarto',
-            [DisponPorPeriodoController::class, 'disponConfigQuarto']
+            '/painel-dlx/apart-hotel/pedidos/detalhe',
+            [DetalhePedidoController::class, 'detalhePedido']
         )->middlewares(
             $verificar_logon,
-            $autorizacao_gerenciar_dispon,
             $define_pagina_mestra
-        );
-
-        $router->post(
-            '/painel-dlx/apart-hotel/disponibilidade/salvar-periodo',
-            [DisponPorPeriodoController::class, 'salvarDisponPorPeriodo']
-        )->middlewares(
-            $verificar_logon,
-            $autorizacao_gerenciar_dispon
         );
     }
 }
