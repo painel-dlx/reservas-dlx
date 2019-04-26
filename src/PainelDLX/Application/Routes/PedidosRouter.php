@@ -60,5 +60,13 @@ class PedidosRouter extends PainelDLXRouter
             $verificar_logon,
             $define_pagina_mestra
         );
+
+        $router->post(
+            '/painel-dlx/apart-hotel/pedidos/confirmar-pedido',
+            [DetalhePedidoController::class, 'confirmarPgtoPedido']
+        )->middlewares(
+            $verificar_logon,
+            $define_pagina_mestra
+        );
     }
 }

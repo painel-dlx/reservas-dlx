@@ -23,52 +23,16 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\Domain\Validators;
 
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Validators\Pedidos\ValidarConfirmarPedido;
+use Reservas\PainelDLX\Domain\Validators\Pedidos\ValidarReservasGeradas;
 
-/**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
- */
-class GerarReservasPedidoCommand
+class PedidoValidatorEnum
 {
-    /**
-     * @var Pedido
-     */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
-
-    /**
-     * GerarReservasPedidoCommand constructor.
-     * @param Pedido $pedido
-     * @param Usuario $usuario
-     */
-    public function __construct(Pedido $pedido, Usuario $usuario)
-    {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
-    }
-
-    /**
-     * @return Pedido
-     */
-    public function getPedido(): Pedido
-    {
-        return $this->pedido;
-    }
-
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
-    }
+    const CONFIRMAR = [
+        ValidarConfirmarPedido::class,
+        ValidarReservasGeradas::class,
+    ];
 }

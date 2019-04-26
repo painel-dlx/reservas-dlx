@@ -105,7 +105,7 @@ $pedido = $this->getAtributo('pedido');
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado info-reserva-botoes">
                         <?php if ($pedido->isPendente()) : ?>
-                            <button type="button" onclick="popupRegistrarPgto('pago', <?php echo $pedido->getId() ?>)" class="botao-salvar">Confirmar</button>
+                            <button type="button" onclick="tmpConfirmarPedido(<?php echo $pedido->getId() ?>)" class="botao-salvar">Confirmar</button>
                             <!-- ou -->
                         <?php endif; ?>
 
@@ -207,7 +207,7 @@ $pedido = $this->getAtributo('pedido');
                     /** @var Reserva $reserva */
                     foreach ($pedido->getReservas() as $reserva) : ?>
                         <tr>
-                            <td headers="reserva-id"><?php echo $reserva->getId() ?></td>
+                            <td headers="reserva-id"><?php echo $pedido->getId() ?></td>
                             <td headers="quarto"><?php echo $reserva->getQuarto()->getNome() ?></td>
                             <td headers="hospede"><?php echo $reserva->getHospede() ?></td>
                             <td headers="periodo">
@@ -232,4 +232,74 @@ $pedido = $this->getAtributo('pedido');
         <?php endif; ?>
     </div>
 </div>
+
+<div id="popup-confirmar-pedido" class="popup-modal" style="display: none;"></div>
 [/CORPO]
+
+[SCRIPTS]
+<script>
+    function popupConfirmarPedido(acao, pedido_id) {
+        $.get(
+            '/painel-dlx/apart-hotel/pedidos/' + acao + '-pedido',
+            {id: pedido_id, 'pg-mestra': 'conteudo-master'},
+            function (html) {
+                $('#popup-confirmar-pedido')
+                    .html(html)
+                    .show();
+
+                $('#form-confirmar-pedido, #form-cancelar-pedido').formAjax({
+                    func_depois: function (json) {
+                        alert(json.mensagem);
+
+                        if (json.retorno === 'sucesso') {
+                            window.location.reload();
+                        }
+                    }
+                });
+
+                $(window).on('keyup.__confirmarPedido', function (evt) {
+                    var kc = evt.keycode || evt.which;
+
+                    if (kc === 27) {
+                        fecharPopupConfirmarPedido();
+                    }
+                });
+            },
+            'html'
+        );
+    }
+
+    /**
+     * Fechar o popup de confirmação / cancelamento
+     */
+    function fecharPopupConfirmarPedido() {
+        $('#popup-confirmar-pedido').fadeOut('fast', function () {
+            $(this).html('');
+            $(window).off('keyup.__confirmarPedido');
+        });
+    }
+
+    /**
+     * Função utilizada para confirmar o pedido enquanto não é implementado o histórico do pedido
+     * @param pedido_id
+     */
+    function tmpConfirmarPedido(pedido_id) {
+        if (confirm('Ao confirmar esse pedido, as RESERVAS SOLICITADAS serão geradas e confirmadas automaticamente.\nDeseja realmente confirmar esse pedido?')) {
+            $.post(
+                '/painel-dlx/apart-hotel/pedidos/confirmar-pedido',
+                {id: pedido_id},
+                function (json) {
+                    alert(json.mensagem);
+
+                    if (json.retorno === 'sucesso') {
+                        window.location.reload();
+                    }
+                },
+                'json'
+            )
+        }
+
+        return false;
+    }
+</script>
+[/SCRIPTS]

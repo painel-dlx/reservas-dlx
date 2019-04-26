@@ -23,52 +23,37 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\Domain\Validators\Pedidos;
 
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use Reservas\PainelDLX\Domain\Contracts\PedidoValidatorInterface;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Exceptions\StatusPedidoInvalidoException;
 
 /**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
+ * Class ValidarConfirmarPedido
+ * @package Reservas\PainelDLX\Domain\Validators\Pedidos
+ * @covers ValidarConfirmarPedidoTest
  */
-class GerarReservasPedidoCommand
+class ValidarConfirmarPedido implements PedidoValidatorInterface
 {
-    /**
-     * @var Pedido
-     */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
 
     /**
-     * GerarReservasPedidoCommand constructor.
+     * Valida uma determinada regra sobre um pedido
      * @param Pedido $pedido
-     * @param Usuario $usuario
+     * @return bool
+     * @throws StatusPedidoInvalidoException
      */
-    public function __construct(Pedido $pedido, Usuario $usuario)
+    public function validar(Pedido $pedido): bool
     {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
-    }
+        if ($pedido->isCancelado()) {
+            throw StatusPedidoInvalidoException::cancelado($pedido->getId());
+        }
 
-    /**
-     * @return Pedido
-     */
-    public function getPedido(): Pedido
-    {
-        return $this->pedido;
-    }
+        if ($pedido->isPago()) {
+            throw StatusPedidoInvalidoException::confirmado($pedido->getId());
+        }
 
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
+        return true;
     }
 }

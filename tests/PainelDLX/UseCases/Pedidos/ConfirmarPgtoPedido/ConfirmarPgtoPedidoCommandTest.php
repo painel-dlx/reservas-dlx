@@ -23,52 +23,34 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\ConfirmarPgtoPedido;
 
-
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
+ * Class ConfirmarPgtoPedidoCommandTest
+ * @package Reservas\PainelDLX\Tests\UseCases\Pedidos\ConfirmarPgtoPedido
+ * @coversDefaultClass \Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand
  */
-class GerarReservasPedidoCommand
+class ConfirmarPgtoPedidoCommandTest extends TestCase
 {
     /**
-     * @var Pedido
+     * @return ConfirmarPgtoPedidoCommand
      */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
-
-    /**
-     * GerarReservasPedidoCommand constructor.
-     * @param Pedido $pedido
-     * @param Usuario $usuario
-     */
-    public function __construct(Pedido $pedido, Usuario $usuario)
+    public function test__construct(): ConfirmarPgtoPedidoCommand
     {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
+        $pedido = new Pedido();
+        $command = new ConfirmarPgtoPedidoCommand($pedido);
+
+        $this->assertInstanceOf(ConfirmarPgtoPedidoCommand::class, $command);
+
+        return $command;
     }
 
-    /**
-     * @return Pedido
-     */
-    public function getPedido(): Pedido
+    public function testGetPedido()
     {
-        return $this->pedido;
-    }
 
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
     }
 }

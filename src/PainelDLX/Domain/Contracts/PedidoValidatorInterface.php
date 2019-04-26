@@ -23,52 +23,17 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\Domain\Contracts;
 
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
 
-/**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
- */
-class GerarReservasPedidoCommand
+interface PedidoValidatorInterface
 {
     /**
-     * @var Pedido
-     */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
-
-    /**
-     * GerarReservasPedidoCommand constructor.
+     * Valida uma determinada regra sobre um pedido
      * @param Pedido $pedido
-     * @param Usuario $usuario
+     * @return bool
      */
-    public function __construct(Pedido $pedido, Usuario $usuario)
-    {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
-    }
-
-    /**
-     * @return Pedido
-     */
-    public function getPedido(): Pedido
-    {
-        return $this->pedido;
-    }
-
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
-    }
+    public function validar(Pedido $pedido): bool;
 }

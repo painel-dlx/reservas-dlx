@@ -23,52 +23,49 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Validators\PedidoValidator;
+use Reservas\PainelDLX\Domain\Validators\PedidoValidatorEnum;
 
 /**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
+ * Class ConfirmarPgtoPedidoCommandHandler
+ * @package Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido
+ * @covers ConfirmarPgtoPedidoCommandHandlerTest
  */
-class GerarReservasPedidoCommand
+class ConfirmarPgtoPedidoCommandHandler
 {
     /**
-     * @var Pedido
+     * @var PedidoRepositoryInterface
      */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
+    private $pedido_repository;
 
     /**
-     * GerarReservasPedidoCommand constructor.
-     * @param Pedido $pedido
-     * @param Usuario $usuario
+     * ConfirmarPgtoPedidoCommandHandler constructor.
+     * @param PedidoRepositoryInterface $pedido_repository
      */
-    public function __construct(Pedido $pedido, Usuario $usuario)
+    public function __construct(PedidoRepositoryInterface $pedido_repository)
     {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
+        $this->pedido_repository = $pedido_repository;
     }
 
     /**
+     * @param ConfirmarPgtoPedidoCommand $command
      * @return Pedido
      */
-    public function getPedido(): Pedido
+    public function handle(ConfirmarPgtoPedidoCommand $command): Pedido
     {
-        return $this->pedido;
-    }
+        $pedido = $command->getPedido();
 
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
+        $validator = new PedidoValidator(PedidoValidatorEnum::CONFIRMAR);
+        $validator->validar($pedido);
+
+        $pedido->pago();
+        $this->pedido_repository->update($pedido);
+
+        return $pedido;
     }
 }

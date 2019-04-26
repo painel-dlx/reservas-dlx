@@ -33,7 +33,7 @@ use Vilex\VileX;
  */
 
 /** @var Reserva|null $reserva */
-$pedido = $this->getAtributo('reserva');
+$reserva = $this->getAtributo('reserva');
 ?>
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
@@ -44,64 +44,64 @@ $pedido = $this->getAtributo('reserva');
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Reserva:</span>
-                    # <?php echo $pedido->getId() ?>
+                    # <?php echo $reserva->getId() ?>
                 </p>
             </div>
 
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Quarto:</span>
-                    <?php echo $pedido->getQuarto() ?>
+                    <?php echo $reserva->getQuarto() ?>
                 </p>
             </div>
 
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Checkin:</span>
-                    <?php echo $pedido->getCheckin()->format('d/m/Y') ?>
+                    <?php echo $reserva->getCheckin()->format('d/m/Y') ?>
                 </p>
 
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Checkout:</span>
-                    <?php echo $pedido->getCheckout()->format('d/m/Y') ?>
+                    <?php echo $reserva->getCheckout()->format('d/m/Y') ?>
                 </p>
             </div>
 
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Adultos:</span>
-                    <?php echo $pedido->getAdultos() ?>
+                    <?php echo $reserva->getAdultos() ?>
                 </p>
 
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Crianças:</span>
-                    <?php echo $pedido->getCriancas() ?>
+                    <?php echo $reserva->getCriancas() ?>
                 </p>
             </div>
 
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Valor:</span>
-                    R$ <?php echo number_format($pedido->getValor(), 2, ',', '') ?>
+                    R$ <?php echo number_format($reserva->getValor(), 2, ',', '') ?>
                 </p>
 
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Status:</span>
-                    <span class="status-reserva -<?php echo strtolower($pedido->getStatus()) ?>">
-                        <?php echo $pedido->getStatus() ?>
+                    <span class="status-reserva -<?php echo strtolower($reserva->getStatus()) ?>">
+                        <?php echo $reserva->getStatus() ?>
                     </span>
                 </p>
             </div>
 
-            <?php if ($pedido->isPendente() || $pedido->isConfirmada()) : ?>
+            <?php if ($reserva->isPendente() || $reserva->isConfirmada()) : ?>
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado info-reserva-botoes">
-                        <?php if ($pedido->isPendente()) : ?>
-                            <button type="button" onclick="popupConfirmarReserva('confirmar', <?php echo $pedido->getId() ?>)" class="botao-salvar">Confirmar</button>
+                        <?php if ($reserva->isPendente()) : ?>
+                            <button type="button" onclick="popupConfirmarReserva('confirmar', <?php echo $reserva->getId() ?>)" class="botao-salvar">Confirmar</button>
                             ou
                         <?php endif; ?>
 
-                        <button type="button" onclick="popupConfirmarReserva('cancelar', <?php echo $pedido->getId() ?>)" class="botao-cancelar">Cancelar</button>
+                        <button type="button" onclick="popupConfirmarReserva('cancelar', <?php echo $reserva->getId() ?>)" class="botao-cancelar">Cancelar</button>
                     </p>
                 </div>
             <?php endif; ?>
@@ -114,22 +114,22 @@ $pedido = $this->getAtributo('reserva');
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">Nome:</span>
-                <?php echo $pedido->getHospede() ?>
+                <?php echo $reserva->getHospede() ?>
             </p>
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">CPF:</span>
-                <?php echo $pedido->getCpf() ?>
+                <?php echo $reserva->getCpf() ?>
             </p>
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">Telefone:</span>
-                <?php echo $pedido->getTelefone() ?>
+                <?php echo $reserva->getTelefone() ?>
             </p>
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">Email:</span>
-                <?php echo $pedido->getEmail() ?>
+                <?php echo $reserva->getEmail() ?>
             </p>
         </details>
 
@@ -138,12 +138,12 @@ $pedido = $this->getAtributo('reserva');
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">Valor:</span>
-                <?php echo 'R$ ' . number_format($pedido->getValor(), 2, ',', '') ?>
+                <?php echo 'R$ ' . number_format($reserva->getValor(), 2, ',', '') ?>
             </p>
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">Origem:</span>
-                <?php echo $pedido->getOrigem() ?>
+                <?php echo $reserva->getOrigem() ?>
             </p>
         </details>
 
@@ -152,7 +152,7 @@ $pedido = $this->getAtributo('reserva');
 
             <?php
             /** @var ReservaHistorico $historico */
-            foreach ($pedido->getHistorico() as $historico) : ?>
+            foreach ($reserva->getHistorico() as $historico) : ?>
                 <p class="detalhe-registro-paragr">
                     <?php echo $historico ?>
                 </p>

@@ -27,8 +27,10 @@ namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\GerarReservasPedido;
 
 use DateTime;
 use DLX\Infra\EntityManagerX;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
@@ -69,6 +71,8 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
         $checkin = new DateTime();
         $checkout = (clone $checkin)->modify('+2 days');
 
+        $usuario = new Usuario('Teste de Usuário', 'teste@gmail.com');
+
         $pedido = new Pedido();
         $pedido->setNome('Teste de Cliente');
         $pedido->setEmail('cliente@gmail.com');
@@ -84,8 +88,14 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
             12.34
         );
 
-        $command = new GerarReservasPedidoCommand($pedido);
+        $command = new GerarReservasPedidoCommand($pedido, $usuario);
         $handler->handle($command);
+
+        /** @var Reserva $reserva */
+        foreach ($pedido->getReservas() as $reserva) {
+            $this->assertEquals('Website', $reserva->getOrigem());
+            $this->assertTrue($reserva->isConfirmada(), "Reserva para o quarto '{$reserva->getQuarto()}' não está confirmada.");
+        }
 
         $this->assertCount(count($pedido->getItens()), $pedido->getReservas());
     }

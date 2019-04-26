@@ -23,52 +23,34 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\Domain\Validators\Pedidos;
 
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use Reservas\PainelDLX\Domain\Contracts\PedidoValidatorInterface;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Exceptions\ReservasPedidoInvalidasException;
 
-/**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
- */
-class GerarReservasPedidoCommand
+class ValidarReservasGeradas implements PedidoValidatorInterface
 {
     /**
-     * @var Pedido
-     */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
-
-    /**
-     * GerarReservasPedidoCommand constructor.
+     * Valida uma determinada regra sobre um pedido
      * @param Pedido $pedido
-     * @param Usuario $usuario
+     * @return bool
+     * @throws ReservasPedidoInvalidasException
      */
-    public function __construct(Pedido $pedido, Usuario $usuario)
+    public function validar(Pedido $pedido): bool
     {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
-    }
+        $qtde_reservas = $pedido->getReservas()->count();
+        $qtde_itens = count($pedido->getItens());
 
-    /**
-     * @return Pedido
-     */
-    public function getPedido(): Pedido
-    {
-        return $this->pedido;
-    }
+        if ($qtde_reservas < 1) {
+            throw ReservasPedidoInvalidasException::nenhumaEncontrada();
+        }
 
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
+        if ($qtde_reservas !== $qtde_itens) {
+            throw ReservasPedidoInvalidasException::qtdeIncorreta($qtde_reservas, $qtde_itens);
+        }
+
+        return true;
     }
 }

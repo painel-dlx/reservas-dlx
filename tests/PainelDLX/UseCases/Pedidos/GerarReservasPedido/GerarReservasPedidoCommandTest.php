@@ -25,6 +25,7 @@
 
 namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\GerarReservasPedido;
 
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\Tests\ReservasTestCase;
@@ -42,7 +43,8 @@ class GerarReservasPedidoCommandTest extends ReservasTestCase
     public function test__construct(): GerarReservasPedidoCommand
     {
         $pedido = new Pedido();
-        $command = new GerarReservasPedidoCommand($pedido);
+        $usuario = new Usuario('Teste de Usuario', 'teste@gmail.com');
+        $command = new GerarReservasPedidoCommand($pedido, $usuario);
 
         $this->assertInstanceOf(GerarReservasPedidoCommand::class, $command);
 
@@ -57,5 +59,15 @@ class GerarReservasPedidoCommandTest extends ReservasTestCase
     public function test_GetPedido(GerarReservasPedidoCommand $command)
     {
         $this->assertInstanceOf(Pedido::class, $command->getPedido());
+    }
+
+    /**
+     * @param GerarReservasPedidoCommand $command
+     * @covers ::getUsuario
+     * @depends test__construct
+     */
+    public function test_GetUsuario(GerarReservasPedidoCommand $command)
+    {
+        $this->assertInstanceOf(Usuario::class, $command->getUsuario());
     }
 }

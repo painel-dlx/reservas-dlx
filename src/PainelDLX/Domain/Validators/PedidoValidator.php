@@ -23,52 +23,43 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\Domain\Validators;
 
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use Reservas\PainelDLX\Domain\Contracts\PedidoValidatorInterface;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
 
 /**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
+ * Class PedidoValidator
+ * @package Reservas\PainelDLX\Domain\Validators
  */
-class GerarReservasPedidoCommand
+class PedidoValidator extends AbstractValidator implements PedidoValidatorInterface
 {
     /**
-     * @var Pedido
+     * PedidoValidator constructor.
+     * @param array $validators
      */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
-
-    /**
-     * GerarReservasPedidoCommand constructor.
-     * @param Pedido $pedido
-     * @param Usuario $usuario
-     */
-    public function __construct(Pedido $pedido, Usuario $usuario)
+    public function __construct(array $validators)
     {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
+        $this->setValidators($validators);
     }
 
     /**
-     * @return Pedido
+     * Valida uma determinada regra sobre reserva
+     * @param Reserva $pedido
+     * @return bool
      */
-    public function getPedido(): Pedido
+    public function validar(Pedido $pedido): bool
     {
-        return $this->pedido;
-    }
+        foreach ($this->getValidators() as $nomeValidator) {
+            $validator = new $nomeValidator;
 
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
+            if ($validator instanceof PedidoValidatorInterface) {
+                $validator->validar($pedido);
+            }
+        }
+
+        return true;
     }
 }

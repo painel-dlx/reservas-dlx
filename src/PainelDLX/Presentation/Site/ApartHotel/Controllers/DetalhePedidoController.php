@@ -30,10 +30,15 @@ use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
 use League\Tactician\CommandBus;
 use PainelDLX\Application\UseCases\ListaRegistros\ConverterFiltro2Criteria\ConverterFiltro2CriteriaCommand;
+use PainelDLX\Application\UseCases\Usuarios\GetUsuarioPeloId\GetUsuarioPeloIdCommand;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
+use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
+use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
 use SechianeX\Contracts\SessionInterface;
@@ -41,6 +46,7 @@ use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
+use Zend\Diactoros\Response\JsonResponse;
 
 class DetalhePedidoController extends SiteController
 {
@@ -91,7 +97,7 @@ class DetalhePedidoController extends SiteController
 
         try {
             /** @var Pedido $pedido */
-            /** @covers GetPedidoPorIdCommandHandler */
+            /** @see GetPedidoPorIdCommandHandler */
             $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($get['id']));
 
             // Atributos
@@ -109,5 +115,46 @@ class DetalhePedidoController extends SiteController
         }
 
         return $this->view->render();
+    }
+
+    /**
+     * Confirmar o pagamento de um pedido.
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function confirmarPgtoPedido(ServerRequestInterface $request): ResponseInterface
+    {
+        $post = filter_var_array($request->getParsedBody(), [
+            'id' => FILTER_VALIDATE_INT
+        ]);
+
+        /** @var Usuario $usuario_logado */
+        $usuario_logado = $this->session->get('usuario-logado');
+
+        try {
+            /** @var Pedido $pedido */
+            /** @see GetPedidoPorIdCommandHandler */
+            $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($post['id']));
+
+            /** @var Usuario $usuario_logado */
+            /** @see GetUsuarioPeloIdCommandHandler */
+            $usuario_logado = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
+            
+            /** @see GerarReservasPedidoCommandHandler */
+            $this->command_bus->handle(new GerarReservasPedidoCommand($pedido, $usuario_logado));
+
+            $this->transaction->transactional(function () use ($pedido) {
+                /** @see ConfirmarPgtoPedidoCommandHandler */
+                $this->command_bus->handle(new ConfirmarPgtoPedidoCommand($pedido));
+            });
+
+            $json['retorno'] = 'sucesso';
+            $json['mensagem'] = "Pedido #{$pedido->getId()} foi confirmado com sucesso!";
+        } catch (UserException $e) {
+            $json['retorno'] = 'erro';
+            $json['mensagem'] = $e->getMessage();
+        }
+
+        return new JsonResponse($json);
     }
 }

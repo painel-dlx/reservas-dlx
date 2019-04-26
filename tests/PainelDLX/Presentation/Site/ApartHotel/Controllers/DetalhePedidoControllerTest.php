@@ -31,6 +31,7 @@ use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Application\Factories\CommandBusFactory;
+use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\DetalhePedidoController;
 use Reservas\Tests\Helpers\PedidoTesteHelper;
@@ -43,6 +44,7 @@ use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
+use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class DetalhePedidoControllerTest
@@ -51,6 +53,8 @@ use Zend\Diactoros\Response\HtmlResponse;
  */
 class DetalhePedidoControllerTest extends ReservasTestCase
 {
+    use TesteComTransaction;
+
     /**
      * @return DetalhePedidoController
      * @throws SessionAdapterInterfaceInvalidaException
@@ -99,5 +103,27 @@ class DetalhePedidoControllerTest extends ReservasTestCase
 
         $response = $controller->detalhePedido($request);
         $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    /**
+     * @param DetalhePedidoController $controller
+     * @throws DBALException
+     * @throws ORMException
+     * @covers ::confirmarPgtoPedido
+     * @depends test__construct
+     */
+    public function test_ConfirmarPgtoPedido_deve_retornar_JsonResponse(DetalhePedidoController $controller)
+    {
+        $id = PedidoTesteHelper::getIdRandom();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getParsedBody')->willReturn([
+            'id' => $id
+        ]);
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->confirmarPgtoPedido($request);
+        $this->assertInstanceOf(JsonResponse::class, $response);
     }
 }

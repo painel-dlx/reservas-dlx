@@ -31,7 +31,14 @@ use Exception;
 use Reservas\PainelDLX\Domain\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Validators\Reservas\ValidarDisponQuarto;
 
+/**
+ * Class GerarReservasPedidoCommandHandler
+ * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
+ * @covers GerarReservasPedidoCommandHandlerTest
+ * @see GerarReservasPedidoCommand
+ */
 class GerarReservasPedidoCommandHandler
 {
     /**
@@ -71,6 +78,11 @@ class GerarReservasPedidoCommandHandler
             $reserva->setCpf($pedido->getCpf());
             $reserva->setTelefone($pedido->getTelefone());
             $reserva->setEmail($pedido->getEmail());
+            $reserva->setOrigem('Website');
+            $reserva->confirmada("Pedido #{$pedido->getId()} foi confirmado.", $command->getUsuario());
+
+            // Validar a disponibilidade do quarto para o período da reserva
+            (new ValidarDisponQuarto())->validar($reserva);
 
             $pedido->addReserva($reserva);
         }

@@ -64,7 +64,7 @@ Reservas\PainelDLX\Domain\Entities\Pedido:
             mappedBy: pedido
             orderBy: { checkin: asc }
             cascade:
-                - merge
+                - persist
             joinColumns:
                 pedido_id:
                     referencedColumnName: reserva_pedido

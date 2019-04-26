@@ -23,52 +23,28 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\Domain\Exceptions;
 
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use DLX\Core\Exceptions\UserException;
 
-/**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
- */
-class GerarReservasPedidoCommand
+class ReservasPedidoInvalidasException extends UserException
 {
     /**
-     * @var Pedido
+     * @return ReservasPedidoInvalidasException
      */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
-
-    /**
-     * GerarReservasPedidoCommand constructor.
-     * @param Pedido $pedido
-     * @param Usuario $usuario
-     */
-    public function __construct(Pedido $pedido, Usuario $usuario)
+    public static function nenhumaEncontrada(): self
     {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
+        return new static('Antes de confirmar o pagamento do pedido, é necessário gerar as reservas com base nos itens.');
     }
 
     /**
-     * @return Pedido
+     * @param int $qtde_reservas
+     * @param int $qtde_itens
+     * @return ReservasPedidoInvalidasException
      */
-    public function getPedido(): Pedido
+    public static function qtdeIncorreta(int $qtde_reservas, int $qtde_itens): self
     {
-        return $this->pedido;
-    }
-
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
+        return new static("A quantidade de reservas geradas ({$qtde_reservas}) é diferente da quantidade de itens do pedido ({$qtde_itens}).");
     }
 }

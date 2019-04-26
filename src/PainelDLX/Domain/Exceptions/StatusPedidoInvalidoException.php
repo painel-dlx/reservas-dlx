@@ -23,52 +23,28 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\PainelDLX\Domain\Exceptions;
 
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use DLX\Core\Exceptions\UserException;
 
-/**
- * Class GerarReservasPedidoCommand
- * @package Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandTest
- */
-class GerarReservasPedidoCommand
+class StatusPedidoInvalidoException extends UserException
 {
     /**
-     * @var Pedido
+     * @param int $pedido_id
+     * @return StatusPedidoInvalidoException
      */
-    private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
-
-    /**
-     * GerarReservasPedidoCommand constructor.
-     * @param Pedido $pedido
-     * @param Usuario $usuario
-     */
-    public function __construct(Pedido $pedido, Usuario $usuario)
+    public static function confirmado(int $pedido_id)
     {
-        $this->pedido = $pedido;
-        $this->usuario = $usuario;
+        return new self("Pedido {$pedido_id} já está confirmado!");
     }
 
     /**
-     * @return Pedido
+     * @param int $pedido_id
+     * @return StatusPedidoInvalidoException
      */
-    public function getPedido(): Pedido
+    public static function cancelado(int $pedido_id)
     {
-        return $this->pedido;
-    }
-
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
+        return new self("Pedido {$pedido_id} já está cancelado!");
     }
 }

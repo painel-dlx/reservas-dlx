@@ -301,4 +301,24 @@ class Pedido extends Entity
     {
         return $this->getStatus() === self::STATUS_CANCELADO;
     }
+
+    /**
+     * Informar que o pedido foi pago
+     * @return Pedido
+     */
+    public function pago(): self
+    {
+        $this->setStatus(self::STATUS_PAGO);
+        return $this;
+    }
+
+    /**
+     * Informar que o pedido foi cancelado
+     * @return Pedido
+     */
+    public function cancelado(): self
+    {
+        $this->setStatus(self::STATUS_CANCELADO);
+        return $this;
+    }
 }
