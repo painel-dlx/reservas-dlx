@@ -102,7 +102,7 @@ class MapaDisponController extends SiteController
         $data_inicial = new DateTime($get['data_inicial']);
         $data_final = new DateTime($get['data_final']);
 
-        if ($data_inicial->diff($data_final)->format('%d') < 14) {
+        if ($data_inicial->diff($data_final)->days < 14) {
             $data_final = (clone $data_inicial)->modify('+13 days');
         }
 
