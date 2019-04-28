@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\Domain\Entities;
 
 
+use CPF\CPF;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -41,7 +42,7 @@ class Pedido extends Entity
     private $id;
     /** @var string */
     private $nome;
-    /** @var string */
+    /** @var CPF */
     private $cpf;
     /** @var string */
     private $email;
@@ -102,18 +103,18 @@ class Pedido extends Entity
     }
 
     /**
-     * @return string
+     * @return CPF
      */
-    public function getCpf(): string
+    public function getCpf(): CPF
     {
         return $this->cpf;
     }
 
     /**
-     * @param string $cpf
+     * @param CPF $cpf
      * @return Pedido
      */
-    public function setCpf(string $cpf): Pedido
+    public function setCpf(CPF $cpf): Pedido
     {
         $this->cpf = $cpf;
         return $this;

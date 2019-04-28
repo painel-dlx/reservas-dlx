@@ -26,17 +26,15 @@
 namespace Reservas\PainelDLX\Domain\Exceptions;
 
 
-use DateTime;
-use DLX\Core\Exceptions\UserException;
+use Exception;
 
-class CheckinAnteriorHojeException extends UserException
+class NaoPodeVisualizarCpfCompletoException extends Exception
 {
     /**
-     * CheckinAnteriorHojeException constructor.
-     * @param DateTime $checkin
+     * @return NaoPodeVisualizarCpfCompletoException
      */
-    public function __construct(DateTime $checkin)
+    public static function limiteVisualizacoesAlcancado()
     {
-        parent::__construct("Não é possível confirmar ou cancelar uma reserva após a data de checkin ({$checkin->format('d/m/Y')}).");
+        return new self('Você já visualizou esse CPF o máximo de vezes permitido.', 10);
     }
 }

@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 
+use CPF\ORM\Doctrine\Types\CPFType;
 use DLX\Core\Configure;
 use Doctrine\DBAL\Logging\EchoSQLLogger;
 use PainelDLX\Application\Services\PainelDLX;
@@ -59,6 +60,9 @@ return [
 
             "{$dir_painel_dlx}src/Infra/ORM/Doctrine/Mappings",
             "{$dir_painel_dlx}src/Infra/ORM/Doctrine/Repositories"
+        ],
+        'types' => [
+            'cpf' => CPFType::class
         ],
         'conexao' => [
             'dbname' => 'bsbaparthoteis_dev',

@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
 use Vilex\VileX;
@@ -34,6 +34,9 @@ use Vilex\VileX;
 
 /** @var Reserva|null $reserva */
 $reserva = $this->getAtributo('reserva');
+
+/** @var Usuario $usuario_logado */
+$usuario_logado = $this->getAtributo('usuario-logado');
 ?>
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
@@ -119,7 +122,11 @@ $reserva = $this->getAtributo('reserva');
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">CPF:</span>
-                <?php echo $reserva->getCpf() ?>
+                <span id="cpf-cliente"><?php echo $reserva->getCpf()->getCpfOculto() ?></span>
+
+                <?php if ($reserva->podeVisualizarCpfCompleto($usuario_logado)) : ?>
+                    <a href="javascript:" id="btn-cpf-completo" onclick="mostrarCpfCompleto(<?php echo $reserva->getId() ?>)">CPF completo</a>
+                <?php endif; ?>
             </p>
 
             <p class="detalhe-registro-paragr">

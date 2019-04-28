@@ -26,10 +26,12 @@
 namespace Reservas\PainelDLX\Domain\Entities;
 
 
+use CPF\CPF;
 use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 
 /**
@@ -51,7 +53,7 @@ class Reserva extends Entity
     private $quarto;
     /** @var string */
     private $hospede;
-    /** @var string */
+    /** @var CPF */
     private $cpf;
     /** @var string */
     private $telefone;
@@ -73,6 +75,8 @@ class Reserva extends Entity
     private $origem;
     /** @var Collection */
     private $historico;
+    /** @var Collection */
+    private $visualizacoes_cpf;
 
     /**
      * Reserva constructor.
@@ -88,6 +92,7 @@ class Reserva extends Entity
         $this->checkout = $checkout;
         $this->adultos = $adultos;
         $this->historico = new ArrayCollection();
+        $this->visualizacoes_cpf = new ArrayCollection();
     }
 
     /**
@@ -163,18 +168,18 @@ class Reserva extends Entity
     }
 
     /**
-     * @return string
+     * @return CPF
      */
-    public function getCpf(): string
+    public function getCpf(): CPF
     {
         return $this->cpf;
     }
 
     /**
-     * @param string $cpf
+     * @param CPF $cpf
      * @return Reserva
      */
-    public function setCpf(string $cpf): Reserva
+    public function setCpf(CPF $cpf): Reserva
     {
         $this->cpf = $cpf;
         return $this;
@@ -368,6 +373,27 @@ class Reserva extends Entity
     }
 
     /**
+     * @return Collection
+     */
+    public function getVisualizacoesCpf(): Collection
+    {
+        return $this->visualizacoes_cpf;
+    }
+
+    /**
+     * Adicionar visualização de CPF
+     * @param Usuario $usuario
+     * @return Reserva
+     */
+    public function addVisualizacaoCpf(Usuario $usuario): self
+    {
+        $vis_cpf = new VisualizacaoCpf($this, $usuario);
+        $this->visualizacoes_cpf->add($vis_cpf);
+
+        return $this;
+    }
+
+    /**
      * Verifica se a reserva está pendente
      * @return bool
      */
@@ -451,5 +477,20 @@ class Reserva extends Entity
         $this->setStatus(self::STATUS_CANCELADA);
         $this->addHistorico(self::STATUS_CANCELADA, $motivo, $usuario);
         return $this;
+    }
+
+    /**
+     * Verifica se um determinado usuário pode visualizar o CPF completo
+     * @param Usuario $usuario
+     * @return bool
+     */
+    public function podeVisualizarCpfCompleto(Usuario $usuario): bool
+    {
+        $criteria = Criteria::create();
+        $criteria->andWhere(Criteria::expr()->eq('usuario', $usuario));
+
+        $qtde_vis = $this->visualizacoes_cpf->matching($criteria)->count();
+
+        return $qtde_vis < 3;
     }
 }

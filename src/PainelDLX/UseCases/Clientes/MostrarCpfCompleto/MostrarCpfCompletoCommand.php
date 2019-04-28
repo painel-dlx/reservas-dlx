@@ -23,20 +23,47 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Exceptions;
+namespace Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto;
 
 
-use DateTime;
-use DLX\Core\Exceptions\UserException;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
 
-class CheckinAnteriorHojeException extends UserException
+/**
+ * Class MostrarCpfCompletoCommand
+ * @package Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto
+ * @covers MostrarCpfCompletoCommandTest
+ */
+class MostrarCpfCompletoCommand
 {
     /**
-     * CheckinAnteriorHojeException constructor.
-     * @param DateTime $checkin
+     * @var Reserva
      */
-    public function __construct(DateTime $checkin)
+    private $reserva;
+    /**
+     * @var Usuario
+     */
+    private $usuario;
+
+    public function __construct(Reserva $reserva, Usuario $usuario)
     {
-        parent::__construct("Não é possível confirmar ou cancelar uma reserva após a data de checkin ({$checkin->format('d/m/Y')}).");
+        $this->reserva = $reserva;
+        $this->usuario = $usuario;
+    }
+
+    /**
+     * @return Reserva
+     */
+    public function getReserva(): Reserva
+    {
+        return $this->reserva;
+    }
+
+    /**
+     * @return Usuario
+     */
+    public function getUsuario(): Usuario
+    {
+        return $this->usuario;
     }
 }

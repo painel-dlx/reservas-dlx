@@ -17,7 +17,7 @@ Reservas\PainelDLX\Domain\Entities\Reserva:
             length: 200
             column: reserva_hospede
         cpf:
-            type: string
+            type: cpf
             nullable: false
             length: 14
             column: reserva_cpf
@@ -80,7 +80,15 @@ Reservas\PainelDLX\Domain\Entities\Reserva:
             mappedBy: reserva
             cascade:
                 - persist
-                - merge
             joinColumns:
                 reserva_id:
                     referencedColumnName: reserva_id
+        visualizacoes_cpf:
+            targetEntity: VisualizacaoCpf
+            orderBy: { data: desc, usuario: asc }
+            mappedBy: reserva
+            cascade:
+                - persist
+            joinColumns:
+                reserva_id:
+                    referencedColumnName: viscpf_reserva

@@ -127,7 +127,7 @@ $pedido = $this->getAtributo('pedido');
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">CPF:</span>
-                <?php echo $pedido->getCpf() ?>
+                <?php echo $pedido->getCpf()->getCpfOculto() ?>
             </p>
 
             <p class="detalhe-registro-paragr">

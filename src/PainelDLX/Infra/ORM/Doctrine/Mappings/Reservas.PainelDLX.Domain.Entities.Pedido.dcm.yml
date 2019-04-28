@@ -17,7 +17,7 @@ Reservas\PainelDLX\Domain\Entities\Pedido:
             length: 50
             column: pedido_nome
         cpf:
-            type: string
+            type: cpf
             nullable: false
             length: 14
             column: pedido_cpf

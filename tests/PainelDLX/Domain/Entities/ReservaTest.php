@@ -68,6 +68,7 @@ class ReservaTest extends ReservasTestCase
         $this->assertEquals($checkout, $reserva->getCheckout());
         $this->assertEquals($adultos, $reserva->getAdultos());
         $this->assertInstanceOf(Collection::class, $reserva->getHistorico());
+        $this->assertInstanceOf(Collection::class, $reserva->getVisualizacoesCpf());
 
         return $reserva;
     }

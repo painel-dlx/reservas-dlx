@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers;
 
 
+use CPF\CPF;
 use DateTime;
 use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
@@ -148,7 +149,7 @@ class SalvarReservaController extends SiteController
             $reserva = new Reserva($quarto, $dt_checkin, $dt_checkout, $post['adultos']);
             $reserva->setCriancas($post['criancas']);
             $reserva->setHospede($post['hospede']);
-            $reserva->setCpf($post['cpf']);
+            $reserva->setCpf(new CPF($post['cpf']));
             $reserva->setTelefone($post['telefone']);
             $reserva->setEmail($post['email']);
             $reserva->setOrigem('Painel DLX');

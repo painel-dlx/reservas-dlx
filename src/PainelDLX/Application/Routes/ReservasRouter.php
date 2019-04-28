@@ -45,6 +45,7 @@ class ReservasRouter extends PainelDLXRouter
         $router = $this->getRouter();
         $verificar_logon = new VerificarLogon($this->session);
         $define_pagina_mestra = new DefinePaginaMestra($this->painel_dlx->getServerRequest(), $this->session);
+        $perm_ver_detalhes_reservas = new Autorizacao('VER_DETALHES_RESERVAS');
 
         $router->get(
             '/painel-dlx/apart-hotel/reservas',
@@ -78,8 +79,16 @@ class ReservasRouter extends PainelDLXRouter
             [DetalheReservaController::class, 'detalhesReserva']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('VER_DETALHES_RESERVAS'),
+            $perm_ver_detalhes_reservas,
             $define_pagina_mestra
+        );
+
+        $router->get(
+            '/painel-dlx/apart-hotel/reservas/mostrar-cpf-completo',
+            [DetalheReservaController::class, 'mostrarCpfCompleto']
+        )->middlewares(
+            $verificar_logon,
+            $perm_ver_detalhes_reservas
         );
 
         $router->get(

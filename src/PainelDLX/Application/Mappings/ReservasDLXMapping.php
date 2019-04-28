@@ -26,6 +26,8 @@
 namespace Reservas\PainelDLX\Application\Mappings;
 
 
+use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
+use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommandHandler;
 use Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommand;
 use Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommandHandler;
 use Reservas\PainelDLX\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo\ListaDisponibilidadePorPeriodoCommand;
@@ -81,6 +83,7 @@ class ReservasDLXMapping
         GetPedidoPorIdCommand::class => GetPedidoPorIdCommandHandler::class,
         GerarReservasPedidoCommand::class => GerarReservasPedidoCommandHandler::class,
         ConfirmarPgtoPedidoCommand::class => ConfirmarPgtoPedidoCommandHandler::class,
+        MostrarCpfCompletoCommand::class => MostrarCpfCompletoCommandHandler::class,
     ];
 
     /**

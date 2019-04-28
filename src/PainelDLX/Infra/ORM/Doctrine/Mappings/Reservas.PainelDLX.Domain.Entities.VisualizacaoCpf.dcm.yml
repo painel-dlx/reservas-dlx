@@ -1,0 +1,28 @@
+Reservas\PainelDLX\Domain\Entities\VisualizacaoCpf:
+    type: entity
+    table: dlx_reservas_visualizacoes_cpf
+    # repositoryClass: Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories\VisualizacaoCpfRepository
+    id:
+        reserva:
+            associationKey: true
+            id: true
+        usuario:
+            associationKey: true
+            id: true
+    fields:
+        data:
+            type: datetime
+            nullable: false
+            column: viscpf_data
+    manyToOne:
+        reserva:
+            targetEntity: Reserva
+            inversedBy: visualizacoes_cpf
+            joinColumns:
+                viscpf_reserva:
+                    referencedColumnName: reserva_id
+        usuario:
+            targetEntity: \PainelDLX\Domain\Usuarios\Entities\Usuario
+            joinColumns:
+                viscpf_usuario:
+                    referencedColumnName: usuario_id

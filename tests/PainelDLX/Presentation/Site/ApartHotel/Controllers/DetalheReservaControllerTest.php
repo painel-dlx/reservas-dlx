@@ -229,4 +229,26 @@ class DetalheReservaControllerTest extends ReservasTestCase
         $response = $controller->cancelarReserva($request);
         $this->assertInstanceOf(JsonResponse::class, $response);
     }
+
+    /**
+     * @param DetalheReservaController $controller
+     * @throws DBALException
+     * @throws ORMException
+     * @covers ::mostrarCpfCompleto
+     * @depends test__construct
+     */
+    public function test_MostrarCpfCompleto_deve_retornar_JsonResponse(DetalheReservaController $controller)
+    {
+        $id = $this->getRandomReserva();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getQueryParams')->willReturn([
+            'id' => $id
+        ]);
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->mostrarCpfCompleto($request);
+        $this->assertInstanceOf(JsonResponse::class, $response);
+    }
 }
