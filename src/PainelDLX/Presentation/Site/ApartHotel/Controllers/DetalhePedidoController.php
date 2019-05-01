@@ -29,18 +29,23 @@ namespace Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers;
 use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
 use League\Tactician\CommandBus;
-use PainelDLX\Application\UseCases\ListaRegistros\ConverterFiltro2Criteria\ConverterFiltro2CriteriaCommand;
 use PainelDLX\Application\UseCases\Usuarios\GetUsuarioPeloId\GetUsuarioPeloIdCommand;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Exceptions\NaoPodeVisualizarCpfCompletoException;
+use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
+use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
+use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
-use Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
+use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler;
+use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use SechianeX\Contracts\SessionInterface;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
@@ -95,17 +100,28 @@ class DetalhePedidoController extends SiteController
             'id' => FILTER_VALIDATE_INT
         ]);
 
+        /** @var Usuario $usuario_logado */
+        $usuario_logado = $this->session->get('usuario-logado');
+
         try {
             /** @var Pedido $pedido */
             /** @see GetPedidoPorIdCommandHandler */
             $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($get['id']));
 
+            /** @var Usuario $usuario_logado */
+            /** @see GetUsuarioPeloIdCommandHandler */
+            $usuario_logado = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
+
             // Atributos
             $this->view->setAtributo('titulo-pagina', "Pedido #{$pedido->getId()}");
             $this->view->setAtributo('pedido', $pedido);
+            $this->view->setAtributo('usuario-logado', $usuario_logado);
 
             // Views
             $this->view->addTemplate('det_pedido');
+
+            // JS
+            $this->view->addArquivoJS('src/PainelDLX/Presentation/Site/public/js/apart-hotel.js');
         } catch (UserException $e) {
             $this->view->addTemplate('../mensagem_usuario');
             $this->view->setAtributo('mensagem', [
@@ -151,6 +167,43 @@ class DetalhePedidoController extends SiteController
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Pedido #{$pedido->getId()} foi confirmado com sucesso!";
         } catch (UserException $e) {
+            $json['retorno'] = 'erro';
+            $json['mensagem'] = $e->getMessage();
+        }
+
+        return new JsonResponse($json);
+    }
+
+    /**
+     * Mostrar o CPF completo do cliente de um pedido
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function mostrarCpfCompleto(ServerRequestInterface $request): ResponseInterface
+    {
+        $get = filter_var_array($request->getQueryParams(), [
+            'id' => FILTER_VALIDATE_INT
+        ]);
+
+        /** @var Usuario $usuario */
+        $usuario = $this->session->get('usuario-logado');
+
+        try {
+            /** @var Pedido $pedido */
+            /* @see GetPedidoPorIdCommandHandler */
+            $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($get['id']));
+
+            /** @var Usuario $usuario_logado */
+            /* @see GetUsuarioPeloIdCommandHandler */
+            $usuario_logado = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getUsuarioId()));
+
+            /** @var string $cpf */
+            /* @see MostrarCpfCompletoPedidoCommandHandler */
+            $cpf = $this->command_bus->handle(new MostrarCpfCompletoPedidoCommand($pedido, $usuario_logado));
+
+            $json['retorno'] = 'sucesso';
+            $json['cpf'] = $cpf;
+        } catch (NaoPodeVisualizarCpfCompletoException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

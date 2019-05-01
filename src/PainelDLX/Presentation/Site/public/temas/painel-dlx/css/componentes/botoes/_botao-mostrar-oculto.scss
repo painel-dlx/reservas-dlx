@@ -1,0 +1,12 @@
+.botao-mostrar-oculto {
+    @extend .botao;
+
+    // Visual
+    background: #8b8ac1;
+    border-bottom-color: #6a6a96;
+
+    &:hover {
+        // Visual
+        background: #7f7fb4;
+    }
+}

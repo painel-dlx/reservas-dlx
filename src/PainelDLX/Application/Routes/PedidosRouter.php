@@ -68,5 +68,13 @@ class PedidosRouter extends PainelDLXRouter
             $verificar_logon,
             $define_pagina_mestra
         );
+
+        $router->get(
+            '/painel-dlx/apart-hotel/pedidos/mostrar-cpf-completo',
+            [DetalhePedidoController::class, 'mostrarCpfCompleto']
+        )->middlewares(
+            $verificar_logon,
+            $define_pagina_mestra
+        );
     }
 }

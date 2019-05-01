@@ -23,6 +23,7 @@
  * SOFTWARE.
  */
 
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Vilex\VileX;
@@ -33,6 +34,9 @@ use Vilex\VileX;
 
 /** @var Pedido $pedido */
 $pedido = $this->getAtributo('pedido');
+
+/** @var Usuario $usuario_logado */
+$usuario_logado = $this->getAtributo('usuario-logado');
 ?>
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
@@ -127,7 +131,20 @@ $pedido = $this->getAtributo('pedido');
 
             <p class="detalhe-registro-paragr">
                 <span class="detalhe-registro-rotulo">CPF:</span>
-                <?php echo $pedido->getCpf()->getCpfOculto() ?>
+                <span id="cpf-cliente">
+                    <?php echo $pedido->isPago() ? $pedido->getCpf()->getCpfOculto() : $pedido->getCpf()->getCpfMask() ?>
+                </span>
+
+                <?php if ($pedido->isPago()) :
+                    /** @var Reserva $reserva */
+                    $reserva = $pedido->getReservas()->first();
+                    if ($reserva->podeVisualizarCpfCompleto($usuario_logado)) : ?>
+                        <br>
+                        <button id="btn-cpf-completo" onclick="mostrarCpfCompletoPedido(<?php echo $reserva->getId() ?>)" class="botao-mostrar-oculto">
+                            CPF completo
+                        </button>
+                    <?php endif;
+                endif; ?>
             </p>
 
             <p class="detalhe-registro-paragr">

@@ -125,7 +125,10 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                 <span id="cpf-cliente"><?php echo $reserva->getCpf()->getCpfOculto() ?></span>
 
                 <?php if ($reserva->podeVisualizarCpfCompleto($usuario_logado)) : ?>
-                    <a href="javascript:" id="btn-cpf-completo" onclick="mostrarCpfCompleto(<?php echo $reserva->getId() ?>)">CPF completo</a>
+                    <br>
+                    <button id="btn-cpf-completo" onclick="mostrarCpfCompleto(<?php echo $reserva->getId() ?>)" class="botao-mostrar-oculto">
+                        CPF completo
+                    </button>
                 <?php endif; ?>
             </p>
 

@@ -39,3 +39,24 @@ function mostrarCpfCompleto(reserva_id) {
         'json'
     );
 }
+
+/**
+ * Mostrar o CPF completo do cliente de um determinado pedido
+ * @param pedido_id
+ */
+function mostrarCpfCompletoPedido(pedido_id) {
+    $.get(
+        '/painel-dlx/apart-hotel/pedidos/mostrar-cpf-completo',
+        {id: pedido_id},
+        function (json) {
+            if (json.retorno === 'erro') {
+                alert(json.mensagem);
+                return;
+            }
+
+            $('#cpf-cliente').html(json.cpf);
+            $('#btn-cpf-completo').remove();
+        },
+        'json'
+    );
+}
