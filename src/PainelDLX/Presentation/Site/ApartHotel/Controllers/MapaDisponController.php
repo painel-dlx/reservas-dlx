@@ -34,7 +34,7 @@ use League\Tactician\CommandBus;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommand;
 use Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommandHandler;

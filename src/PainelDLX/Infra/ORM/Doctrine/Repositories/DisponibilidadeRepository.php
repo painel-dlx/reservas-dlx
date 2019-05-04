@@ -30,11 +30,11 @@ use DateTime;
 use DLX\Infra\ORM\Doctrine\Repositories\EntityRepository;
 use Doctrine\DBAL\ParameterType;
 use Exception;
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 
-class DisponibilidadeRepository extends EntityRepository implements DisponibilidadeRepositoryInterface
+class DisponibilidadeRepository extends EntityRepository implements \Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface
 {
 
     /**

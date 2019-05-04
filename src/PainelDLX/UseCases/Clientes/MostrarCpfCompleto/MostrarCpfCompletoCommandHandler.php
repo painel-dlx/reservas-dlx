@@ -25,19 +25,19 @@
 
 namespace Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto;
 
-use Reservas\PainelDLX\Domain\Exceptions\NaoPodeVisualizarCpfCompletoException;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 
 class MostrarCpfCompletoCommandHandler
 {
     /**
-     * @var ReservaRepositoryInterface
+     * @var \Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface
      */
     private $reserva_repository;
 
     /**
      * MostrarCpfCompletoCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
+     * @param \Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository
      */
     public function __construct(ReservaRepositoryInterface $reserva_repository)
     {
@@ -46,8 +46,8 @@ class MostrarCpfCompletoCommandHandler
 
     /**
      * @param MostrarCpfCompletoCommand $command
-     * @throws NaoPodeVisualizarCpfCompletoException
      * @return string Retorna o CPF completo do cliente / hóspede
+     *@throws VisualizarCpfException
      */
     public function handle(MostrarCpfCompletoCommand $command): string
     {
@@ -55,7 +55,7 @@ class MostrarCpfCompletoCommandHandler
         $usuario = $command->getUsuario();
 
         if (!$reserva->podeVisualizarCpfCompleto($usuario)) {
-            throw NaoPodeVisualizarCpfCompletoException::limiteVisualizacoesAlcancado();
+            throw VisualizarCpfException::limiteVisualizacoesAlcancado();
         }
 
         $reserva->addVisualizacaoCpf($usuario);

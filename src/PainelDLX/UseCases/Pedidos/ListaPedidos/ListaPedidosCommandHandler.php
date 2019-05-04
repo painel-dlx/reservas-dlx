@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos;
 
 
 use PainelDLX\Application\Contracts\ListaRegistrosCommand;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
 /**
  * Class ListaPedidosCommandHandler
@@ -43,7 +43,7 @@ class ListaPedidosCommandHandler
 
     /**
      * ListaPedidosCommandHandler constructor.
-     * @param PedidoRepositoryInterface $pedido_repository
+     * @param \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
     {

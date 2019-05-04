@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\GerarReservasPedido;
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\Tests\ReservasTestCase;
 

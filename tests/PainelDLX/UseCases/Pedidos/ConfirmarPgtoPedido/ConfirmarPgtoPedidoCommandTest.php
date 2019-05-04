@@ -25,7 +25,7 @@
 
 namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\ConfirmarPgtoPedido;
 
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use PHPUnit\Framework\TestCase;
 

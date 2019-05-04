@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto;
 
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 
 /**
  * Class MostrarCpfCompletoCommand
@@ -37,7 +37,7 @@ use Reservas\PainelDLX\Domain\Entities\Reserva;
 class MostrarCpfCompletoCommand
 {
     /**
-     * @var Reserva
+     * @var \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva
      */
     private $reserva;
     /**

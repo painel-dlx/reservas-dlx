@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido;
 
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 
 /**
  * Class MostrarCpfCompletoPedidoCommand
@@ -37,7 +37,7 @@ use Reservas\PainelDLX\Domain\Entities\Pedido;
 class MostrarCpfCompletoPedidoCommand
 {
     /**
-     * @var Pedido
+     * @var \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido
      */
     private $pedido;
     /**
@@ -57,7 +57,7 @@ class MostrarCpfCompletoPedidoCommand
     }
 
     /**
-     * @return Pedido
+     * @return \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido
      */
     public function getPedido(): Pedido
     {

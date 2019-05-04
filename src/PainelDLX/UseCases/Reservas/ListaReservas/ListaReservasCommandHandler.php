@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\UseCases\Reservas\ListaReservas;
 
 
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 
 /**
  * Class ListaReservasCommandHandler

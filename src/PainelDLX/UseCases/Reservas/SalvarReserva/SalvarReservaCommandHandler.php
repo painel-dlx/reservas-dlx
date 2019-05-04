@@ -26,10 +26,10 @@
 namespace Reservas\PainelDLX\UseCases\Reservas\SalvarReserva;
 
 
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Validators\ReservaValidator;
+use Reservas\PainelDLX\Domain\Reservas\Validators\ReservaValidatorsEnum;
 
 class SalvarReservaCommandHandler
 {

@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto;
 
 
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 
 /**
  * Class SalvarDisponibilidadeQuartoCommand
@@ -36,13 +36,13 @@ use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 class SalvarDisponibilidadeQuartoCommand
 {
     /**
-     * @var Disponibilidade
+     * @var \Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade
      */
     private $disponibilidade;
 
     /**
      * SalvarDisponibilidadeQuartoCommand constructor.
-     * @param Disponibilidade $disponibilidade
+     * @param \Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade $disponibilidade
      */
     public function __construct(Disponibilidade $disponibilidade)
     {

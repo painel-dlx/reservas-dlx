@@ -26,10 +26,10 @@
 namespace Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 
-use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\PainelDLX\Domain\Validators\PedidoValidator;
-use Reservas\PainelDLX\Domain\Validators\PedidoValidatorEnum;
+use Reservas\PainelDLX\Domain\Pedidos\Validators\PedidoValidatorEnum;
 
 /**
  * Class ConfirmarPgtoPedidoCommandHandler
@@ -39,13 +39,13 @@ use Reservas\PainelDLX\Domain\Validators\PedidoValidatorEnum;
 class ConfirmarPgtoPedidoCommandHandler
 {
     /**
-     * @var PedidoRepositoryInterface
+     * @var \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface
      */
     private $pedido_repository;
 
     /**
      * ConfirmarPgtoPedidoCommandHandler constructor.
-     * @param PedidoRepositoryInterface $pedido_repository
+     * @param \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
     {

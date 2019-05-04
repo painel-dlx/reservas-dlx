@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Vilex\VileX;
 
 /**
@@ -84,7 +84,7 @@ $filtro = $this->getAtributo('filtro');
         </tr>
     <?php endif;
 
-    /** @var Pedido $pedido */
+    /** @var \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido */
     foreach ($lista_pedidos as $pedido) : ?>
         <tr>
             <td headers="pedido-id"><?php echo $pedido->getId() ?></td>

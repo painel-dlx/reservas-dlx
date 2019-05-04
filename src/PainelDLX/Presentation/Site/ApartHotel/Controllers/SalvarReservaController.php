@@ -36,7 +36,7 @@ use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use Reservas\PainelDLX\UseCases\Reservas\SalvarReserva\SalvarReservaCommand;

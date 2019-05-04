@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\ListaPedidos;
 
 use DLX\Infra\EntityManagerX;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos\ListaPedidosCommandHandler;
 use Reservas\Tests\ReservasTestCase;
@@ -46,7 +46,7 @@ class ListaPedidosCommandHandlerTest extends ReservasTestCase
      */
     public function test__construct(): ListaPedidosCommandHandler
     {
-        /** @var PedidoRepositoryInterface $pedido_repository */
+        /** @var \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository */
         $pedido_repository = EntityManagerX::getRepository(Pedido::class);
         $handler = new ListaPedidosCommandHandler($pedido_repository);
 

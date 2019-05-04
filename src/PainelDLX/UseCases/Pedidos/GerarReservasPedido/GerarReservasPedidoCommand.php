@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
 
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 
 /**
  * Class GerarReservasPedidoCommand

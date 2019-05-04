@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto;
 
 
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 
 /**
  * Class SalvarDisponibilidadeQuartoCommandHandler
@@ -36,13 +36,13 @@ use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
 class SalvarDisponibilidadeQuartoCommandHandler
 {
     /**
-     * @var DisponibilidadeRepositoryInterface
+     * @var \Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface
      */
     private $disponibilidade_repository;
 
     /**
      * SalvarDisponibilidadeQuartoCommandHandler constructor.
-     * @param DisponibilidadeRepositoryInterface $disponibilidade_repository
+     * @param \Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface $disponibilidade_repository
      */
     public function __construct(DisponibilidadeRepositoryInterface $disponibilidade_repository)
     {

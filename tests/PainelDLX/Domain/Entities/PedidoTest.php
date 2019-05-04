@@ -26,13 +26,13 @@
 namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class PedidoTest
  * @package Reservas\PainelDLX\Tests\Domain\Entities
- * @coversDefaultClass \Reservas\PainelDLX\Domain\Entities\Pedido
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido
  */
 class PedidoTest extends ReservasTestCase
 {
@@ -66,7 +66,7 @@ class PedidoTest extends ReservasTestCase
     }
 
     /**
-     * @param Pedido $pedido
+     * @param \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido
      * @covers ::isPago
      * @depends test__construct
      */
@@ -84,7 +84,7 @@ class PedidoTest extends ReservasTestCase
      * @covers ::isCancelado
      * @depends test__construct
      */
-    public function test_IsCancelado(Pedido $pedido)
+    public function test_IsCancelado(\Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido)
     {
         $pedido->setStatus(Pedido::STATUS_PENDENTE);
         $this->assertFalse($pedido->isCancelado());

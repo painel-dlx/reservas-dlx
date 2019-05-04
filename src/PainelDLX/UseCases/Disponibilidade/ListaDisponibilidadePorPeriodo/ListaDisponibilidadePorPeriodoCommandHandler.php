@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo;
 
 
-use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 
 /**
  * Class ListaDisponibilidadePorPeriodoCommandHandler

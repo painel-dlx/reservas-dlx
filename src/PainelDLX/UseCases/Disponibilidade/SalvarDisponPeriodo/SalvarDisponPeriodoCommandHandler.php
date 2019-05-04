@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo;
 
 
-use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 
 class SalvarDisponPeriodoCommandHandler
 {
@@ -37,7 +37,7 @@ class SalvarDisponPeriodoCommandHandler
 
     /**
      * SalvarDisponPeriodoCommandHandler constructor.
-     * @param DisponibilidadeRepositoryInterface $disponibilidade_repository
+     * @param \Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface $disponibilidade_repository
      */
     public function __construct(DisponibilidadeRepositoryInterface $disponibilidade_repository)
     {

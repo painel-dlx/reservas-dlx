@@ -28,8 +28,8 @@ namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\GetPedidoPorId;
 use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler;
 use Reservas\Tests\Helpers\PedidoTesteHelper;
@@ -48,7 +48,7 @@ class GetPedidoPorIdCommandHandlerTest extends ReservasTestCase
      */
     public function test__construct(): GetPedidoPorIdCommandHandler
     {
-        /** @var PedidoRepositoryInterface $pedido_repository */
+        /** @var \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository */
         $pedido_repository = EntityManagerX::getRepository(Pedido::class);
         $handler = new GetPedidoPorIdCommandHandler($pedido_repository);
 

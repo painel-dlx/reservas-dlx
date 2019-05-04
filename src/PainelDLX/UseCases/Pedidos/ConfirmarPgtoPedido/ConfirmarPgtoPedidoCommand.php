@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 
 /**
  * Class ConfirmarPgtoPedidoCommand
@@ -50,7 +50,7 @@ class ConfirmarPgtoPedidoCommand
     }
 
     /**
-     * @return Pedido
+     * @return \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido
      */
     public function getPedido(): Pedido
     {

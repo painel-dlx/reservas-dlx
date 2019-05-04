@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\Domain\Quartos\Services;
 
 use DateTime;
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
 use Reservas\PainelDLX\Tests\Domain\Quartos\Services\VerificarDisponQuartoTest;

@@ -26,13 +26,13 @@
 namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
 use DateTime;
-use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
+use Reservas\PainelDLX\Domain\Reservas\Entities\ReservaHistorico;
 use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class ReservaHistoricoTest
  * @package Reservas\PainelDLX\Tests\Domain\Entities
- * @coversDefaultClass \Reservas\PainelDLX\Domain\Entities\ReservaHistorico
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Reservas\Entities\ReservaHistorico
  */
 class ReservaHistoricoTest extends ReservasTestCase
 {

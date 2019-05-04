@@ -30,8 +30,8 @@ use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\ParameterType;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
 use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommandHandler;
 use Reservas\Tests\ReservasTestCase;
@@ -51,7 +51,7 @@ class ConfirmarReservaCommandHandlerTest extends ReservasTestCase
      */
     public function test__construct(): ConfirmarReservaCommandHandler
     {
-        /** @var ReservaRepositoryInterface $reserva_repository */
+        /** @var \Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository */
         $reserva_repository = EntityManagerX::getRepository(Reserva::class);
 
         $handler = new ConfirmarReservaCommandHandler($reserva_repository);
@@ -119,7 +119,7 @@ class ConfirmarReservaCommandHandlerTest extends ReservasTestCase
 
         $id = $con->lastInsertId();
 
-        /** @var Reserva $reserva */
+        /** @var \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva */
         $reserva = EntityManagerX::getRepository(Reserva::class)->find($id);
 
         /** @var Usuario $usuario */

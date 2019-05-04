@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\UseCases\Reservas\SalvarReserva;
 
 
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 
 /**
  * Class ReservarQuartoCommand
@@ -42,7 +42,7 @@ class SalvarReservaCommand
 
     /**
      * ReservarQuartoCommand constructor.
-     * @param Reserva $reserva
+     * @param \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva
      */
     public function __construct(Reserva $reserva)
     {

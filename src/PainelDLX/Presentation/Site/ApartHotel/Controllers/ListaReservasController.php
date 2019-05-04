@@ -34,7 +34,7 @@ use PainelDLX\Application\UseCases\ListaRegistros\ConverterFiltro2Criteria\Conve
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
 use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommand;

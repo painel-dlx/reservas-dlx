@@ -26,10 +26,10 @@
 namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
 
 
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidator;
-use Reservas\PainelDLX\Domain\Validators\ReservaValidatorsEnum;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Validators\ReservaValidator;
+use Reservas\PainelDLX\Domain\Reservas\Validators\ReservaValidatorsEnum;
 
 class CancelarReservaCommandHandler
 {
@@ -49,7 +49,7 @@ class CancelarReservaCommandHandler
 
     /**
      * @param CancelarReservaCommand $command
-     * @return Reserva
+     * @return \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva
      */
     public function handle(CancelarReservaCommand $command): Reserva
     {

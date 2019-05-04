@@ -1,0 +1,46 @@
+Reservas\PainelDLX\Domain\Pedidos\Entities\PedidoPgtoCartao:
+    type: entity
+    table: dlx_reservas_pgto_cartao
+    # repositoryClass: Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories\PedidoPgtoCartaoRepository
+    id:
+        pedido:
+            associationKey: true
+            id: true
+    fields:
+        valor:
+            type: float
+            nullable: false
+            column: pgto_valor
+        numero_cartao:
+            type: string
+            nullable: false
+            length: 19
+            column: pgto_cartao_numero
+        dono_cartao:
+            type: string
+            nullable: false
+            length: 100
+            column: pgto_cartao_dono
+        expiracao:
+            type: string
+            nullable: false
+            length: 5
+            column: pgto_cartao_expiracao
+        codigo_seguranca:
+            type: string
+            nullable: false
+            length: 5
+            column: pgto_cartao_codseg
+        qtde_parcelas:
+            type: integer
+            nullable: false
+            options:
+                default: 1
+            column: pgto_parcelas
+    oneToOne:
+        pedido:
+            targetEntity: Pedido
+            inversedBy: pgto_cartao
+            joinColumns:
+                pgto_pedido:
+                    referencedColumnName: pedido_id

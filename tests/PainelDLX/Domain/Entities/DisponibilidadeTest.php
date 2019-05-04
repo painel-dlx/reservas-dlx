@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
 use DateTime;
 use Doctrine\Common\Collections\Collection;
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 use Reservas\Tests\ReservasTestCase;
@@ -35,7 +35,7 @@ use Reservas\Tests\ReservasTestCase;
 /**
  * Class DisponibilidadeTest
  * @package Reservas\PainelDLX\Domain\Entities
- * @coversDefaultClass \Reservas\PainelDLX\Domain\Entities\Disponibilidade
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade
  */
 class DisponibilidadeTest extends ReservasTestCase
 {
@@ -49,7 +49,7 @@ class DisponibilidadeTest extends ReservasTestCase
         $hoje = new DateTime();
         $qtde_dispon = mt_rand(1, 10);
 
-        $dispon = new Disponibilidade($quarto, $hoje, $qtde_dispon);
+        $dispon = new \Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade($quarto, $hoje, $qtde_dispon);
 
         $this->assertInstanceOf(Disponibilidade::class, $dispon);
         $this->assertEquals($quarto, $dispon->getQuarto());
@@ -66,7 +66,7 @@ class DisponibilidadeTest extends ReservasTestCase
      * @depends test__construct
      * @throws \Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException
      */
-    public function test_GetValorPorQtdePessoas_deve_retornar_valor_ref_qtde_pessoas(Disponibilidade $dispon)
+    public function test_GetValorPorQtdePessoas_deve_retornar_valor_ref_qtde_pessoas(\Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade $dispon)
     {
         $valor = 12.34;
         $qtde_pessoas = mt_rand(1, 10);
@@ -111,7 +111,7 @@ class DisponibilidadeTest extends ReservasTestCase
     }
 
     /**
-     * @param Disponibilidade $dispon
+     * @param \Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade $dispon
      * @covers ::hasValorPorQtdePessoas
      * @depends test__construct
      */
@@ -157,7 +157,7 @@ class DisponibilidadeTest extends ReservasTestCase
      * @depends test__construct
      * @throws ValorMenorQueMinimoQuartoException
      */
-    public function test_IsPublicado_deve_retornar_false_quando_tiver_algum_valor_menor_que_minimo(Disponibilidade $dispon)
+    public function test_IsPublicado_deve_retornar_false_quando_tiver_algum_valor_menor_que_minimo(\Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade $dispon)
     {
         $dispon->setQtde(1);
         $dispon->addValor(1, 1);

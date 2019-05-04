@@ -24,15 +24,15 @@
  */
 
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\ReservaHistorico;
 use Vilex\VileX;
 
 /**
  * @var VileX $this
  */
 
-/** @var Reserva|null $reserva */
+/** @var \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva|null $reserva */
 $reserva = $this->getAtributo('reserva');
 ?>
 [CORPO]

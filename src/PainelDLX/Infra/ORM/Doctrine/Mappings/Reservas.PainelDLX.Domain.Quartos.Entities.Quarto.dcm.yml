@@ -52,7 +52,7 @@ Reservas\PainelDLX\Domain\Quartos\Entities\Quarto:
             column: quarto_delete
     oneToMany:
         dispon:
-            targetEntity: Reservas\PainelDLX\Domain\Entities\Disponibilidade
+            targetEntity: Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade
             orderBy: { dia: desc }
             cascade:
                 - merge

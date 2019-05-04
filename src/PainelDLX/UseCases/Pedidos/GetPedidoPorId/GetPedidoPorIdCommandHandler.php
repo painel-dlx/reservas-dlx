@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId;
 
 
-use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
 class GetPedidoPorIdCommandHandler
 {
@@ -38,7 +38,7 @@ class GetPedidoPorIdCommandHandler
 
     /**
      * GetPedidoPorIdCommandHandler constructor.
-     * @param PedidoRepositoryInterface $pedido_repository
+     * @param \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
     {
@@ -47,7 +47,7 @@ class GetPedidoPorIdCommandHandler
 
     /**
      * @param GetPedidoPorIdCommand $command
-     * @return Pedido|null
+     * @return \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido|null
      */
     public function handle(GetPedidoPorIdCommand $command): ?Pedido
     {

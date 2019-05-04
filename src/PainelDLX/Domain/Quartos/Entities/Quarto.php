@@ -31,9 +31,15 @@ use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
 
+/**
+ * Class Quarto
+ * @package Reservas\PainelDLX\Domain\Quartos\Entities
+ * @covers QuartoTest
+ */
 class Quarto extends Entity
 {
     /** @var int|null */
@@ -274,7 +280,6 @@ class Quarto extends Entity
      * @param DateTime $data
      * @param int $qtde
      * @param array $valores
-     * @throws ValorMenorQueMinimoQuartoException
      */
     public function addDispon(DateTime $data, int $qtde, array $valores)
     {
@@ -295,5 +300,16 @@ class Quarto extends Entity
         }
 
         return $this;
+    }
+
+    /**
+     * @param DateTime $checkin
+     * @param DateTime $checkout
+     * @return bool
+     * @throws VerificarDisponQuartoException
+     */
+    public function isDisponivelPeriodo(DateTime $checkin, DateTime $checkout): bool
+    {
+        return (new VerificarDisponQuarto())->executar($this, $checkin, $checkin);
     }
 }

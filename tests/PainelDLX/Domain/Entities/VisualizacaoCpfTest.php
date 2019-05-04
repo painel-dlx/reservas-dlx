@@ -30,13 +30,13 @@ use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PHPUnit\Framework\TestCase;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Entities\VisualizacaoCpf;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\VisualizacaoCpf;
 
 /**
  * Class VisualizacaoCpfTest
  * @package Reservas\PainelDLX\Domain\Entities
- * @coversDefaultClass \Reservas\PainelDLX\Domain\Entities\VisualizacaoCpf
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Reservas\Entities\VisualizacaoCpf
  */
 class VisualizacaoCpfTest extends TestCase
 {
@@ -44,7 +44,7 @@ class VisualizacaoCpfTest extends TestCase
      * @return VisualizacaoCpf
      * @throws Exception
      */
-    public function test__construct(): VisualizacaoCpf
+    public function test__construct(): \Reservas\PainelDLX\Domain\Reservas\Entities\VisualizacaoCpf
     {
         $quarto = new Quarto('Teste de Quarto', 10, 10);
         $checkin = new DateTime();
@@ -52,7 +52,7 @@ class VisualizacaoCpfTest extends TestCase
         $reserva = new Reserva($quarto, $checkin, $checkout, 1);
         $usuario = new Usuario('Nome do Funcionário', 'funcionario@gmail.com');
 
-        $vis_cpf = new VisualizacaoCpf($reserva, $usuario);
+        $vis_cpf = new \Reservas\PainelDLX\Domain\Reservas\Entities\VisualizacaoCpf($reserva, $usuario);
 
         $this->assertInstanceOf(VisualizacaoCpf::class, $vis_cpf);
 

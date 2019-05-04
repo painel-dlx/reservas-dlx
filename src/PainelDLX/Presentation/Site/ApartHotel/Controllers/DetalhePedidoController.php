@@ -34,9 +34,9 @@ use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Exceptions\NaoPodeVisualizarCpfCompletoException;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
@@ -104,7 +104,7 @@ class DetalhePedidoController extends SiteController
         $usuario_logado = $this->session->get('usuario-logado');
 
         try {
-            /** @var Pedido $pedido */
+            /** @var \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido */
             /** @see GetPedidoPorIdCommandHandler */
             $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($get['id']));
 
@@ -148,7 +148,7 @@ class DetalhePedidoController extends SiteController
         $usuario_logado = $this->session->get('usuario-logado');
 
         try {
-            /** @var Pedido $pedido */
+            /** @var \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido */
             /** @see GetPedidoPorIdCommandHandler */
             $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($post['id']));
 
@@ -203,7 +203,7 @@ class DetalhePedidoController extends SiteController
 
             $json['retorno'] = 'sucesso';
             $json['cpf'] = $cpf;
-        } catch (NaoPodeVisualizarCpfCompletoException $e) {
+        } catch (VisualizarCpfException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

@@ -30,14 +30,14 @@ use Doctrine\ORM\ORMException;
 use League\Container\Container;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use PainelDLX\Infra\ORM\Doctrine\Services\RepositoryFactory;
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 
 class ReservasServiceProvider extends AbstractServiceProvider
 {

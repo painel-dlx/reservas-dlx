@@ -24,8 +24,8 @@
  */
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\ReservaHistorico;
 use Vilex\VileX;
 
 /**
@@ -161,7 +161,7 @@ $usuario_logado = $this->getAtributo('usuario-logado');
             <summary class="detalhe-registro-titulo">Histórico</summary>
 
             <?php
-            /** @var ReservaHistorico $historico */
+            /** @var \Reservas\PainelDLX\Domain\Reservas\Entities\ReservaHistorico $historico */
             foreach ($reserva->getHistorico() as $historico) : ?>
                 <p class="detalhe-registro-paragr">
                     <?php echo $historico ?>

@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva;
 
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 
 /**
  * Class ConfirmarReservaCommand
@@ -51,7 +51,7 @@ class ConfirmarReservaCommand
 
     /**
      * ConfirmarReservaCommand constructor.
-     * @param Reserva $reserva
+     * @param \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva
      * @param Usuario $usuario
      * @param string $motivo
      */
@@ -63,7 +63,7 @@ class ConfirmarReservaCommand
     }
 
     /**
-     * @return Reserva
+     * @return \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva
      */
     public function getReserva(): Reserva
     {

@@ -30,8 +30,8 @@ use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Reservas\SalvarReserva\SalvarReservaCommand;
 use Reservas\PainelDLX\UseCases\Reservas\SalvarReserva\SalvarReservaCommandHandler;
 use Reservas\Tests\Helpers\QuartoTesteHelper;
@@ -52,7 +52,7 @@ class SalvarReservaCommandHandlerTest extends ReservasTestCase
      */
     public function test__construct(): SalvarReservaCommandHandler
     {
-        /** @var ReservaRepositoryInterface $reserva_repository */
+        /** @var \Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository */
         $reserva_repository = EntityManagerX::getRepository(Reserva::class);
         $handler = new SalvarReservaCommandHandler($reserva_repository);
 

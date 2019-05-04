@@ -1,4 +1,0 @@
-Reservas\Website\Domain\Entities\Disponibilidade:
-    type: entity
-    table: dlx_reservas_disponibilidade
-    # repositoryClass: Reservas\Website\Infra\ORM\Doctrine\Repositories\DisponibilidadeRepository

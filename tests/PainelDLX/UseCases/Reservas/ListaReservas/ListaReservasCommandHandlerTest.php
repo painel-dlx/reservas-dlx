@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\Tests\UseCases\Reservas\ListaReservas;
 
 use DLX\Infra\EntityManagerX;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommand;
 use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommandHandler;
 use Reservas\Tests\ReservasTestCase;
@@ -66,7 +66,7 @@ class ListaReservasCommandHandlerTest extends ReservasTestCase
         $this->assertIsArray($lista);
 
         if (count($lista) > 0) {
-            /** @var Reserva $reserva */
+            /** @var \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva */
             foreach ($lista as $reserva) {
                 $this->assertInstanceOf(Reserva::class, $reserva);
             }

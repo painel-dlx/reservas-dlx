@@ -24,8 +24,8 @@
  */
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Vilex\VileX;
 
 /**
@@ -136,7 +136,7 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                 </span>
 
                 <?php if ($pedido->isPago()) :
-                    /** @var Reserva $reserva */
+                    /** @var \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva */
                     $reserva = $pedido->getReservas()->first();
                     if ($reserva->podeVisualizarCpfCompleto($usuario_logado)) : ?>
                         <br>

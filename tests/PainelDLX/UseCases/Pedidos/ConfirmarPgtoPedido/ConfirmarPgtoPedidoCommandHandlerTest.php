@@ -31,10 +31,10 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommandHandler;
@@ -100,7 +100,7 @@ class ConfirmarPgtoPedidoCommandHandlerTest extends ReservasTestCase
         $pedido->addItem($quarto1, $checkin1->format('Y-m-d'), $checkout1->format('Y-m-d'), 2, 0, 616);
         $pedido->addItem($quarto2, $checkin2->format('Y-m-d'), $checkout2->format('Y-m-d'), 2, 1, 616);
 
-        /** @var PedidoRepositoryInterface $pedido_repository */
+        /** @var \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository */
         $pedido_repository = EntityManagerX::getRepository(Pedido::class);
         $pedido_repository->create($pedido);
 

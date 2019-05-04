@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto;
 
 
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 
 /**
  * Class GetDisponibilidadePorDataQuartoCommandHandler

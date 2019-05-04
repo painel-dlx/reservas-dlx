@@ -30,10 +30,10 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Entities\VisualizacaoCpf;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\VisualizacaoCpf;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
 use PHPUnit\Framework\TestCase;
@@ -56,7 +56,7 @@ class MostrarCpfCompletoPedidoCommandHandlerTest extends ReservasTestCase
      */
     public function test__construct(): MostrarCpfCompletoPedidoCommandHandler
     {
-        /** @var PedidoRepositoryInterface $pedido_repository */
+        /** @var \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository */
         $pedido_repository = EntityManagerX::getRepository(Pedido::class);
         $handler = new MostrarCpfCompletoPedidoCommandHandler($pedido_repository);
 

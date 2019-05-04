@@ -25,21 +25,21 @@
 
 namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
-use Reservas\PainelDLX\Domain\Entities\DisponValor;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\DisponValor;
 use PHPUnit\Framework\TestCase;
 use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class DisponValorTest
  * @package Reservas\PainelDLX\Tests\Domain\Entities
- * @coversDefaultClass \Reservas\PainelDLX\Domain\Entities\DisponValor
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Disponibilidade\Entities\DisponValor
  */
 class DisponValorTest extends ReservasTestCase
 {
     /**
-     * @return DisponValor
+     * @return \Reservas\PainelDLX\Domain\Validators\Disponibilidade\Entities\DisponValor
      */
-    public function test__construct(): DisponValor
+    public function test__construct(): \Reservas\PainelDLX\Domain\Disponibilidade\Entities\DisponValor
     {
         $qtde_pessoas = mt_rand(1, 10);
         $valor = 12.34;

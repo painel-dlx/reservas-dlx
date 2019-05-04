@@ -28,9 +28,9 @@ namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Disponibilidade\ListaDispo
 use DateTime;
 use DLX\Infra\EntityManagerX;
 use Exception;
-use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo\ListaDisponibilidadePorPeriodoCommand;
 use Reservas\PainelDLX\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo\ListaDisponibilidadePorPeriodoCommandHandler;
@@ -49,7 +49,7 @@ class ListaDisponibilidadePorPeriodoCommandHandlerTest extends ReservasTestCase
      */
     public function test__construct(): ListaDisponibilidadePorPeriodoCommandHandler
     {
-        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
+        /** @var \Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface $disponibilidade_repository */
         $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
         $handler = new ListaDisponibilidadePorPeriodoCommandHandler($disponibilidade_repository);
 

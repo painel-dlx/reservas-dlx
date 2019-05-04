@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Reservas\CancelarReserva;
 
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 
 /**
  * Class ConfirmarReservaCommand
@@ -63,7 +63,7 @@ class CancelarReservaCommand
     }
 
     /**
-     * @return Reserva
+     * @return \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva
      */
     public function getReserva(): Reserva
     {

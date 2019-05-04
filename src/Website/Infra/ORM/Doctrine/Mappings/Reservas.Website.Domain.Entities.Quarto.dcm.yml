@@ -1,4 +1,0 @@
-Reservas\Website\Domain\Entities\Quarto:
-    type: entity
-    table: dlx_reservas_quartos
-    repositoryClass: Reservas\Website\Infra\ORM\Doctrine\Repositories\QuartoRepository

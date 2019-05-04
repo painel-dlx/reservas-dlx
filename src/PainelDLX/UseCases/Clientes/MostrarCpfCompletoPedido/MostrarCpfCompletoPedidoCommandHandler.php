@@ -26,9 +26,9 @@
 namespace Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido;
 
 
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Exceptions\NaoPodeVisualizarCpfCompletoException;
-use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
 /**
  * Class MostrarCpfCompletoPedidoCommandHandler
@@ -38,13 +38,13 @@ use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
 class MostrarCpfCompletoPedidoCommandHandler
 {
     /**
-     * @var PedidoRepositoryInterface
+     * @var \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface
      */
     private $pedido_repository;
 
     /**
      * MostrarCpfCompletoPedidoCommandHandler constructor.
-     * @param PedidoRepositoryInterface $pedido_repository
+     * @param \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
     {
@@ -62,7 +62,7 @@ class MostrarCpfCompletoPedidoCommandHandler
 
         $pedido->getReservas()->map(function (Reserva $reserva) use ($usuario) {
             if (!$reserva->podeVisualizarCpfCompleto($usuario)) {
-                throw NaoPodeVisualizarCpfCompletoException::limiteVisualizacoesAlcancado();
+                throw VisualizarCpfException::limiteVisualizacoesAlcancado();
             }
 
             $reserva->addVisualizacaoCpf($usuario);

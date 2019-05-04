@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId;
 
 
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 
 class GetReservaPorIdCommandHandler
 {
@@ -38,7 +38,7 @@ class GetReservaPorIdCommandHandler
 
     /**
      * GetReservaPorIdCommandHandler constructor.
-     * @param ReservaRepositoryInterface $reserva_repository
+     * @param \Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository
      */
     public function __construct(ReservaRepositoryInterface $reserva_repository)
     {

@@ -30,8 +30,8 @@ use DateTime;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommandHandler;
 use Reservas\Tests\Helpers\QuartoTesteHelper;
@@ -54,7 +54,7 @@ class MostrarCpfCompletoCommandHandlerTest extends ReservasTestCase
         $reserva_repository = $this->createMock(ReservaRepositoryInterface::class);
         $reserva_repository->method('update')->willReturn(null);
 
-        /** @var ReservaRepositoryInterface $reserva_repository */
+        /** @var \Reservas\PainelDLX\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository */
 
         $handler = new MostrarCpfCompletoCommandHandler($reserva_repository);
 
@@ -67,7 +67,7 @@ class MostrarCpfCompletoCommandHandlerTest extends ReservasTestCase
      * @param MostrarCpfCompletoCommandHandler $handler
      * @throws DBALException
      * @throws ORMException
-     * @throws \Reservas\PainelDLX\Domain\Exceptions\NaoPodeVisualizarCpfCompletoException
+     * @throws \Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException
      * @covers ::handle
      * @depends test__construct
      */

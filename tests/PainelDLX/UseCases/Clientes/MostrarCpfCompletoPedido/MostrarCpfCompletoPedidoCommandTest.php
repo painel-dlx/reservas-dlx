@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\Tests\UseCases\Clientes\MostrarCpfCompletoPedido;
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use PHPUnit\Framework\TestCase;
 
