@@ -27,6 +27,7 @@ namespace Reservas\PainelDLX\Application\Routes;
 
 
 use PainelDLX\Application\Middlewares\Autorizacao;
+use PainelDLX\Application\Middlewares\DefinePaginaMestra;
 use PainelDLX\Application\Middlewares\VerificarLogon;
 use PainelDLX\Application\Routes\PainelDLXRouter;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\CadastrarQuartoController;
@@ -43,14 +44,22 @@ class QuartosRouter extends PainelDLXRouter
     public function registrar(): void
     {
         $router = $this->getRouter();
+
+        // Middlewares
         $verificar_logon = new VerificarLogon($this->session);
+        $define_pagina_mestra = new DefinePaginaMestra($this->painel_dlx->getServerRequest(), $this->session);
+
+        // Permissões
+        $perm_cadastrar_quarto = new Autorizacao('CADASTRAR_NOVO_QUARTO');
+        $perm_editar_quarto = new Autorizacao('EDITAR_QUARTO');
 
         $router->get(
             '/painel-dlx/apart-hotel/quartos',
             [ListaQuartosController::class, 'listaQuartos']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('VER_LISTA_QUARTOS')
+            new Autorizacao('VER_LISTA_QUARTOS'),
+            $define_pagina_mestra
         );
 
         $router->post(
@@ -66,7 +75,8 @@ class QuartosRouter extends PainelDLXRouter
             [CadastrarQuartoController::class, 'formNovoQuarto']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('CADASTRAR_NOVO_QUARTO')
+            $perm_cadastrar_quarto,
+            $define_pagina_mestra
         );
 
         $router->post(
@@ -74,7 +84,7 @@ class QuartosRouter extends PainelDLXRouter
             [CadastrarQuartoController::class, 'salvarNovoQuarto']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('CADASTRAR_NOVO_QUARTO')
+            $perm_cadastrar_quarto
         );
 
         $router->get(
@@ -82,7 +92,8 @@ class QuartosRouter extends PainelDLXRouter
             [EditarQuartoController::class, 'formEditarQuarto']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('EDITAR_QUARTO')
+            $perm_editar_quarto,
+            $define_pagina_mestra
         );
 
         $router->post(
@@ -90,7 +101,7 @@ class QuartosRouter extends PainelDLXRouter
             [EditarQuartoController::class, 'editarInformacoesQuarto']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('EDITAR_QUARTO')
+            $perm_editar_quarto
         );
     }
 }
