@@ -32,10 +32,10 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
@@ -80,12 +80,12 @@ class ConfirmarPgtoPedidoCommandHandlerTest extends ReservasTestCase
         /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
 
-        /** @var Quarto $quarto1 */
+        /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto1 */
         $quarto1 = QuartoTesteHelper::getRandom();
         $checkin1 = new DateTime();
         $checkout1 = (clone $checkin1)->modify('+1 day');
 
-        /** @var Quarto $quarto2 */
+        /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto2 */
         $quarto2 = QuartoTesteHelper::getRandom();
         $checkin2 = (new DateTime())->modify('+7 days');
         $checkout2 = (clone $checkin1)->modify('+1 day');

@@ -1,4 +1,4 @@
-Reservas\PainelDLX\Domain\Entities\Quarto:
+Reservas\PainelDLX\Domain\Quartos\Entities\Quarto:
     type: entity
     table: dlx_reservas_quartos
     repositoryClass: Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories\QuartoRepository
@@ -52,7 +52,7 @@ Reservas\PainelDLX\Domain\Entities\Quarto:
             column: quarto_delete
     oneToMany:
         dispon:
-            targetEntity: Disponibilidade
+            targetEntity: Reservas\PainelDLX\Domain\Entities\Disponibilidade
             orderBy: { dia: desc }
             cascade:
                 - merge

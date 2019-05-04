@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\Tests\UseCases\Clientes\MostrarCpfCompleto;
 
 use DateTime;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
 use PHPUnit\Framework\TestCase;

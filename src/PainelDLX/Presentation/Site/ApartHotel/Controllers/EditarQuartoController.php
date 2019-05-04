@@ -32,12 +32,16 @@ use League\Tactician\CommandBus;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\ValidarQuartoException;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
+use Vilex\Exceptions\ContextoInvalidoException;
+use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
+use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -78,9 +82,9 @@ class EditarQuartoController extends SiteController
      * Formulário para editar as informações do quarto.
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     * @throws ContextoInvalidoException
      */
     public function formEditarQuarto(ServerRequestInterface $request): ResponseInterface
     {
@@ -163,7 +167,7 @@ class EditarQuartoController extends SiteController
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Quarto atualizado com sucesso!';
             $json['quarto_id'] = $quarto->getId();
-        } catch (UserException $e) {
+        } catch (ValidarQuartoException | UserException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

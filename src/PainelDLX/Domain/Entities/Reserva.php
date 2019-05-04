@@ -33,6 +33,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 /**
  * Class Reserva

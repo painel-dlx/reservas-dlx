@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQ
 
 
 use DateTime;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 /**
  * Class GetDisponibilidadePorDataQuartoCommand
@@ -47,7 +47,7 @@ class GetDisponibilidadePorDataQuartoCommand
 
     /**
      * GetDisponibilidadePorDataQuartoCommand constructor.
-     * @param Quarto $quarto
+     * @param \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto
      * @param DateTime $data
      */
     public function __construct(Quarto $quarto, DateTime $data)
@@ -57,7 +57,7 @@ class GetDisponibilidadePorDataQuartoCommand
     }
 
     /**
-     * @return Quarto
+     * @return \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto
      */
     public function getQuarto(): Quarto
     {

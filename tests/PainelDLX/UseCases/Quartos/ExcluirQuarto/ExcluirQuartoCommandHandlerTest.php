@@ -27,8 +27,8 @@ namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\ExcluirQuarto;
 
 use DLX\Infra\EntityManagerX;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommandHandler;
@@ -121,7 +121,7 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
         // e marca a transação para rollback!
         // EntityManagerX::beginTransaction();
 
-        /** @var Quarto $quarto */
+        /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto */
         $quarto = EntityManagerX::getRepository(Quarto::class)->find($quarto_id);
         $command = new ExcluirQuartoCommand($quarto);
         $handler->handle($command);

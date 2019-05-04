@@ -29,12 +29,12 @@ namespace Reservas\Tests\Helpers;
 use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 class QuartoTesteHelper
 {
     /**
-     * @return Quarto
+     * @return \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto
      * @throws DBALException
      * @throws ORMException
      */
@@ -53,7 +53,7 @@ class QuartoTesteHelper
         $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query);
         $id = $sql->fetchColumn();
 
-        /** @var Quarto|null $quarto */
+        /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto|null $quarto */
         $quarto = EntityManagerX::getRepository(Quarto::class)->find($id);
 
         return $quarto;

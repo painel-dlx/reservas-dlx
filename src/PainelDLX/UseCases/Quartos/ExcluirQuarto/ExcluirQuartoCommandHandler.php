@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto;
 
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
 class ExcluirQuartoCommandHandler
 {

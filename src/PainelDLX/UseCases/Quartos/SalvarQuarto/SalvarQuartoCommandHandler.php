@@ -25,12 +25,16 @@
 
 namespace Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto;
 
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Validators\QuartoValidator;
+use Reservas\PainelDLX\Domain\Quartos\Validators\QuartoValidatorEnum;
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\Quartos\VerificarLinkUtilizado;
-use Reservas\PainelDLX\Domain\Validators\Quartos\VerificarNomeDuplicado;
-
+/**
+ * Class SalvarQuartoCommandHandler
+ * @package Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto
+ * @covers SalvarQuartoCommandHandlerTest
+ */
 class SalvarQuartoCommandHandler
 {
     /**
@@ -50,22 +54,16 @@ class SalvarQuartoCommandHandler
     /**
      * @param SalvarQuartoCommand $command
      * @return Quarto
-     * @throws \Reservas\PainelDLX\Domain\Exceptions\LinkQuartoUtilizadoException
-     * @throws \Reservas\PainelDLX\Domain\Exceptions\NomeQuartoUtilizadoException
      */
     public function handle(SalvarQuartoCommand $command): Quarto
     {
         $quarto = $command->getQuarto();
 
-        // Verificar se o nome do quarto está disponível
-        (new VerificarNomeDuplicado($this->quarto_repository))->executar($quarto);
-
-        // Verificar se o link atribuído a esse quarto está disponível
-        (new VerificarLinkUtilizado($this->quarto_repository))->executar($quarto);
-
         if (empty($quarto->getId())) {
+            (new QuartoValidator(QuartoValidatorEnum::CADASTRAR))->validar($quarto, $this->quarto_repository);
             $this->quarto_repository->create($quarto);
         } else {
+            (new QuartoValidator(QuartoValidatorEnum::EDITAR))->validar($quarto, $this->quarto_repository);
             $this->quarto_repository->update($quarto);
         }
 

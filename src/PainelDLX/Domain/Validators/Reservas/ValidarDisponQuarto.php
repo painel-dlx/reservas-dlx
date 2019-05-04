@@ -49,16 +49,6 @@ class ValidarDisponQuarto implements ReservaValidatorInterface
     {
         $dispon_quarto = $reserva->getQuarto()->getDispon($reserva->getCheckin(), $reserva->getCheckout());
 
-        if ($dispon_quarto->count() < 1) {
-            throw new QuartoNaoDisponivelException($reserva->getCheckin());
-        }
-
-        $dispon_quarto->map(function (Disponibilidade $dispon) {
-            if (!$dispon->isPublicado()) {
-                throw new QuartoNaoDisponivelException($dispon->getDia());
-            }
-        });
-
         return true;
     }
 }

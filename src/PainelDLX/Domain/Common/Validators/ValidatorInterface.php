@@ -23,25 +23,15 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Repositories;
+namespace Reservas\PainelDLX\Domain\Common\Validators;
 
 
-use DLX\Domain\Repositories\EntityRepositoryInterface;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-
-interface QuartoRepositoryInterface extends EntityRepositoryInterface
+interface ValidatorInterface
 {
     /**
-     * Verificar se existe outro quarto com o mesmo nome.
-     * @param Quarto $quarto
+     * Executar uma validação
+     * @param null $params
      * @return bool
      */
-    public function existsOutroQuartoComMesmoNome(Quarto $quarto): bool;
-
-    /**
-     * Verificar se existe outro quarto com mesmo link.
-     * @param Quarto $quarto
-     * @return bool
-     */
-    public function existsOutroQuartoComMesmoLink(Quarto $quarto): bool;
+    public function validar($params = null): bool;
 }

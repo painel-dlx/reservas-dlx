@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\Tests\PainelDLX\UseCases\Quartos\ListaQuartos;
 
 use DLX\Infra\EntityManagerX;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommandHandler;

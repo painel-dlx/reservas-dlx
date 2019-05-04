@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo;
 
 
 use DateTime;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 /**
  * Class SalvarDisponPeriodoCommand
@@ -45,7 +45,7 @@ class SalvarDisponPeriodoCommand
      */
     private $data_final;
     /**
-     * @var Quarto
+     * @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto
      */
     private $quarto;
     /**
@@ -96,7 +96,7 @@ class SalvarDisponPeriodoCommand
     }
 
     /**
-     * @return Quarto
+     * @return \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto
      */
     public function getQuarto(): Quarto
     {

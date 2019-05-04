@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\Tests\UseCases\Disponibilidade\SalvarDisponPeriodo;
 
 use DateTime;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommand;
 use Reservas\Tests\ReservasTestCase;
 

@@ -30,6 +30,7 @@ use CPF\CPF;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use stdClass;
 
 class Pedido extends Entity

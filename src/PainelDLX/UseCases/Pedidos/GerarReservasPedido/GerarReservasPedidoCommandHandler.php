@@ -28,9 +28,9 @@ namespace Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido;
 
 use DateTime;
 use Exception;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\PainelDLX\Domain\Validators\Reservas\ValidarDisponQuarto;
 
 /**
@@ -64,7 +64,7 @@ class GerarReservasPedidoCommandHandler
         $itens = $pedido->getItens();
 
         foreach ($itens as $item) {
-            /** @var Quarto $quarto */
+            /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto */
             $quarto = $this->quarto_repository->find($item->quartoID);
             $checkin = new DateTime($item->checkin);
             $checkout = new DateTime($item->checkout);

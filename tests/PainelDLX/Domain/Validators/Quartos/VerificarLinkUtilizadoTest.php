@@ -25,16 +25,16 @@
 
 namespace Reservas\PainelDLX\Tests\PainelDLX\Validators\Quartos\Domain;
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Exceptions\LinkQuartoUtilizadoException;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\Quartos\VerificarLinkUtilizado;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Validators\VerificarLinkUtilizado;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class VerificarLinkUtilizadoTest
  * @package Reservas\PainelDLX\Tests\PainelDLX\Validators\Quartos
- * @coversDefaultClass \Reservas\PainelDLX\Domain\Validators\Quartos\VerificarLinkUtilizado
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Quartos\Validators\VerificarLinkUtilizado
  */
 class VerificarLinkUtilizadoTest extends TestCase
 {

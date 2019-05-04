@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\Tests\Domain\Validators\Reservas;
 
 use DateTime;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Exceptions\DataCheckoutMenorCheckinException;
 use Reservas\PainelDLX\Domain\Validators\Reservas\ValidarCheckoutReserva;

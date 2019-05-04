@@ -28,7 +28,7 @@ namespace Reservas\PainelDLX\Tests\Domain\Entities;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 use Reservas\Tests\ReservasTestCase;
 

@@ -27,7 +27,7 @@ namespace Reservas\PainelDLX\UseCases\Disponibilidade\ListaDisponibilidadePorPer
 
 
 use DateTime;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 class ListaDisponibilidadePorPeriodoCommand
 {

@@ -31,7 +31,7 @@ use DLX\Infra\ORM\Doctrine\Repositories\EntityRepository;
 use Doctrine\DBAL\ParameterType;
 use Exception;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
 
 class DisponibilidadeRepository extends EntityRepository implements DisponibilidadeRepositoryInterface

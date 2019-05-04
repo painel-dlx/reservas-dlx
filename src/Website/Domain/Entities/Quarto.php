@@ -26,7 +26,7 @@
 namespace Reservas\Website\Domain\Entities;
 
 
-class Quarto extends \Reservas\PainelDLX\Domain\Entities\Quarto
+class Quarto extends \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto
 {
 
 }

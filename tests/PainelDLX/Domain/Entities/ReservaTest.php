@@ -35,7 +35,7 @@ use Exception;
 use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
 use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;

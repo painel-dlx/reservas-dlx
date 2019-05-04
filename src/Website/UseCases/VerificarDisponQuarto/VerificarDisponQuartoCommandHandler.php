@@ -23,47 +23,22 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Validators\Quartos;
+namespace Reservas\Website\UseCases\VerificarDisponQuarto;
 
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Exceptions\NomeQuartoUtilizadoException;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Exceptions\QuartoNaoDisponivelException;
+use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
 
-/**
- * Class VerificarNomeDuplicado
- * @package Reservas\PainelDLX\Domain\Validators\Quartos
- * @covers VerificarNomeDuplicadoTest
- */
-class VerificarNomeDuplicado
+class VerificarDisponQuartoCommandHandler
 {
     /**
-     * @var QuartoRepositoryInterface
+     * @param VerificarDisponQuartoCommand $command
+     * @throws QuartoNaoDisponivelException
+     * @throws \Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException
      */
-    private $quarto_repository;
-
-    /**
-     * VerificarNomeDuplicado constructor.
-     * @param QuartoRepositoryInterface $quarto_repository
-     */
-    public function __construct(QuartoRepositoryInterface $quarto_repository)
+    public function handle(VerificarDisponQuartoCommand $command): void
     {
-        $this->quarto_repository = $quarto_repository;
-    }
-
-    /**
-     * @param Quarto $quarto
-     * @return bool
-     * @throws NomeQuartoUtilizadoException
-     */
-    public function executar(Quarto $quarto): bool
-    {
-        $exists = $this->quarto_repository->existsOutroQuartoComMesmoNome($quarto);
-
-        if ($exists) {
-            throw new NomeQuartoUtilizadoException($quarto->getNome());
-        }
-
-        return true;
+        $quarto = $command->getQuarto();
+        (new VerificarDisponQuarto())->executar($quarto, $command->getCheckin(), $command->getCheckout());
     }
 }

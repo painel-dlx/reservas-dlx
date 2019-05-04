@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Entities\ReservaHistorico;
 use Vilex\VileX;
@@ -34,7 +34,7 @@ use Vilex\VileX;
 
 /** @var Reserva|null $reserva */
 $reserva = $this->getAtributo('reserva');
-/** @var Quarto[] $lista_quartos */
+/** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto[] $lista_quartos */
 $lista_quartos = $this->getAtributo('lista-quartos');
 ?>
 [CORPO]

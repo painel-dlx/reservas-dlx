@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\UseCases\Quartos\ListaQuartos;
 
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
 /**
  * Class ListaQuartosCommandHandler

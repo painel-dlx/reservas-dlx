@@ -28,7 +28,7 @@ namespace Reservas\PainelDLX\Tests\Domain\Validators\Reservas;
 use DateTime;
 use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Exceptions\CheckinAnteriorHojeException;
 use Reservas\PainelDLX\Domain\Exceptions\ReservaJaCanceladaException;

@@ -28,7 +28,7 @@ namespace Reservas\Website\Domain\Repositories;
 
 use DateTime;
 use DLX\Domain\Repositories\EntityRepositoryInterface;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 interface QuartoRepositoryInterface extends EntityRepositoryInterface
 {

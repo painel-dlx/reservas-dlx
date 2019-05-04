@@ -23,46 +23,39 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Validators\Quartos;
+namespace Reservas\PainelDLX\Domain\Quartos\Services;
 
-
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Exceptions\LinkQuartoUtilizadoException;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use DateTime;
+use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Tests\Domain\Quartos\Services\VerificarDisponQuartoTest;
 
 /**
- * Class VerificarLinkUtilizado
- * @package Reservas\PainelDLX\Domain\Validators\Quartos
- * @covers VerificarLinkUtilizadoTest
+ * Class VerificarDisponQuarto
+ * @package Reservas\PainelDLX\Domain\Quartos\Services
+ * @covers VerificarDisponQuartoTest
  */
-class VerificarLinkUtilizado
+class VerificarDisponQuarto
 {
     /**
-     * @var QuartoRepositoryInterface
-     */
-    private $quarto_repository;
-
-    /**
-     * VerificarNomeDuplicado constructor.
-     * @param QuartoRepositoryInterface $quarto_repository
-     */
-    public function __construct(QuartoRepositoryInterface $quarto_repository)
-    {
-        $this->quarto_repository = $quarto_repository;
-    }
-
-    /**
      * @param Quarto $quarto
+     * @throws VerificarDisponQuartoException
      * @return bool
-     * @throws LinkQuartoUtilizadoException
      */
-    public function executar(Quarto $quarto): bool
+    public function executar(Quarto $quarto, DateTime $checkin, DateTime $checkout): bool
     {
-        $exists = $this->quarto_repository->existsOutroQuartoComMesmoLink($quarto);
+        $dispon_quarto = $quarto->getDispon($checkin, $checkout);
 
-        if ($exists) {
-            throw new LinkQuartoUtilizadoException($quarto->getLink());
+        if ($dispon_quarto->count() < 1) {
+            throw VerificarDisponQuartoException::quartoIndisponivelData($checkin);
         }
+
+        $dispon_quarto->map(function (Disponibilidade $dispon) {
+            if (!$dispon->isPublicado()) {
+                throw VerificarDisponQuartoException::quartoIndisponivelData($dispon->getDia());
+            }
+        });
 
         return true;
     }

@@ -25,16 +25,16 @@
 
 namespace Reservas\PainelDLX\Tests\PainelDLX\Validators\Quartos\Domain;
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Exceptions\NomeQuartoUtilizadoException;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\Quartos\VerificarNomeDuplicado;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Validators\VerificarNomeDuplicado;
 use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class VerificarNomeDuplicadoTest
  * @package Reservas\PainelDLX\Tests\PainelDLX\Validators\Quartos
- * @coversDefaultClass \Reservas\PainelDLX\Domain\Validators\Quartos\VerificarNomeDuplicado
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Quartos\Validators\VerificarNomeDuplicado
  */
 class VerificarNomeDuplicadoTest extends ReservasTestCase
 {

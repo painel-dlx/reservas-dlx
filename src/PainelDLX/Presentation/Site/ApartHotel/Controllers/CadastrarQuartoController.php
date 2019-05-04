@@ -32,7 +32,8 @@ use League\Tactician\CommandBus;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\ValidarQuartoException;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
@@ -139,7 +140,7 @@ class CadastrarQuartoController extends SiteController
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Quarto cadastrado com sucesso!';
             $json['quarto_id'] = $quarto->getId();
-        } catch (UserException $e) {
+        } catch (ValidarQuartoException | UserException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

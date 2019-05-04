@@ -26,18 +26,18 @@
 namespace Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto;
 
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 class SalvarQuartoCommand
 {
     /**
-     * @var Quarto
+     * @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto
      */
     private $quarto;
 
     /**
      * SalvarQuartoCommand constructor.
-     * @param Quarto $quarto
+     * @param \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto
      */
     public function __construct(Quarto $quarto)
     {
@@ -45,7 +45,7 @@ class SalvarQuartoCommand
     }
 
     /**
-     * @return Quarto
+     * @return \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto
      */
     public function getQuarto(): Quarto
     {

@@ -28,7 +28,7 @@ namespace Reservas\PainelDLX\Tests\UseCases\Reservas\CancelarReserva;
 use DateTime;
 use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use PHPUnit\Framework\TestCase;
 use Reservas\PainelDLX\UseCases\Reservas\CancelarReserva\CancelarReservaCommand;

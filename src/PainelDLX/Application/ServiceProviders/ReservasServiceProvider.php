@@ -26,17 +26,17 @@
 namespace Reservas\PainelDLX\Application\ServiceProviders;
 
 
-use DLX\Infra\EntityManagerX;
+use Doctrine\ORM\ORMException;
 use League\Container\Container;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use PainelDLX\Infra\ORM\Doctrine\Services\RepositoryFactory;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Entities\Pedido;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\PainelDLX\Domain\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\PainelDLX\Domain\Repositories\PedidoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
 use Reservas\PainelDLX\Domain\Repositories\ReservaRepositoryInterface;
 
 class ReservasServiceProvider extends AbstractServiceProvider
@@ -54,7 +54,6 @@ class ReservasServiceProvider extends AbstractServiceProvider
      * from the ContainerAwareTrait.
      *
      * @return void
-     * @throws \Doctrine\ORM\ORMException
      */
     public function register()
     {

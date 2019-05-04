@@ -33,7 +33,7 @@ use League\Tactician\CommandBus;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommand;
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
@@ -126,7 +126,7 @@ class DisponPorPeriodoController extends SiteController
         ]);
 
         try {
-            /** @var Quarto $quarto */
+            /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto */
             /** @covers GetQuartoPorIdCommandHandler */
             $quarto = $this->command_bus->handle(new GetQuartoPorIdCommand($get['id']));
 

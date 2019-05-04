@@ -35,7 +35,7 @@ use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommand;
 use Reservas\PainelDLX\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommandHandler;
 use Reservas\PainelDLX\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo\ListaDisponibilidadePorPeriodoCommand;
@@ -107,7 +107,7 @@ class MapaDisponController extends SiteController
         }
 
         try {
-            /** @var Quarto|null $quarto */
+            /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto|null $quarto */
             /** @covers GetQuartoPorIdCommandHandler */
             $quarto = $this->command_bus->handle(new GetQuartoPorIdCommand((int)$get['quarto']));
 
@@ -162,7 +162,7 @@ class MapaDisponController extends SiteController
         $dt_dia = new DateTime($post['dia']);
 
         try {
-            /** @var Quarto $quarto */
+            /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto */
             /** @covers GetQuartoPorIdCommandHandler */
             $quarto = $this->command_bus->handle(new GetQuartoPorIdCommand($post['quarto']));
 

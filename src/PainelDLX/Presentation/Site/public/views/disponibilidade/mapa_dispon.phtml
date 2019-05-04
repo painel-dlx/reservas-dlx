@@ -24,7 +24,7 @@
  */
 
 use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Vilex\VileX;
 
 /**
@@ -63,7 +63,7 @@ $filtro = $this->getAtributo('filtro');
                 <option value="">Todos os quartos</option>
 
                 <?php
-                /** @var Quarto $quarto */
+                /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto */
                 foreach ($lista_quartos as $quarto) : ?>
                     <option value="<?php echo $quarto->getId() ?>"<?php echo (int)$filtro['quarto'] === $quarto->getId() ? ' selected' : '' ?>>
                         <?php echo $quarto->getNome() ?>

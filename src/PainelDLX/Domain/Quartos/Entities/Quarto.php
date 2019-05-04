@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Entities;
+namespace Reservas\PainelDLX\Domain\Quartos\Entities;
 
 
 use DateTime;
@@ -31,6 +31,7 @@ use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Reservas\PainelDLX\Domain\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 
 class Quarto extends Entity

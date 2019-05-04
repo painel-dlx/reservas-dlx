@@ -28,7 +28,7 @@ namespace Reservas\PainelDLX\Tests\Domain\Validators\Reservas;
 use DateInterval;
 use DatePeriod;
 use DateTime;
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Exceptions\QuartoNaoDisponivelException;
 use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;

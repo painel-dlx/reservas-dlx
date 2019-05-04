@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Vilex\VileX;
 
 /**
@@ -90,7 +90,7 @@ $filtro = $this->getAtributo('filtro');
         </tr>
     <?php endif;
 
-    /** @var Quarto $quarto */
+    /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto */
     foreach ($lista_reservas as $quarto) : ?>
         <tr>
             <td headers="quarto-id"><?php echo $quarto->getId() ?></td>

@@ -26,8 +26,8 @@
 namespace Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId;
 
 
-use Reservas\PainelDLX\Domain\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
 class GetQuartoPorIdCommandHandler
 {
@@ -47,7 +47,7 @@ class GetQuartoPorIdCommandHandler
 
     /**
      * @param GetQuartoPorIdCommand $command
-     * @return Quarto|null
+     * @return \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto|null
      */
     public function handle(GetQuartoPorIdCommand $command): ?Quarto
     {
