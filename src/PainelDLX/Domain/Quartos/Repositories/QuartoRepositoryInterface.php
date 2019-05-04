@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\Domain\Quartos\Repositories;
 
 
+use DateTime;
 use DLX\Domain\Repositories\EntityRepositoryInterface;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
@@ -33,7 +34,7 @@ interface QuartoRepositoryInterface extends EntityRepositoryInterface
 {
     /**
      * Verificar se existe outro quarto com o mesmo nome.
-     * @param \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto
+     * @param Quarto $quarto
      * @return bool
      */
     public function existsOutroQuartoComMesmoNome(Quarto $quarto): bool;
@@ -44,4 +45,19 @@ interface QuartoRepositoryInterface extends EntityRepositoryInterface
      * @return bool
      */
     public function existsOutroQuartoComMesmoLink(Quarto $quarto): bool;
+
+    /**
+     * Procurar quartos no bd que estejam disponíveis para um determinado período
+     * @param DateTime $checkin
+     * @param DateTime $checkout
+     * @param int $qtde_hospedes
+     * @param int $qtde_quartos
+     * @return array
+     */
+    public function findQuartosDisponiveis(
+        DateTime $checkin,
+        DateTime $checkout,
+        int $qtde_hospedes,
+        int $qtde_quartos
+    ): array;
 }

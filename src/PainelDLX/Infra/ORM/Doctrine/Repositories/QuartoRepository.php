@@ -26,14 +26,18 @@
 namespace Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories;
 
 
+use DateTime;
 use DLX\Infra\ORM\Doctrine\Repositories\EntityRepository;
+use Doctrine\DBAL\ParameterType;
+use Doctrine\ORM\Query\Expr\Join;
+use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
 use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
 
 class QuartoRepository extends EntityRepository implements QuartoRepositoryInterface
 {
-
     /**
      * Verificar se existe outro quarto com o mesmo nome.
      * @param Quarto $quarto
@@ -60,5 +64,55 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
         return !empty(array_filter($lista, function (Quarto $quarto_lista) use ($quarto) {
             return $quarto_lista->getId() !== $quarto->getId();
         }));
+    }
+
+    /**
+     * Procurar quartos no bd que estejam disponíveis para um determinado período
+     * @param DateTime $checkin
+     * @param DateTime $checkout
+     * @param int $qtde_hospedes
+     * @param int $qtde_quartos
+     * @return array
+     */
+    public function findQuartosDisponiveis(DateTime $checkin, DateTime $checkout, int $qtde_hospedes, int $qtde_quartos): array
+    {
+        $qtde_diarias_desejadas = $checkin->diff($checkout)->days;
+
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select(['q'])
+            ->from(Quarto::class, 'q')
+            ->innerJoin(Disponibilidade::class, 'd', Join::WITH, 'q.id = d.quarto')
+            ->where('d.dia between :dt_checkin and :dt_checkout')
+                ->andWhere('d.qtde >= :qtde_quartos')
+                ->andWhere('q.max_hospedes >= :qtde_hospedes')
+                ->andWhere('q.publicar = 1')
+            ->groupBy('q.id')
+                ->addGroupBy('q.nome')
+                ->addGroupBy('q.descricao')
+                ->addGroupBy('q.max_hospedes')
+                ->addGroupBy('q.qtde')
+                ->addGroupBy('q.valor_min')
+                ->addGroupBy('q.tamanho_m2')
+                ->addGroupBy('q.link')
+            ->having('count(d.dia) >= :qtde_diarias')
+            ->setParameter(':dt_checkin', $checkin->format('Y-m-d'), ParameterType::INTEGER)
+            ->setParameter(':dt_checkout', $checkout->format('Y-m-d'), ParameterType::INTEGER)
+            ->setParameter(':qtde_quartos', $qtde_quartos, ParameterType::INTEGER)
+            ->setParameter(':qtde_hospedes', $qtde_hospedes, ParameterType::INTEGER)
+            ->setParameter(':qtde_diarias', $qtde_diarias_desejadas, ParameterType::INTEGER);
+
+        $quartos = $qb->getQuery()->getResult();
+
+        // Retirar quartos que tiverem alguma disponibilidade inválida
+        $quartos = array_filter($quartos, function (Quarto $quarto) use ($checkin, $checkout) {
+            try {
+                $quarto->isDisponivelPeriodo($checkin, $checkout);
+                return true;
+            } catch (VerificarDisponQuartoException $e) {
+                return false;
+            }
+        });
+
+        return $quartos;
     }
 }
