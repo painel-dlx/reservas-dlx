@@ -79,6 +79,7 @@ $filtro = $this->getAtributo('filtro');
         <th id="qtde" style="text-align: center;">Qtde.</th>
         <th id="max-hospedes" style="text-align: center;">Máx. Hóspedes</th>
         <th id="valor-min">Valor Min.</th>
+        <th id="qtde-midias">Qtde. Mídias</th>
         <th id="opcoes">Opções</th>
     </tr>
     </thead>
@@ -86,7 +87,7 @@ $filtro = $this->getAtributo('filtro');
     <tbody>
     <?php if (!count($lista_reservas)) : ?>
         <tr>
-            <td colspan="6" class="sem-registros">Nenhum quarto encontrado.</td>
+            <td colspan="7" class="sem-registros">Nenhum quarto encontrado.</td>
         </tr>
     <?php endif;
 
@@ -103,6 +104,7 @@ $filtro = $this->getAtributo('filtro');
             <td headers="valor-min">
                 R$ <?php echo number_format($quarto->getValorMin(), 2, ',', '') ?>
             </td>
+            <td headers="qtde-midias"><?php echo $quarto->getMidias()->count() ?></td>
             <td headers="opcoes">
                 <a href="/painel-dlx/apart-hotel/quartos/detalhe?id=<?php echo $quarto->getId() ?>" class="link-detalhe" title="Informações desse quarto">
                     Detalhe

@@ -32,8 +32,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
+use Reservas\PainelDLX\Domain\Quartos\Contracts\QuartoMidiaCollectionInterface;
 use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
 use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
+use Reservas\PainelDLX\Infra\ORM\Doctrine\Collections\QuartoMidiaCollection;
 
 /**
  * Class Quarto
@@ -64,6 +66,8 @@ class Quarto extends Entity
     private $deletado = false;
     /** @var Collection */
     private $dispon;
+    /** @var QuartoMidiaCollectionInterface */
+    private $midias;
 
     /**
      * Quarto constructor.
@@ -77,6 +81,7 @@ class Quarto extends Entity
         $this->qtde = $qtde;
         $this->valor_min = $valor_min;
         $this->dispon = new ArrayCollection();
+        $this->midias = new QuartoMidiaCollection();
     }
 
     public function __toString()
@@ -299,6 +304,27 @@ class Quarto extends Entity
             $dispon->setValorPorQtdePessoas($qtde, $valor);
         }
 
+        return $this;
+    }
+
+    /**
+     * @return QuartoMidiaCollectionInterface
+     */
+    public function getMidias(): Collection
+    {
+        return $this->midias;
+    }
+
+    /**
+     * @param string $arquivo
+     * @return Quarto
+     */
+    public function addMidia(string $arquivo): self
+    {
+        $midia = new QuartoMidia($arquivo);
+        $midia->setQuarto($this);
+
+        $this->midias->addMidia($midia);
         return $this;
     }
 

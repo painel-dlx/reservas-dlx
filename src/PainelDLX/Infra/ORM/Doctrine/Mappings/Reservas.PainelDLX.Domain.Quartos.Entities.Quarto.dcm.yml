@@ -60,3 +60,9 @@ Reservas\PainelDLX\Domain\Quartos\Entities\Quarto:
             joinColumns:
                 quarto_id:
                     referencedColumnName: dispon_quarto
+        midias:
+            targetEntity: QuartoMidia
+            mappedBy: quarto
+            joinColumns:
+                quarto_id:
+                    referencedColumnName: midia_quarto
