@@ -36,6 +36,7 @@ use Reservas\PainelDLX\Domain\Quartos\Contracts\QuartoMidiaCollectionInterface;
 use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
 use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
 use Reservas\PainelDLX\Infra\ORM\Doctrine\Collections\QuartoMidiaCollection;
+use Reservas\PainelDLX\Tests\Domain\Quartos\Entities\QuartoTest;
 
 /**
  * Class Quarto

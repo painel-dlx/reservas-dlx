@@ -23,10 +23,11 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Quartos\Entities;
+namespace Reservas\PainelDLX\Tests\Domain\Quartos\Entities;
 
 use PHPUnit\Framework\TestCase;
 use Reservas\PainelDLX\Domain\Quartos\Contracts\QuartoMidiaCollectionInterface;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 /**
  * Class QuartoTest
