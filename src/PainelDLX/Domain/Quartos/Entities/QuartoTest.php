@@ -63,7 +63,7 @@ class QuartoTest extends TestCase
      * @covers ::addMidia
      * @depends test__construct
      */
-    public function testAddMidia(Quarto $quarto)
+    public function test_AddMidia_deve_adicionar_uma_instancia_de_QuartoMidia(Quarto $quarto)
     {
         // Limpar as mídias de testes anteriores
         $quarto->getMidias()->clear();

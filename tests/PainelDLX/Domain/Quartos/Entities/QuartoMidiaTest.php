@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\Tests\Domain\Quartos\Entities;
 
 use PHPUnit\Framework\TestCase;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Quartos\Entities\QuartoMidia;
 
 /**
@@ -47,5 +48,24 @@ class QuartoMidiaTest extends TestCase
         $this->assertEquals($arquivo, $midia->getArquivo());
 
         return $midia;
+    }
+
+    public function test_GetTagHtml_deve_retornar_a_tag_html_correspondente_a_midia()
+    {
+        $regex_img = '~^\<img\s+~';
+        $regex_video = '~^\<video\>+~';
+
+        $quarto = new Quarto('Teste de Quarto', 10, 10);
+
+        $arquivo_foto = '../../../../Helpers/arquivos/test_code.jpg';
+        $midia_foto = new QuartoMidia($arquivo_foto);
+        $midia_foto->setQuarto($quarto);
+
+        $arquivo_video = '../../../../Helpers/arquivos/test_video.mp4';
+        $midia_video = new QuartoMidia($arquivo_video);
+        $midia_video->setQuarto($quarto);
+
+        $this->assertRegExp($regex_img, $midia_foto->getTagHtml());
+        $this->assertRegExp($regex_video, $midia_video->getTagHtml());
     }
 }
