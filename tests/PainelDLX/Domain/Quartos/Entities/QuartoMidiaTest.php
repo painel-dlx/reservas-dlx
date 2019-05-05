@@ -52,8 +52,8 @@ class QuartoMidiaTest extends TestCase
 
     public function test_GetTagHtml_deve_retornar_a_tag_html_correspondente_a_midia()
     {
-        $regex_img = '~^\<img\s+~';
-        $regex_video = '~^\<video\>+~';
+        $regex_img = '~^\<figure\>~';
+        $regex_video = '~^\<video\>~';
 
         $quarto = new Quarto('Teste de Quarto', 10, 10);
 

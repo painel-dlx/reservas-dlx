@@ -35,7 +35,7 @@ use DLX\Domain\Entities\Entity;
  */
 class QuartoMidia extends Entity
 {
-    const HTML_IMAGEM = '<img src="%s" alt="%s">';
+    const HTML_IMAGEM = '<figure><img src="%s" alt="%s"></figure>';
     const HTML_VIDEO = '<video><source src="%s" type="%s"></video>';
 
     /** @var Quarto */
@@ -92,14 +92,15 @@ class QuartoMidia extends Entity
      * Retorna a mídia em HTML
      * @return string|null
      */
-    public function getTagHtml(): ?string
+    public function getTagHtml(?string $base_html = null): ?string
     {
         $mime_type = mime_content_type($this->getArquivo());
+        $src = "{$base_html}{$this->getArquivo()}";
 
         if (preg_match('~^image/~', $mime_type)) {
-            $html = sprintf(self::HTML_IMAGEM, $this->getArquivo(), $this->getQuarto()->getNome());
+            $html = sprintf(self::HTML_IMAGEM, $src, $this->getQuarto()->getNome());
         } elseif (preg_match('~^video/~', $mime_type)) {
-            $html = sprintf(self::HTML_VIDEO, $this->getArquivo(), $mime_type);
+            $html = sprintf(self::HTML_VIDEO, $src, $mime_type);
         }
 
         return $html;
