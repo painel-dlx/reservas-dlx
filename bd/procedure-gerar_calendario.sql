@@ -1,4 +1,5 @@
-create procedure gerar_calendario (data_inicial date, data_final date)
+drop procedure if exists gerar_calendario;
+create procedure gerar_calendario (data_inicial date, data_final date, quarto int)
     begin
         drop temporary table if exists calendario;
         create temporary table calendario (data date);
@@ -28,6 +29,10 @@ create procedure gerar_calendario (data_inicial date, data_final date)
             left join
                 dlx_reservas_disponibilidade drd on q.quarto_id = drd.dispon_quarto
             where
-                drd.dispon_dia is null;
+                drd.dispon_dia is null
+                and (
+                    quarto is null
+                    or q.quarto_id = quarto
+                );
         commit;
     end;
