@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Validators;
+namespace Reservas\PainelDLX\Domain\Pedidos\Validators;
 
 
 use Reservas\PainelDLX\Domain\Common\Validators\AbstractValidator;

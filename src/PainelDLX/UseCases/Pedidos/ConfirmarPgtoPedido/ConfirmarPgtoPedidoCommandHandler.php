@@ -28,7 +28,7 @@ namespace Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Validators\PedidoValidator;
+use Reservas\PainelDLX\Domain\Pedidos\Validators\PedidoValidator;
 use Reservas\PainelDLX\Domain\Pedidos\Validators\PedidoValidatorEnum;
 
 /**
