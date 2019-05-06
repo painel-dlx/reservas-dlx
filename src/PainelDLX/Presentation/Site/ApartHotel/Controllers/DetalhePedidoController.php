@@ -35,7 +35,9 @@ use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
 use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Exceptions\ReservaInvalidaException;
 use Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
@@ -45,7 +47,6 @@ use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoC
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler;
-use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use SechianeX\Contracts\SessionInterface;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
@@ -149,24 +150,24 @@ class DetalhePedidoController extends SiteController
 
         try {
             /** @var \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido */
-            /** @see GetPedidoPorIdCommandHandler */
+            /* @see GetPedidoPorIdCommandHandler */
             $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($post['id']));
 
             /** @var Usuario $usuario_logado */
-            /** @see GetUsuarioPeloIdCommandHandler */
+            /* @see GetUsuarioPeloIdCommandHandler */
             $usuario_logado = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
             
-            /** @see GerarReservasPedidoCommandHandler */
+            /* @see GerarReservasPedidoCommandHandler */
             $this->command_bus->handle(new GerarReservasPedidoCommand($pedido, $usuario_logado));
 
             $this->transaction->transactional(function () use ($pedido) {
-                /** @see ConfirmarPgtoPedidoCommandHandler */
+                /* @see ConfirmarPgtoPedidoCommandHandler */
                 $this->command_bus->handle(new ConfirmarPgtoPedidoCommand($pedido));
             });
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Pedido #{$pedido->getId()} foi confirmado com sucesso!";
-        } catch (UserException $e) {
+        } catch (ReservaInvalidaException | VerificarDisponQuartoException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

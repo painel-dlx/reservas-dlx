@@ -36,6 +36,7 @@ use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\Domain\Reservas\Exceptions\ReservaInvalidaException;
 use Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommandHandler;
@@ -54,7 +55,7 @@ use Zend\Diactoros\Response\JsonResponse;
 /**
  * Class DetalheReservaController
  * @package Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers
- * @covers DetalheReservaControllerTest
+ * @see DetalheReservaControllerTest
  */
 class DetalheReservaController extends SiteController
 {
@@ -105,7 +106,7 @@ class DetalheReservaController extends SiteController
 
         try {
             /** @var Reserva|null $reserva */
-            /** @covers GetReservaPorIdCommandHandler */
+            /** @see GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($get['id']));
 
             // Atributos
@@ -143,7 +144,7 @@ class DetalheReservaController extends SiteController
 
         try {
             /** @var Reserva|null $reserva */
-            /** @covers GetReservaPorIdCommandHandler */
+            /** @see GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($get['id']));
 
             /** @var Usuario $usuario_logado */
@@ -187,7 +188,7 @@ class DetalheReservaController extends SiteController
 
         try {
             /** @var Reserva|null $reserva */
-            /** @covers GetReservaPorIdCommandHandler */
+            /** @see GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($get['id']));
 
             // Atributos
@@ -227,7 +228,7 @@ class DetalheReservaController extends SiteController
 
         try {
             /** @var Reserva|null $reserva */
-            /** @covers GetReservaPorIdCommandHandler */
+            /** @see GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($id));
 
             /** @var Usuario|null $usuario_logado */
@@ -237,13 +238,13 @@ class DetalheReservaController extends SiteController
             $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
 
             $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
-                /** @covers ConfirmarReservaCommandHandler */
+                /** @see ConfirmarReservaCommandHandler */
                 $this->command_bus->handle(new ConfirmarReservaCommand($reserva, $usuario, $motivo));
             });
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} confirmada com sucesso!";
-        } catch (UserException $e) {
+        } catch (ReservaInvalidaException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }
@@ -271,7 +272,7 @@ class DetalheReservaController extends SiteController
 
         try {
             /** @var Reserva|null $reserva */
-            /** @covers GetReservaPorIdCommandHandler */
+            /** @see GetReservaPorIdCommandHandler */
             $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($id));
 
             /** @var Usuario|null $usuario_logado */
@@ -281,13 +282,13 @@ class DetalheReservaController extends SiteController
             $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
 
             $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
-                /** @covers CancelarReservaCommandHandler */
+                /** @see CancelarReservaCommandHandler */
                 $this->command_bus->handle(new CancelarReservaCommand($reserva, $usuario, $motivo));
             });
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} cancelada com sucesso!";
-        } catch (UserException $e) {
+        } catch (ReservaInvalidaException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

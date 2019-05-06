@@ -37,6 +37,6 @@ class VerificarDisponQuartoException extends Exception
      */
     public static function quartoIndisponivelData(DateTime $dia)
     {
-        return new self("Quarto indisponível para o dia {$dia->format('d/m/Y')}", 10);
+        return new self("Quarto indisponível para o dia {$dia->format('d/m/Y')}.", 10);
     }
 }
