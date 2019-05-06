@@ -34,7 +34,7 @@ use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 
-class DisponibilidadeRepository extends EntityRepository implements \Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface
+class DisponibilidadeRepository extends EntityRepository implements DisponibilidadeRepositoryInterface
 {
 
     /**
@@ -48,14 +48,17 @@ class DisponibilidadeRepository extends EntityRepository implements \Reservas\Pa
         $qb = $this->_em->createQueryBuilder();
         $qb->select('d')
             ->from(Disponibilidade::class, 'd')
+            ->innerJoin('d.quarto', 'q')
             ->where('d.dia BETWEEN :data_inicial AND :data_final')
+            ->andWhere('q.publicar = 1')
+            ->andWhere('q.deletado = 0')
             ->orderBy('d.quarto')
             ->addOrderBy('d.dia')
             ->setParameter(':data_inicial', $data_inicial->format('Y-m-d'), ParameterType::STRING)
             ->setParameter(':data_final', $data_final->format('Y-m-d'), ParameterType::STRING);
 
         if (!is_null($quarto)) {
-            $qb->andWhere('d.quarto = :quarto');
+            $qb->andWhere('q.quarto = :quarto');
             $qb->setParameter(':quarto', $quarto);
         }
 

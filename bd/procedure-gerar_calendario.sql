@@ -25,7 +25,7 @@ create procedure gerar_calendario (data_inicial date, data_final date)
             from
                 calendario c,
                 dlx_reservas_quartos q
-                    left join
+            left join
                 dlx_reservas_disponibilidade drd on q.quarto_id = drd.dispon_quarto
             where
                 drd.dispon_dia is null;
