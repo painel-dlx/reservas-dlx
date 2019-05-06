@@ -58,7 +58,7 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
             ->setParameter(':data_final', $data_final->format('Y-m-d'), ParameterType::STRING);
 
         if (!is_null($quarto)) {
-            $qb->andWhere('q.quarto = :quarto');
+            $qb->andWhere('d.quarto = :quarto');
             $qb->setParameter(':quarto', $quarto);
         }
 
