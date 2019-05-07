@@ -23,35 +23,34 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\EmailsRouter;
-use Reservas\PainelDLX\Application\Routes\PedidosRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
+namespace Reservas\PainelDLX\Application\Routes;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-    PedidosRouter::class,
+use PainelDLX\Application\Middlewares\VerificarLogon;
+use PainelDLX\Application\Routes\PainelDLXRouter;
+use Reservas\PainelDLX\Presentation\Site\ApartHotel\Emails\Controllers\EmailPedidosController;
 
-    // Emails
-    EmailsRouter::class,
-];
+class EmailsRouter extends PainelDLXRouter
+{
+
+    /**
+     * Registrar todas as rotas
+     */
+    public function registrar(): void
+    {
+        $router = $this->getRouter();
+
+        // Middlewares
+        $verificar_logon = new VerificarLogon($this->session);
+
+        $router->get(
+            '/painel-dlx/apart-hotel/emails/confirmacao-pedido',
+            [EmailPedidosController::class, 'notificacaoConfirmacaoPedido']
+        )->middlewares($verificar_logon);
+
+        $router->get(
+            '/painel-dlx/apart-hotel/emails/cancelamento-pedido',
+            [EmailPedidosController::class, 'notificacaoCancelamentoPedido']
+        )->middlewares($verificar_logon);
+    }
+}

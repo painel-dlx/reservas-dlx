@@ -35,13 +35,14 @@ use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
-use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Reservas\Exceptions\ReservaInvalidaException;
 use Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException;
-use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
+use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommand;
+use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
@@ -163,11 +164,14 @@ class DetalhePedidoController extends SiteController
             $this->transaction->transactional(function () use ($pedido) {
                 /* @see ConfirmarPgtoPedidoCommandHandler */
                 $this->command_bus->handle(new ConfirmarPgtoPedidoCommand($pedido));
+
+                /* @see EnviarNotificacaoConfirmacaoPedidoCommandHandler */
+                $this->command_bus->handle(new EnviarNotificacaoConfirmacaoPedidoCommand($pedido));
             });
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Pedido #{$pedido->getId()} foi confirmado com sucesso!";
-        } catch (ReservaInvalidaException | VerificarDisponQuartoException $e) {
+        } catch (PedidoInvalidoException | ReservaInvalidaException | VerificarDisponQuartoException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

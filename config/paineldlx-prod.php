@@ -39,6 +39,7 @@ return [
         'nome' => 'reservas-dlx',
         'nome-amigavel' => 'Painel DLX',
         'base-html' => '/',
+        'base-url' => 'https://brasiliaaparthoteis.com.br/',
         'rotas' => include 'rotas.php',
         'service-providers' => include 'service_providers.php',
         'mapping' => include 'mapping.php',

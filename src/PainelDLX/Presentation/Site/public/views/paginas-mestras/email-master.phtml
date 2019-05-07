@@ -23,35 +23,33 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\EmailsRouter;
-use Reservas\PainelDLX\Application\Routes\PedidosRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
+?>
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
+<html lang="pt">
+<head>
+    <meta name="Content-type" content="text-html">
+    <meta name="charset" content="UTF-8">
+    <title></title>
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-    PedidosRouter::class,
+    [HTML-HEAD/]
+</head>
 
-    // Emails
-    EmailsRouter::class,
-];
+<body style="background: #EFEFEF; padding: 40px 10%; font: 13px sans-serif">
+
+<div class="wrapper" style="background: #FFF; padding: 10px; max-width: 800px; border-radius: 4px; box-shadow: 0 0 5px rgba(0,0,0, .2); margin: auto;">
+    <header class="dlx-topo" style="border-bottom: 1px solid #EFEFEF; padding: 10px 0; margin-bottom: 10px">
+        [DLX-TOPO/]
+    </header>
+
+    <div class="dlx-conteudo">
+        [CORPO/]
+    </div>
+
+    <footer class="dlx-rodape">
+        [RODAPE/]
+    </footer>
+</div>
+
+</body>
+</html>
+

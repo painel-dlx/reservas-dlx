@@ -23,35 +23,20 @@
  * SOFTWARE.
  */
 
-use PainelDLX\Application\Routes\ConfigSmtpRouter;
-use PainelDLX\Application\Routes\ErrosRouter;
-use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
-use PainelDLX\Application\Routes\LoginRouter;
-use PainelDLX\Application\Routes\PermissoesRouter;
-use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\EmailsRouter;
-use Reservas\PainelDLX\Application\Routes\PedidosRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
+use DLX\Core\Configure;
 
-return [
-    // Painel DLX
-    HomeRouter::class,
-    ErrosRouter::class,
-    UsuariosRouter::class,
-    PermissoesRouter::class,
-    GruposUsuariosRouter::class,
-    LoginRouter::class,
-    ConfigSmtpRouter::class,
+$base_url = Configure::get('app', 'base-url');
+?>
 
-    // Reservas / Apart Hotel
-    QuartosRouter::class,
-    DisponibilidadeRouter::class,
-    ReservasRouter::class,
-    PedidosRouter::class,
+[RODAPE]
 
-    // Emails
-    EmailsRouter::class,
-];
+<div style="color: #888; text-align: center; margin: 20px 0 0; font-size: 12px;">
+    Clique aqui para ver nossa
+    <a href="<?php echo $base_url ?>web/uploads/configuracoes/politica-reserva.pdf" target="_blank" rel="noopener" style="color: #E35243">
+        Política de Reservas
+    </a>.
+    <br>
+
+    Brasília Apart Hotéis @ <?php echo date('Y') ?> - Todos os direitos reservados.
+</div>
+[/RODAPE]

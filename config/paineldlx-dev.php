@@ -39,6 +39,7 @@ return [
         'nome' => 'reservas-dlx',
         'nome-amigavel' => 'Painel DLX',
         'base-html' => '/',
+        'base-url' => 'http://reservas-dlx.localhost/',
         'rotas' => include 'rotas.php',
         'service-providers' => include 'service_providers.php',
         'mapping' => include 'mapping.php',
