@@ -12,16 +12,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Reservas\\PainelDLX\\": "src/PainelDLX/",
-            "Reservas\\Website\\": "src/Website/"
+            "Reservas\\PainelDLX\\": "src/PainelDLX/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "PainelDLX\\Testes\\": "vendor/dlepera88-php/painel-dlx/tests",
             "Reservas\\Tests\\": "tests",
-            "Reservas\\PainelDLX\\Tests\\": "tests/PainelDLX",
-            "Reservas\\Website\\Tests\\": "tests/Website"
+            "Reservas\\PainelDLX\\Tests\\": "tests/PainelDLX"
         }
     }
 }
