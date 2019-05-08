@@ -276,7 +276,7 @@ class Quarto extends Entity
     public function getDispon(DateTime $checkin, DateTime $chekcout): Collection
     {
         $criteria = Criteria::create();
-        $criteria->andWhere(Criteria::expr()->gte('dia', $checkin));
+        $criteria->where(Criteria::expr()->gte('dia', $checkin));
         $criteria->andWhere(Criteria::expr()->lte('dia', $chekcout));
 
         return $this->dispon->matching($criteria);
@@ -337,6 +337,6 @@ class Quarto extends Entity
      */
     public function isDisponivelPeriodo(DateTime $checkin, DateTime $checkout): bool
     {
-        return (new VerificarDisponQuarto())->executar($this, $checkin, $checkin);
+        return (new VerificarDisponQuarto())->executar($this, $checkin, $checkout);
     }
 }

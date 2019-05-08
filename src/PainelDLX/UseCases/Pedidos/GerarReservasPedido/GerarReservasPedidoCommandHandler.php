@@ -79,10 +79,11 @@ class GerarReservasPedidoCommandHandler
             $reserva->setTelefone($pedido->getTelefone());
             $reserva->setEmail($pedido->getEmail());
             $reserva->setOrigem('Website');
-            $reserva->confirmada("Pedido #{$pedido->getId()} foi confirmado.", $command->getUsuario());
 
             // Validar a disponibilidade do quarto para o período da reserva
+            // Observação: a confirmação deve ser feita apenas após a verificação da disponibilidade
             (new ValidarDisponQuarto())->validar($reserva);
+            $reserva->confirmada("Pedido #{$pedido->getId()} foi confirmado.", $command->getUsuario());
 
             $pedido->addReserva($reserva);
         }

@@ -30,7 +30,6 @@ use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
 
@@ -151,7 +150,6 @@ class Disponibilidade extends Entity
      * @param int $qtde_pessoas
      * @param float $valor
      * @return Disponibilidade
-     * @throws ValorMenorQueMinimoQuartoException
      */
     public function addValor(int $qtde_pessoas, float $valor): self
     {
@@ -182,7 +180,6 @@ class Disponibilidade extends Entity
      * @param int $qtde_pessoas
      * @param float $valor
      * @return Disponibilidade
-     * @throws ValorMenorQueMinimoQuartoException
      */
     public function setValorPorQtdePessoas(int $qtde_pessoas, float $valor): self
     {
