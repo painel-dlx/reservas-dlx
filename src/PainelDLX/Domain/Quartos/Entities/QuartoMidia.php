@@ -110,12 +110,16 @@ class QuartoMidia extends Entity
 
     /**
      * Retorna a mídia em HTML
+     * @param string|null $base_html
+     * @param bool $mini
      * @return string|null
      */
-    public function getTagHtml(?string $base_html = null): ?string
+    public function getTagHtml(?string $base_html = null, bool $mini = true): ?string
     {
+        $arquivo = $mini && !empty($this->getMini()) ? $this->getMini() : $this->getArquivo();
+
         $mime_type = mime_content_type($this->getArquivo());
-        $src = "{$base_html}{$this->getArquivo()}";
+        $src = "{$base_html}{$arquivo}";
 
         if (preg_match('~^image/~', $mime_type)) {
             $html = sprintf(self::HTML_IMAGEM, $src, $this->getQuarto()->getNome());
