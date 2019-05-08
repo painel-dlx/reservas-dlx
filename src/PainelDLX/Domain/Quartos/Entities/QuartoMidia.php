@@ -42,6 +42,8 @@ class QuartoMidia extends Entity
     private $quarto;
     /** @var string */
     private $arquivo;
+    /** @var string|null */
+    private $mini;
 
     /**
      * QuartoMidia constructor.
@@ -85,6 +87,24 @@ class QuartoMidia extends Entity
     public function setArquivo(string $arquivo): QuartoMidia
     {
         $this->arquivo = $arquivo;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMini(): ?string
+    {
+        return $this->mini;
+    }
+
+    /**
+     * @param string|null $mini
+     * @return QuartoMidia
+     */
+    public function setMini(?string $mini): QuartoMidia
+    {
+        $this->mini = $mini;
         return $this;
     }
 

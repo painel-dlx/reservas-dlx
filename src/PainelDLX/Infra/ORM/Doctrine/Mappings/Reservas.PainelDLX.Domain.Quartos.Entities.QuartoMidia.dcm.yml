@@ -13,6 +13,12 @@ Reservas\PainelDLX\Domain\Quartos\Entities\QuartoMidia:
             length: 255
             id: true
             column: midia_arquivo
+        mini:
+            type: string
+            nullable: true
+            length: 255
+            id: true
+            column: midia_mini
     manyToOne:
         quarto:
             targetEntity: Quarto
