@@ -40,20 +40,15 @@ class GerarReservasPedidoCommand
      * @var Pedido
      */
     private $pedido;
-    /**
-     * @var Usuario
-     */
-    private $usuario;
 
     /**
      * GerarReservasPedidoCommand constructor.
      * @param Pedido $pedido
      * @param Usuario $usuario
      */
-    public function __construct(Pedido $pedido, Usuario $usuario)
+    public function __construct(Pedido $pedido)
     {
         $this->pedido = $pedido;
-        $this->usuario = $usuario;
     }
 
     /**
@@ -62,13 +57,5 @@ class GerarReservasPedidoCommand
     public function getPedido(): Pedido
     {
         return $this->pedido;
-    }
-
-    /**
-     * @return Usuario
-     */
-    public function getUsuario(): Usuario
-    {
-        return $this->usuario;
     }
 }

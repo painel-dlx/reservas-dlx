@@ -30,7 +30,7 @@ use DatePeriod;
 use DateTime;
 use Reservas\PainelDLX\Domain\Exceptions\QuartoNaoDisponivelException;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
 use Reservas\Tests\ReservasTestCase;
 
@@ -42,7 +42,7 @@ use Reservas\Tests\ReservasTestCase;
 class VerificarDisponQuartoTest extends ReservasTestCase
 {
     /**
-     * @throws VerificarDisponQuartoException
+     * @throws QuartoIndisponivelException
      * @throws QuartoNaoDisponivelException
      * @covers ::executar
      */
@@ -52,14 +52,14 @@ class VerificarDisponQuartoTest extends ReservasTestCase
         $checkin = new DateTime();
         $checkout = (clone $checkin)->modify('+5 days');
 
-        $this->expectException(VerificarDisponQuartoException::class);
+        $this->expectException(QuartoIndisponivelException::class);
         $this->expectExceptionCode(10);
 
         (new VerificarDisponQuarto())->executar($quarto, $checkin, $checkout);
     }
 
     /**
-     * @throws VerificarDisponQuartoException
+     * @throws QuartoIndisponivelException
      * @throws QuartoNaoDisponivelException
      * @throws \Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException
      * @covers ::executar
@@ -78,14 +78,14 @@ class VerificarDisponQuartoTest extends ReservasTestCase
             $quarto->addDispon($data, 1, [1 => 10]);
         }
 
-        $this->expectException(VerificarDisponQuartoException::class);
+        $this->expectException(QuartoIndisponivelException::class);
         $this->expectExceptionCode(10);
 
         (new VerificarDisponQuarto())->executar($quarto, $checkin, $checkout);
     }
 
     /**
-     * @throws VerificarDisponQuartoException
+     * @throws QuartoIndisponivelException
      * @throws QuartoNaoDisponivelException
      * @throws \Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException
      * @covers ::executar

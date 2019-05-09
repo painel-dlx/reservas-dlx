@@ -36,13 +36,16 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Pedidos\Exceptions\PedidoInvalidoException;
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Domain\Reservas\Exceptions\ReservaInvalidaException;
 use Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
+use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommand;
+use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoCancelamentoPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommandHandler;
+use Reservas\PainelDLX\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
@@ -55,6 +58,11 @@ use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
+/**
+ * Class DetalhePedidoController
+ * @package Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers
+ * @covers DetalhePedidoControllerTest
+ */
 class DetalhePedidoController extends SiteController
 {
     /**
@@ -106,7 +114,7 @@ class DetalhePedidoController extends SiteController
         $usuario_logado = $this->session->get('usuario-logado');
 
         try {
-            /** @var \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido */
+            /** @var Pedido $pedido */
             /** @see GetPedidoPorIdCommandHandler */
             $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($get['id']));
 
@@ -123,7 +131,43 @@ class DetalhePedidoController extends SiteController
             $this->view->addTemplate('det_pedido');
 
             // JS
+            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
             $this->view->addArquivoJS('src/PainelDLX/Presentation/Site/public/js/apart-hotel.js');
+        } catch (UserException $e) {
+            $this->view->addTemplate('../mensagem_usuario');
+            $this->view->setAtributo('mensagem', [
+                'tipo' => 'erro',
+                'mensagem' => $e->getMessage()
+            ]);
+        }
+
+        return $this->view->render();
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     */
+    public function formConfirmarPgtoPedido(ServerRequestInterface $request): ResponseInterface
+    {
+        $get = filter_var_array($request->getQueryParams(), [
+            'id' => FILTER_VALIDATE_INT
+        ]);
+
+        try {
+            /** @var Pedido $pedido */
+            /* @see GetPedidoPorIdCommandHandler */
+            $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($get['id']));
+
+            // Parâmetros
+            $this->view->setAtributo('titulo-pagina', "Confirmar pedido #{$pedido->getId()}");
+            $this->view->setAtributo('pedido', $pedido);
+
+            // Visões
+            $this->view->addTemplate('form_confirmar_pedido');
         } catch (UserException $e) {
             $this->view->addTemplate('../mensagem_usuario');
             $this->view->setAtributo('mensagem', [
@@ -143,14 +187,15 @@ class DetalhePedidoController extends SiteController
     public function confirmarPgtoPedido(ServerRequestInterface $request): ResponseInterface
     {
         $post = filter_var_array($request->getParsedBody(), [
-            'id' => FILTER_VALIDATE_INT
+            'id' => FILTER_VALIDATE_INT,
+            'motivo' => FILTER_SANITIZE_STRING
         ]);
 
         /** @var Usuario $usuario_logado */
         $usuario_logado = $this->session->get('usuario-logado');
 
         try {
-            /** @var \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido */
+            /** @var Pedido $pedido */
             /* @see GetPedidoPorIdCommandHandler */
             $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($post['id']));
 
@@ -159,11 +204,11 @@ class DetalhePedidoController extends SiteController
             $usuario_logado = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
             
             /* @see GerarReservasPedidoCommandHandler */
-            $this->command_bus->handle(new GerarReservasPedidoCommand($pedido, $usuario_logado));
+            $this->command_bus->handle(new GerarReservasPedidoCommand($pedido));
 
-            $this->transaction->transactional(function () use ($pedido) {
+            $this->transaction->transactional(function () use ($pedido, $post, $usuario_logado) {
                 /* @see ConfirmarPgtoPedidoCommandHandler */
-                $this->command_bus->handle(new ConfirmarPgtoPedidoCommand($pedido));
+                $this->command_bus->handle(new ConfirmarPgtoPedidoCommand($pedido, $post['motivo'], $usuario_logado));
 
                 /* @see EnviarNotificacaoConfirmacaoPedidoCommandHandler */
                 $this->command_bus->handle(new EnviarNotificacaoConfirmacaoPedidoCommand($pedido));
@@ -171,7 +216,84 @@ class DetalhePedidoController extends SiteController
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Pedido #{$pedido->getId()} foi confirmado com sucesso!";
-        } catch (PedidoInvalidoException | ReservaInvalidaException | VerificarDisponQuartoException $e) {
+        } catch (PedidoInvalidoException | ReservaInvalidaException | QuartoIndisponivelException $e) {
+            $json['retorno'] = 'erro';
+            $json['mensagem'] = $e->getMessage();
+        }
+
+        return new JsonResponse($json);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     */
+    public function formCancelarPedido(ServerRequestInterface $request): ResponseInterface
+    {
+        $get = filter_var_array($request->getQueryParams(), [
+            'id' => FILTER_VALIDATE_INT
+        ]);
+
+        try {
+            /** @var Pedido $pedido */
+            /* @see GetPedidoPorIdCommandHandler */
+            $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($get['id']));
+
+            // Parâmetros
+            $this->view->setAtributo('titulo-pagina', "Cancelar pedido #{$pedido->getId()}");
+            $this->view->setAtributo('pedido', $pedido);
+
+            // Visões
+            $this->view->addTemplate('form_cancelar_pedido');
+        } catch (UserException $e) {
+            $this->view->addTemplate('../mensagem_usuario');
+            $this->view->setAtributo('mensagem', [
+                'tipo' => 'erro',
+                'mensagem' => $e->getMessage()
+            ]);
+        }
+
+        return $this->view->render();
+    }
+
+    /**
+     * Cancelar um pedido
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function cancelarPedido(ServerRequestInterface $request): ResponseInterface
+    {
+        $post = filter_var_array($request->getParsedBody(), [
+            'id' => FILTER_VALIDATE_INT,
+            'motivo' => FILTER_SANITIZE_STRING
+        ]);
+
+        /** @var Usuario $usuario_logado */
+        $usuario_logado = $this->session->get('usuario-logado');
+
+        try {
+            /** @var Pedido $pedido */
+            /* @see GetPedidoPorIdCommandHandler */
+            $pedido = $this->command_bus->handle(new GetPedidoPorIdCommand($post['id']));
+
+            /** @var Usuario $usuario_logado */
+            /* @see GetUsuarioPeloIdCommandHandler */
+            $usuario_logado = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
+
+            $this->transaction->transactional(function () use ($pedido, $post, $usuario_logado) {
+                /* @see CancelarPedidoCommandHandler */
+                $this->command_bus->handle(new CancelarPedidoCommand($pedido, $post['motivo'], $usuario_logado));
+
+                /* @see EnviarNotificacaoCancelamentoPedidoCommandHandler */
+                $this->command_bus->handle(new EnviarNotificacaoCancelamentoPedidoCommand($pedido, $post['motivo']));
+            });
+
+            $json['retorno'] = 'sucesso';
+            $json['mensagem'] = "Pedido #{$pedido->getId()} foi cancelado com sucesso!";
+        } catch (PedidoInvalidoException | ReservaInvalidaException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

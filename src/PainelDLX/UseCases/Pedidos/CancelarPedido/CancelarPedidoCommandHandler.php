@@ -23,22 +23,39 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Quartos\VerificarDisponQuarto;
+namespace Reservas\PainelDLX\UseCases\Pedidos\CancelarPedido;
 
 
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
-use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
-class VerificarDisponQuartoCommandHandler
+class CancelarPedidoCommandHandler
 {
     /**
-     * @param VerificarDisponQuartoCommand $command
-     * @return bool Retorna true se o quarto está disponível para o período desejado
-     *@throws QuartoIndisponivelException
+     * @var PedidoRepositoryInterface
      */
-    public function handle(VerificarDisponQuartoCommand $command): bool
+    private $pedido_repository;
+
+    /**
+     * CancelarPedidoCommandHandler constructor.
+     * @param PedidoRepositoryInterface $pedido_repository
+     */
+    public function __construct(PedidoRepositoryInterface $pedido_repository)
     {
-        $quarto = $command->getQuarto();
-        return (new VerificarDisponQuarto())->executar($quarto, $command->getCheckin(), $command->getCheckout());
+        $this->pedido_repository = $pedido_repository;
+    }
+
+    /**
+     * @param CancelarPedidoCommand $command
+     * @return Pedido|null
+     */
+    public function handle(CancelarPedidoCommand $command): ?Pedido
+    {
+        $pedido = $command->getPedido();
+
+        $pedido->cancelado($command->getMotivo(), $command->getUsuario());
+        $this->pedido_repository->update($pedido);
+
+        return $pedido;
     }
 }

@@ -79,7 +79,7 @@ class GetPedidoPorIdCommandHandlerTest extends ReservasTestCase
      */
     public function test_Handle_deve_retornar_Pedido_quando_encontrar_registro_bd(GetPedidoPorIdCommandHandler $handler)
     {
-        $id = PedidoTesteHelper::getIdRandom();
+        $id = PedidoTesteHelper::getPedidoIdRandom();
 
         $command = new GetPedidoPorIdCommand($id);
         $pedido = $handler->handle($command);

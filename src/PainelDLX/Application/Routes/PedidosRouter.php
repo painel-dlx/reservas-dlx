@@ -61,20 +61,42 @@ class PedidosRouter extends PainelDLXRouter
             $define_pagina_mestra
         );
 
-        $router->post(
-            '/painel-dlx/apart-hotel/pedidos/confirmar-pedido',
-            [DetalhePedidoController::class, 'confirmarPgtoPedido']
-        )->middlewares(
-            $verificar_logon,
-            $define_pagina_mestra
-        );
-
         $router->get(
             '/painel-dlx/apart-hotel/pedidos/mostrar-cpf-completo',
             [DetalhePedidoController::class, 'mostrarCpfCompleto']
         )->middlewares(
             $verificar_logon,
             $define_pagina_mestra
+        );
+
+        $router->get(
+            '/painel-dlx/apart-hotel/pedidos/confirmar-pedido',
+            [DetalhePedidoController::class, 'formConfirmarPgtoPedido']
+        )->middlewares(
+            $verificar_logon,
+            $define_pagina_mestra
+        );
+
+        $router->post(
+            '/painel-dlx/apart-hotel/pedidos/confirmar-pedido',
+            [DetalhePedidoController::class, 'confirmarPgtoPedido']
+        )->middlewares(
+            $verificar_logon
+        );
+
+        $router->get(
+            '/painel-dlx/apart-hotel/pedidos/cancelar-pedido',
+            [DetalhePedidoController::class, 'formCancelarPedido']
+        )->middlewares(
+            $verificar_logon,
+            $define_pagina_mestra
+        );
+
+        $router->post(
+            '/painel-dlx/apart-hotel/pedidos/cancelar-pedido',
+            [DetalhePedidoController::class, 'cancelarPedido']
+        )->middlewares(
+            $verificar_logon
         );
     }
 }

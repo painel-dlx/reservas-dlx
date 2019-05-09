@@ -38,7 +38,6 @@ use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Reservas\Entities\ReservaHistorico;
-use Reservas\PainelDLX\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 use Reservas\Tests\ReservasTestCase;
 
 /**
@@ -53,16 +52,16 @@ class ReservaTest extends ReservasTestCase
     /**
      * @throws Exception
      */
-    public function test__construct(): \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva
+    public function test__construct(): Reserva
     {
         $quarto = new Quarto('Teste de Quarto', 1, 10);
         $checkin = new DateTime();
         $checkout = (new DateTime())->modify('+3 days');
         $adultos = mt_rand(1, 3);
 
-        $reserva = new \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva($quarto, $checkin, $checkout, $adultos);
+        $reserva = new Reserva($quarto, $checkin, $checkout, $adultos);
 
-        $this->assertInstanceOf(\Reservas\PainelDLX\Domain\Reservas\Entities\Reserva::class, $reserva);
+        $this->assertInstanceOf(Reserva::class, $reserva);
         $this->assertEquals($quarto, $reserva->getQuarto());
         $this->assertEquals($checkin, $reserva->getCheckin());
         $this->assertEquals($checkout, $reserva->getCheckout());
@@ -74,13 +73,13 @@ class ReservaTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva
+     * @param Reserva $reserva
      * @throws DBALException
      * @throws ORMException
      * @covers ::addHistorico
      * @depends test__construct
      */
-    public function test_AddHistorico_deve_adicionar_um_historico_a_reserva(\Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva)
+    public function test_AddHistorico_deve_adicionar_um_historico_a_reserva(Reserva $reserva)
     {
         $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
         $status = 'Cancelada';
@@ -98,14 +97,13 @@ class ReservaTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva
+     * @param Reserva $reserva
      * @throws DBALException
      * @throws ORMException
-     * @throws ValorMenorQueMinimoQuartoException
      * @covers ::confirmada
      * @depends test__construct
      */
-    public function test_Confirmada_seta_Reserva_como_confirmada_e_retirar_Disponibilidade(\Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva)
+    public function test_Confirmada_seta_Reserva_como_confirmada_e_retirar_Disponibilidade(Reserva $reserva)
     {
         $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
         // $quarto = $reserva->getQuarto();
@@ -125,47 +123,47 @@ class ReservaTest extends ReservasTestCase
 
         $reserva->confirmada('Reserva foi paga via digitação de cartão.', $usuario);
 
-        $has_historico_confirmada = $reserva->getHistorico()->exists(function ($key, \Reservas\PainelDLX\Domain\Reservas\Entities\ReservaHistorico $reserva_historico) {
-            return $reserva_historico->getStatus() === \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva::STATUS_CONFIRMADA;
+        $has_historico_confirmada = $reserva->getHistorico()->exists(function ($key, ReservaHistorico $reserva_historico) {
+            return $reserva_historico->getStatus() === Reserva::STATUS_CONFIRMADA;
         });
 
-        $has_dispon_invalida = $quarto->getDispon($reserva->getCheckin(), $reserva->getCheckout())->exists(function ($key, \Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade $dispon) use ($qtde_quartos_esperada) {
+        $has_dispon_invalida = $quarto->getDispon($reserva->getCheckin(), $reserva->getCheckout())->exists(function ($key, Disponibilidade $dispon) use ($qtde_quartos_esperada) {
             return $dispon->getQtde() !== $qtde_quartos_esperada;
         });
 
         $this->assertTrue($reserva->isConfirmada());
-        $this->assertEquals(\Reservas\PainelDLX\Domain\Reservas\Entities\Reserva::STATUS_CONFIRMADA, $reserva->getStatus());
+        $this->assertEquals(Reserva::STATUS_CONFIRMADA, $reserva->getStatus());
         $this->assertTrue($has_historico_confirmada);
         $this->assertFalse($has_dispon_invalida);
     }
 
     /**
-     * @param \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva
+     * @param Reserva $reserva
      * @throws DBALException
      * @throws ORMException
      * @covers ::cancelada
      * @depends test__construct
      */
-    public function test_Cancelada_seta_Reserva_como_cancelada(\Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva)
+    public function test_Cancelada_seta_Reserva_como_cancelada(Reserva $reserva)
     {
         $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
         $reserva->cancelada('Reserva foi paga via digitação de cartão.', $usuario);
 
         $has_historico_cancelada = $reserva->getHistorico()->exists(function ($key, ReservaHistorico $reserva_historico) {
-            return $reserva_historico->getStatus() === \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva::STATUS_CANCELADA;
+            return $reserva_historico->getStatus() === Reserva::STATUS_CANCELADA;
         });
 
         $this->assertTrue($reserva->isCancelada());
-        $this->assertEquals(\Reservas\PainelDLX\Domain\Reservas\Entities\Reserva::STATUS_CANCELADA, $reserva->getStatus());
+        $this->assertEquals(Reserva::STATUS_CANCELADA, $reserva->getStatus());
         $this->assertTrue($has_historico_cancelada);
     }
 
     /**
-     * @param \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva
+     * @param Reserva $reserva
      * @covers ::getTotalHospedes
      * @depends test__construct
      */
-    public function test_GetTotalHospedes_deve_retornar_a_soma_dos_hospedes_adultos_e_criancas(\Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva)
+    public function test_GetTotalHospedes_deve_retornar_a_soma_dos_hospedes_adultos_e_criancas(Reserva $reserva)
     {
         $total_hospedes = $reserva->getTotalHospedes();
         $soma_hospedes = $reserva->getAdultos() + $reserva->getCriancas();
@@ -175,12 +173,11 @@ class ReservaTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva
+     * @param Reserva $reserva
      * @covers ::calcularValor
      * @depends test__construct
-     * @throws ValorMenorQueMinimoQuartoException
      */
-    public function test_CalcularValor_deve_retornar_valor_total_reserva(\Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva)
+    public function test_CalcularValor_deve_retornar_valor_total_reserva(Reserva $reserva)
     {
         $quarto = $reserva->getQuarto();
 

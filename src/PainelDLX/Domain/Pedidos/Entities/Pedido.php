@@ -30,11 +30,19 @@ use CPF\CPF;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Reservas\PainelDLX\Domain\Pedidos\Entities\PedidoPgtoCartao;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use Reservas\PainelDLX\Domain\Pedidos\Validators\PedidoValidator;
+use Reservas\PainelDLX\Domain\Pedidos\Validators\PedidoValidatorEnum;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
 use stdClass;
 
+/**
+ * Class Pedido
+ * @package Reservas\PainelDLX\Domain\Pedidos\Entities
+ * @covers PedidoTest
+ */
 class Pedido extends Entity
 {
     const STATUS_PENDENTE = 'Pendente';
@@ -63,10 +71,13 @@ class Pedido extends Entity
     private $itens;
     /** @var Collection */
     private $reservas;
+    /** @var Collection */
+    private $historico;
 
     public function __construct()
     {
         $this->reservas = new ArrayCollection();
+        $this->historico = new ArrayCollection();
     }
 
     /**
@@ -271,11 +282,48 @@ class Pedido extends Entity
         return $this->reservas;
     }
 
+    /**
+     * @param Reserva $reserva
+     * @return Pedido
+     */
     public function addReserva(Reserva $reserva): self
     {
         $reserva->setPedido($this);
 
         $this->reservas->add($reserva);
+        return $this;
+    }
+
+    /**
+     * Verifica se o pedido possui reservas vinculadass
+     * @return bool
+     */
+    public function hasReservas(): bool
+    {
+        return $this->getReservas()->count() > 0;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getHistorico(): Collection
+    {
+        return $this->historico;
+    }
+
+    /**
+     * @param string $status
+     * @param string $motivo
+     * @param Usuario $usuario
+     * @return Pedido
+     */
+    public function addHistorico(string $status, string $motivo, Usuario $usuario): self
+    {
+        $historico = new PedidoHistorico($status, $motivo);
+        $historico->setPedido($this);
+        $historico->setUsuario($usuario);
+
+        $this->historico->add($historico);
         return $this;
     }
 
@@ -308,21 +356,45 @@ class Pedido extends Entity
 
     /**
      * Informar que o pedido foi pago
+     * @param string $motivo
+     * @param Usuario $usuario
      * @return Pedido
      */
-    public function pago(): self
+    public function pago(string $motivo, Usuario $usuario): self
     {
+        $validator = new PedidoValidator(PedidoValidatorEnum::CONFIRMAR);
+        $validator->validar($this);
+
+        // Confirmar todas as reservas
+        $this->getReservas()->map(function (Reserva $reserva) use ($motivo, $usuario) {
+            $reserva->confirmada($motivo, $usuario);
+        });
+
+        $this->addHistorico(self::STATUS_PAGO, $motivo, $usuario);
         $this->setStatus(self::STATUS_PAGO);
         return $this;
     }
 
     /**
-     * Informar que o pedido foi cancelado
+     * Informar que o pedido foi cancelado. Ao cancelar o pedido, todas as reservas devem
+     * ser canceladas também
+     * @param string $motivo
+     * @param Usuario $usuario
      * @return Pedido
      */
-    public function cancelado(): self
+    public function cancelado(string $motivo, Usuario $usuario): self
     {
+        $validator = new PedidoValidator(PedidoValidatorEnum::CANCELAR);
+        $validator->validar($this);
+
+        $this->addHistorico(self::STATUS_CANCELADO, $motivo, $usuario);
         $this->setStatus(self::STATUS_CANCELADO);
+
+        // Cancelar todas as reservas
+        $this->getReservas()->map(function (Reserva $reserva) use ($motivo, $usuario) {
+            $reserva->cancelada($motivo, $usuario);
+        });
+
         return $this;
     }
 }

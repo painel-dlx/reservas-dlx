@@ -69,3 +69,12 @@ Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido:
             joinColumns:
                 pedido_id:
                     referencedColumnName: reserva_pedido
+        historico:
+            targetEntity: PedidoHistorico
+            mappedBy: pedido
+            orderBy: { data: desc }
+            cascade:
+                - persist
+            joinColumns:
+                pedido_id:
+                    referencedColumnName: pedido_id

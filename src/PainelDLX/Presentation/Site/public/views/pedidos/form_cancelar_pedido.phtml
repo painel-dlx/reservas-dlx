@@ -23,40 +23,38 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\GerarReservasPedido;
-
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
-use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
-use Reservas\Tests\ReservasTestCase;
+use Vilex\VileX;
 
 /**
- * Class GerarReservasPedidoCommandTest
- * @package Reservas\PainelDLX\Tests\UseCases\Pedidos\GerarReservasPedido
- * @coversDefaultClass \Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand
+ * @var VileX $this
  */
-class GerarReservasPedidoCommandTest extends ReservasTestCase
-{
-    /**
-     * @return GerarReservasPedidoCommand
-     */
-    public function test__construct(): GerarReservasPedidoCommand
-    {
-        $pedido = new Pedido();
-        $command = new GerarReservasPedidoCommand($pedido);
 
-        $this->assertInstanceOf(GerarReservasPedidoCommand::class, $command);
+/** @var Pedido|null $pedido */
+$pedido = $this->getAtributo('pedido');
+?>
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
 
-        return $command;
-    }
+<form id="form-cancelar-pedido" action="/painel-dlx/apart-hotel/pedidos/cancelar-pedido" method="post">
+    <input type="hidden" name="id" value="<?php echo $pedido->getId() ?>">
 
-    /**
-     * @param GerarReservasPedidoCommand $command
-     * @covers ::getPedido
-     * @depends test__construct
-     */
-    public function test_GetPedido(GerarReservasPedidoCommand $command)
-    {
-        $this->assertInstanceOf(Pedido::class, $command->getPedido());
-    }
-}
+    <p class="mensagem-usuario -atencao">
+        ATENÇÃO! Essa ação não pode ser defeita.<br>
+        <?php if ($pedido->hasReservas()) : ?>
+            Ao cancelar um pedido, todas as reservas vinculadas a ele serão canceladas também.<br>
+        <?php endif; ?>
+        Deseja realmente cancelar esse pedido?
+    </p>
+
+    <p class="form-paragr">
+        <label for="txt-motivo" class="form-rotulo">Motivo:</label>
+        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea" required></textarea>
+    </p>
+
+    <p class="form-botoes">
+        <button type="button" onclick="fecharPopupConfirmarPedido()" class="botao-salvar">Não quero cancelar o pedido</button>
+        <button type="submit" class="botao-cancelar">Sim, desejo cancelar esse pedido</button>
+    </p>
+</form>
+[/CORPO]

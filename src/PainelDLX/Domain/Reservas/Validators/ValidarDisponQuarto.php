@@ -26,7 +26,7 @@
 namespace Reservas\PainelDLX\Domain\Reservas\Validators;
 
 
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Domain\Reservas\Contracts\ReservaValidatorInterface;
 use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 
@@ -42,7 +42,7 @@ class ValidarDisponQuarto implements ReservaValidatorInterface
      * Valida uma determinada regra sobre reserva
      * @param \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva
      * @return bool
-     * @throws VerificarDisponQuartoException
+     * @throws QuartoIndisponivelException
      */
     public function validar(Reserva $reserva): bool
     {

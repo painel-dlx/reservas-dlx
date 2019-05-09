@@ -25,12 +25,14 @@
 
 namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\GerarReservasPedido;
 
+use CPF\CPF;
 use DateTime;
 use DLX\Infra\EntityManagerX;
+use Doctrine\ORM\ORMException;
+use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
@@ -46,7 +48,7 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
 {
     /**
      * @return GerarReservasPedidoCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): GerarReservasPedidoCommandHandler
     {
@@ -63,7 +65,7 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
      * @param GerarReservasPedidoCommandHandler $handler
      * @covers ::handle
      * @depends test__construct
-     * @throws \Exception
+     * @throws Exception
      */
     public function test_Handle_deve_adicionar_Reservas_no_Pedido_de_acordo_com_itens(GerarReservasPedidoCommandHandler $handler)
     {
@@ -77,7 +79,7 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
         $pedido->setNome('Teste de Cliente');
         $pedido->setEmail('cliente@gmail.com');
         $pedido->setTelefone('(00) 0 0000-0000');
-        $pedido->setCpf('000.000.000-00');
+        $pedido->setCpf(new CPF('000.000.000-00'));
         $pedido->setValorTotal(1234.00);
         $pedido->addItem(
             $quarto,
@@ -90,12 +92,6 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
 
         $command = new GerarReservasPedidoCommand($pedido, $usuario);
         $handler->handle($command);
-
-        /** @var \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva $reserva */
-        foreach ($pedido->getReservas() as $reserva) {
-            $this->assertEquals('Website', $reserva->getOrigem());
-            $this->assertTrue($reserva->isConfirmada(), "Reserva para o quarto '{$reserva->getQuarto()}' não está confirmada.");
-        }
 
         $this->assertCount(count($pedido->getItens()), $pedido->getReservas());
     }

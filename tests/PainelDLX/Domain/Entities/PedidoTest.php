@@ -25,8 +25,17 @@
 
 namespace Reservas\PainelDLX\Tests\Domain\Entities;
 
+use CPF\CPF;
+use DLX\Infra\EntityManagerX;
 use Doctrine\Common\Collections\ArrayCollection;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\PedidoHistorico;
+use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
+use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
+use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
 use Reservas\Tests\ReservasTestCase;
 
 /**
@@ -41,10 +50,20 @@ class PedidoTest extends ReservasTestCase
      */
     public function test__construct(): Pedido
     {
+        $quarto = new Quarto('Teste de Quarto', 10, 10);
+        $quarto->setId(1);
+
         $pedido = new Pedido();
+        $pedido->setId(1);
+        $pedido->setNome('Nome do Cliente');
+        $pedido->setEmail('email.cliente@gmail.com');
+        $pedido->setCpf(new CPF('177.965.730-73'));
+        $pedido->setTelefone('(61) 9 8350-3517');
+        $pedido->addItem($quarto, date('Y-m-d'), date('Y-m-d'), 1, 0, 10);
 
         $this->assertInstanceOf(Pedido::class, $pedido);
         $this->assertInstanceOf(ArrayCollection::class, $pedido->getReservas());
+        $this->assertInstanceOf(ArrayCollection::class, $pedido->getHistorico());
         $this->assertTrue($pedido->isPendente());
         $this->assertEquals('digitada', $pedido->getFormaPgto());
 
@@ -66,7 +85,7 @@ class PedidoTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido
+     * @param Pedido $pedido
      * @covers ::isPago
      * @depends test__construct
      */
@@ -84,12 +103,108 @@ class PedidoTest extends ReservasTestCase
      * @covers ::isCancelado
      * @depends test__construct
      */
-    public function test_IsCancelado(\Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido)
+    public function test_IsCancelado(Pedido $pedido)
     {
         $pedido->setStatus(Pedido::STATUS_PENDENTE);
         $this->assertFalse($pedido->isCancelado());
 
         $pedido->setStatus(Pedido::STATUS_CANCELADO);
         $this->assertTrue($pedido->isCancelado());
+    }
+
+    /**
+     * @param Pedido $pedido
+     * @covers ::addHistorico
+     * @depends test__construct
+     */
+    public function test_AddHistorico_instancia_PedidoHistorico_e_adiciona_na_Collection(Pedido $pedido)
+    {
+        // Limpar histórico de testes anteriores
+        $pedido->getHistorico()->clear();
+
+        $usuario = new Usuario('Teste de Funcionário', 'funcionario@gmail.com');
+
+        $status = 'Cancelado';
+        $motivo = 'Motivo de cancelamento';
+
+        $pedido->addHistorico($status, $motivo, $usuario);
+
+        /** @var PedidoHistorico $pedido_historico */
+        $pedido_historico = $pedido->getHistorico()->first();
+
+        // Teste da Collection
+        $this->assertCount(1, $pedido->getHistorico());
+
+        // Teste do histórico criado
+        $this->assertInstanceOf(PedidoHistorico::class, $pedido_historico);
+        $this->assertEquals($status, $pedido_historico->getStatus());
+        $this->assertEquals($motivo, $pedido_historico->getMotivo());
+        $this->assertEquals($pedido, $pedido_historico->getPedido());
+    }
+
+    /**
+     * @param Pedido $pedido
+     * @covers ::pago
+     * @depends test__construct
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Exception
+     */
+    public function test_Pago_seta_Pedido_como_pago_e_adiciona_historico(Pedido $pedido)
+    {
+        // Limpar histórico de testes anteriores
+        $pedido->getHistorico()->clear();
+
+        // Setar o pedido como pendente
+        $pedido->setStatus(Pedido::STATUS_PENDENTE);
+
+        $usuario = new Usuario('Teste de Funcionário', 'funcionario@gmail.com');
+        $motivo = 'Motivo de confirmação';
+
+        // Gerar reservas
+        /** @var QuartoRepositoryInterface $quarto_repository */
+        $quarto_repository = EntityManagerX::getRepository(Quarto::class);
+
+        $command = new GerarReservasPedidoCommand($pedido, $usuario);
+        (new GerarReservasPedidoCommandHandler($quarto_repository))->handle($command);
+
+        $pedido->pago($motivo, $usuario);
+
+        $has_historico_pago = $pedido->getHistorico()->exists(function ($key, PedidoHistorico $historico) {
+            return $historico->getStatus() === Pedido::STATUS_PAGO;
+        });
+
+        $this->assertTrue($pedido->isPago());
+        $this->assertTrue($has_historico_pago);
+    }
+
+    /**
+     * @param Pedido $pedido
+     * @covers ::pago
+     * @depends test__construct
+     */
+    public function test_Cancelado_seta_Pedido_como_cancelado_e_adiciona_historico(Pedido $pedido)
+    {
+        // Limpar histórico de testes anteriores
+        $pedido->getHistorico()->clear();
+
+        // Setar o pedido como pendente
+        $pedido->setStatus(Pedido::STATUS_PENDENTE);
+
+        $usuario = new Usuario('Teste de Funcionário', 'funcionario@gmail.com');
+        $motivo = 'Motivo de cancelamento';
+
+        $pedido->cancelado($motivo, $usuario);
+
+        $has_historico_cancelado = $pedido->getHistorico()->exists(function ($key, PedidoHistorico $historico) {
+            return $historico->getStatus() === Pedido::STATUS_CANCELADO;
+        });
+
+        $has_reserva_ativa = $pedido->getReservas()->exists(function ($key, Reserva $reserva) {
+             return !$reserva->isCancelada();
+        });
+
+        $this->assertTrue($pedido->isCancelado());
+        $this->assertTrue($has_historico_cancelado);
+        $this->assertFalse($has_reserva_ativa);
     }
 }

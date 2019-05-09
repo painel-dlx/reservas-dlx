@@ -32,7 +32,7 @@ use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\Query\Expr\Join;
 use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
 
@@ -108,7 +108,7 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
             try {
                 $quarto->isDisponivelPeriodo($checkin, $checkout);
                 return true;
-            } catch (VerificarDisponQuartoException $e) {
+            } catch (QuartoIndisponivelException $e) {
                 return false;
             }
         });

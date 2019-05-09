@@ -23,22 +23,36 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Quartos\VerificarDisponQuarto;
+namespace Reservas\PainelDLX\Tests\Domain\Pedidos\Entities;
 
+use DateTime;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\PedidoHistorico;
+use PHPUnit\Framework\TestCase;
 
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
-use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
-
-class VerificarDisponQuartoCommandHandler
+/**
+ * Class PedidoHistoricoTest
+ * @package Reservas\PainelDLX\Tests\Domain\Pedidos\Entities
+ * @coversDefaultClass \Reservas\PainelDLX\Domain\Pedidos\Entities\PedidoHistorico
+ */
+class PedidoHistoricoTest extends TestCase
 {
     /**
-     * @param VerificarDisponQuartoCommand $command
-     * @return bool Retorna true se o quarto está disponível para o período desejado
-     *@throws QuartoIndisponivelException
+     * @return PedidoHistorico
      */
-    public function handle(VerificarDisponQuartoCommand $command): bool
+    public function test__construct(): PedidoHistorico
     {
-        $quarto = $command->getQuarto();
-        return (new VerificarDisponQuarto())->executar($quarto, $command->getCheckin(), $command->getCheckout());
+        $status = 'Pago';
+        $motivo = 'Teste de Motivo';
+
+        $pedido_historico = new PedidoHistorico($status, $motivo);
+
+        $this->assertInstanceOf(PedidoHistorico::class, $pedido_historico);
+        $this->assertEquals($status, $pedido_historico->getStatus());
+        $this->assertEquals($motivo, $pedido_historico->getMotivo());
+
+        $this->assertEquals(DateTime::class, $pedido_historico->getData());
+        $this->assertEquals(new DateTime(), $pedido_historico->getData(), '', 0.1);
+
+        return $pedido_historico;
     }
 }

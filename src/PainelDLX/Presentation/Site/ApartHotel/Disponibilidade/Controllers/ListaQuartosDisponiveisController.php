@@ -30,7 +30,7 @@ use DateTime;
 use League\Tactician\CommandBus;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\UseCases\Quartos\FindQuartosDisponiveis\FindQuartosDisponiveisCommand;
 use Reservas\PainelDLX\UseCases\Quartos\FindQuartosDisponiveis\FindQuartosDisponiveisCommandHandler;
 use Vilex\VileX;
@@ -88,7 +88,7 @@ class ListaQuartosDisponiveisController
 
             $this->view->setAtributo('titulo-pagina', 'Quartos Disponíveis');
             $this->view->setAtributo('lista-quartos', $lista_quartos);
-        } catch (VerificarDisponQuartoException $e) {
+        } catch (QuartoIndisponivelException $e) {
 
         }
 

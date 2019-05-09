@@ -55,14 +55,11 @@ class ConfirmarReservaCommandHandler
     {
         $reserva = $command->getReserva();
 
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CONFIRMAR);
-        $validator->validar($reserva);
-
         $reserva->confirmada($command->getMotivo(), $command->getUsuario());
         $this->reserva_repository->update($reserva);
 
         // Atualizar disponibilidade
-        // todo: verificar impacto para configurar cascade direto na entiade Reserva
+        // todo: verificar impacto para configurar cascade direto na entidade Reserva
         $this->reserva_repository->update($reserva->getQuarto());
 
         return $reserva;

@@ -23,63 +23,46 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\ConfirmarPgtoPedido;
+namespace Reservas\PainelDLX\Tests\UseCases\Emails\EnviarNotificacaoCancelamentoPedido;
 
-use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
-use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
+use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommand;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class ConfirmarPgtoPedidoCommandTest
- * @package Reservas\PainelDLX\Tests\UseCases\Pedidos\ConfirmarPgtoPedido
- * @coversDefaultClass \Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand
+ * Class EnviarNotificacaoCancelamentoPedidoCommandTest
+ * @package Reservas\PainelDLX\Tests\UseCases\Emails\EnviarNotificacaoCancelamentoPedido
+ * @coversDefaultClass \Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommand
  */
-class ConfirmarPgtoPedidoCommandTest extends TestCase
+class EnviarNotificacaoCancelamentoPedidoCommandTest extends TestCase
 {
-    /**
-     * @return ConfirmarPgtoPedidoCommand
-     */
-    public function test__construct(): ConfirmarPgtoPedidoCommand
+    public function test__construct(): EnviarNotificacaoCancelamentoPedidoCommand
     {
         $pedido = new Pedido();
-        $motivo = 'Teste de motivo para confirmar um pedido';
-        $usuario = new Usuario('Funcionário', 'func@gmail.com');
+        $command = new EnviarNotificacaoCancelamentoPedidoCommand($pedido, 'Teste Unitário');
 
-        $command = new ConfirmarPgtoPedidoCommand($pedido, $motivo, $usuario);
-
-        $this->assertInstanceOf(ConfirmarPgtoPedidoCommand::class, $command);
+        $this->assertInstanceOf(EnviarNotificacaoCancelamentoPedidoCommand::class, $command);
 
         return $command;
     }
 
     /**
-     * @param ConfirmarPgtoPedidoCommand $command
+     * @param EnviarNotificacaoCancelamentoPedidoCommand $command
      * @covers ::getPedido
      * @depends test__construct
      */
-    public function test_GetPedido(ConfirmarPgtoPedidoCommand $command)
+    public function test_GetPedido(EnviarNotificacaoCancelamentoPedidoCommand $command)
     {
         $this->assertInstanceOf(Pedido::class, $command->getPedido());
     }
 
     /**
-     * @param ConfirmarPgtoPedidoCommand $command
+     * @param EnviarNotificacaoCancelamentoPedidoCommand $command
      * @covers ::getMotivo
      * @depends test__construct
      */
-    public function test_GetMotivo(ConfirmarPgtoPedidoCommand $command)
+    public function testGetMotivo(EnviarNotificacaoCancelamentoPedidoCommand $command)
     {
         $this->assertIsString($command->getMotivo());
-    }
-
-    /**
-     * @param ConfirmarPgtoPedidoCommand $command
-     * @covers ::getUsuario
-     * @depends test__construct
-     */
-    public function test_GetUsuario(ConfirmarPgtoPedidoCommand $command)
-    {
-        $this->assertInstanceOf(Usuario::class, $command->getUsuario());
     }
 }

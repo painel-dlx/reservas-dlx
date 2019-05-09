@@ -28,8 +28,6 @@ namespace Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
-use Reservas\PainelDLX\Domain\Pedidos\Validators\PedidoValidator;
-use Reservas\PainelDLX\Domain\Pedidos\Validators\PedidoValidatorEnum;
 
 /**
  * Class ConfirmarPgtoPedidoCommandHandler
@@ -39,13 +37,13 @@ use Reservas\PainelDLX\Domain\Pedidos\Validators\PedidoValidatorEnum;
 class ConfirmarPgtoPedidoCommandHandler
 {
     /**
-     * @var \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface
+     * @var PedidoRepositoryInterface
      */
     private $pedido_repository;
 
     /**
      * ConfirmarPgtoPedidoCommandHandler constructor.
-     * @param \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository
+     * @param PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
     {
@@ -60,10 +58,7 @@ class ConfirmarPgtoPedidoCommandHandler
     {
         $pedido = $command->getPedido();
 
-        $validator = new PedidoValidator(PedidoValidatorEnum::CONFIRMAR);
-        $validator->validar($pedido);
-
-        $pedido->pago();
+        $pedido->pago($command->getMotivo(), $command->getUsuario());
         $this->pedido_repository->update($pedido);
 
         return $pedido;

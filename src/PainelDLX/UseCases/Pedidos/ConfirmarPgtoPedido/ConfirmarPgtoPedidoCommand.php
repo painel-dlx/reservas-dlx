@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 
 /**
@@ -39,14 +40,26 @@ class ConfirmarPgtoPedidoCommand
      * @var Pedido
      */
     private $pedido;
+    /**
+     * @var string
+     */
+    private $motivo;
+    /**
+     * @var Usuario
+     */
+    private $usuario;
 
     /**
      * ConfirmarPgtoPedidoCommand constructor.
      * @param Pedido $pedido
+     * @param string $motivo
+     * @param Usuario $usuario
      */
-    public function __construct(Pedido $pedido)
+    public function __construct(Pedido $pedido, string $motivo, Usuario $usuario)
     {
         $this->pedido = $pedido;
+        $this->motivo = $motivo;
+        $this->usuario = $usuario;
     }
 
     /**
@@ -55,5 +68,21 @@ class ConfirmarPgtoPedidoCommand
     public function getPedido(): Pedido
     {
         return $this->pedido;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMotivo(): string
+    {
+        return $this->motivo;
+    }
+
+    /**
+     * @return Usuario
+     */
+    public function getUsuario(): Usuario
+    {
+        return $this->usuario;
     }
 }

@@ -23,49 +23,66 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Tests\Helpers;
+namespace Reservas\PainelDLX\UseCases\Pedidos\CancelarPedido;
 
 
-use DLX\Infra\EntityManagerX;
-use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\ORMException;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 
-class PedidoTesteHelper
+/**
+ * Class CancelarPedidoCommand
+ * @package Reservas\PainelDLX\UseCases\Pedidos\CancelarPedido
+ * @covers CancelarPedidoCommandTest
+ */
+class CancelarPedidoCommand
 {
     /**
-     * @return \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido|null
-     * @throws DBALException
-     * @throws ORMException
+     * @var Pedido
      */
-    public static function getRandom(): ?Pedido
+    private $pedido;
+    /**
+     * @var string
+     */
+    private $motivo;
+    /**
+     * @var Usuario
+     */
+    private $usuario;
+
+    /**
+     * CancelarPedidoCommand constructor.
+     * @param Pedido $pedido
+     * @param string $motivo
+     * @param Usuario $usuario
+     */
+    public function __construct(Pedido $pedido, string $motivo, Usuario $usuario)
     {
-        $id = self::getPedidoIdRandom();
-
-        /** @var \Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido $pedido */
-        $pedido = EntityManagerX::getRepository(Pedido::class)->find($id);
-
-        return $pedido;
+        $this->pedido = $pedido;
+        $this->motivo = $motivo;
+        $this->usuario = $usuario;
     }
 
     /**
-     * @return int
-     * @throws DBALException
-     * @throws ORMException
+     * @return Pedido
      */
-    public static function getPedidoIdRandom(): int
+    public function getPedido(): Pedido
     {
-        $query = '
-            select
-                pedido_id
-            from
-                dlx_reservas_pedidos
-            order by 
-                rand()
-            limit 1
-        ';
+        return $this->pedido;
+    }
 
-        $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query);
-        return $sql->fetchColumn();
+    /**
+     * @return string
+     */
+    public function getMotivo(): string
+    {
+        return $this->motivo;
+    }
+
+    /**
+     * @return Usuario
+     */
+    public function getUsuario(): Usuario
+    {
+        return $this->usuario;
     }
 }

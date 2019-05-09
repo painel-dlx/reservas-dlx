@@ -38,6 +38,8 @@ use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Reservas\Entities\ReservaHistorico;
 use Reservas\PainelDLX\Domain\Reservas\Entities\VisualizacaoCpf;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
+use Reservas\PainelDLX\Domain\Reservas\Validators\ReservaValidator;
+use Reservas\PainelDLX\Domain\Reservas\Validators\ReservaValidatorsEnum;
 
 /**
  * Class Reserva
@@ -460,6 +462,9 @@ class Reserva extends Entity
      */
     public function confirmada(string $motivo, Usuario $usuario): self
     {
+        $validator = new ReservaValidator(ReservaValidatorsEnum::CONFIRMAR);
+        $validator->validar($this);
+
         $this->setStatus(self::STATUS_CONFIRMADA);
         $this->addHistorico(self::STATUS_CONFIRMADA, $motivo, $usuario);
 
@@ -479,6 +484,9 @@ class Reserva extends Entity
      */
     public function cancelada(string $motivo, Usuario $usuario): self
     {
+        $validator = new ReservaValidator(ReservaValidatorsEnum::CANCELAR);
+        $validator->validar($this);
+
         $this->setStatus(self::STATUS_CANCELADA);
         $this->addHistorico(self::STATUS_CANCELADA, $motivo, $usuario);
         return $this;

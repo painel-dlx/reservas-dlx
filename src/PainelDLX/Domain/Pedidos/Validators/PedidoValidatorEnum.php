@@ -35,4 +35,6 @@ class PedidoValidatorEnum
         ValidarConfirmarPedido::class,
         ValidarReservasGeradas::class,
     ];
+
+    const CANCELAR = [];
 }

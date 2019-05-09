@@ -49,14 +49,11 @@ class CancelarReservaCommandHandler
 
     /**
      * @param CancelarReservaCommand $command
-     * @return \Reservas\PainelDLX\Domain\Reservas\Entities\Reserva
+     * @return Reserva
      */
     public function handle(CancelarReservaCommand $command): Reserva
     {
         $reserva = $command->getReserva();
-
-        $validator = new ReservaValidator(ReservaValidatorsEnum::CANCELAR);
-        $validator->validar($reserva);
 
         $reserva->cancelada($command->getMotivo(), $command->getUsuario());
         $this->reserva_repository->update($reserva);

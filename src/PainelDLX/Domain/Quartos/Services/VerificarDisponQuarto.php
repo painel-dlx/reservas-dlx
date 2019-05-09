@@ -28,7 +28,7 @@ namespace Reservas\PainelDLX\Domain\Quartos\Services;
 use DateTime;
 use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Tests\Domain\Quartos\Services\VerificarDisponQuartoTest;
 
 /**
@@ -40,20 +40,20 @@ class VerificarDisponQuarto
 {
     /**
      * @param Quarto $quarto
-     * @throws VerificarDisponQuartoException
      * @return bool
+     * @throws QuartoIndisponivelException
      */
     public function executar(Quarto $quarto, DateTime $checkin, DateTime $checkout): bool
     {
         $dispon_quarto = $quarto->getDispon($checkin, $checkout);
 
         if ($dispon_quarto->count() < 1) {
-            throw VerificarDisponQuartoException::quartoIndisponivelData($checkin);
+            throw QuartoIndisponivelException::dataIndisponivel($checkin);
         }
 
         $dispon_quarto->map(function (Disponibilidade $dispon) {
             if (!$dispon->isPublicado()) {
-                throw VerificarDisponQuartoException::quartoIndisponivelData($dispon->getDia());
+                throw QuartoIndisponivelException::dataIndisponivel($dispon->getDia());
             }
         });
 

@@ -25,11 +25,14 @@
 
 namespace Reservas\PainelDLX\Tests\UseCases\Pedidos\ConfirmarPgtoPedido;
 
+use CPF\CPF;
 use DateTime;
 use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
+use Exception;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
@@ -71,28 +74,31 @@ class ConfirmarPgtoPedidoCommandHandlerTest extends ReservasTestCase
      * @param ConfirmarPgtoPedidoCommandHandler $handler
      * @throws DBALException
      * @throws ORMException
-     * @throws \Exception
+     * @throws Exception
      * @covers ::handle
      * @depends test__construct
      */
     public function test_Handle_deve_salvar_Pedido_como_pago_e_criar_Reservas(ConfirmarPgtoPedidoCommandHandler $handler)
     {
+        /** @var Usuario|null $usuario */
+        $usuario = EntityManagerX::getReference(Usuario::class, 2);
+
         /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
 
-        /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto1 */
+        /** @var Quarto $quarto1 */
         $quarto1 = QuartoTesteHelper::getRandom();
         $checkin1 = new DateTime();
         $checkout1 = (clone $checkin1)->modify('+1 day');
 
-        /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto2 */
+        /** @var Quarto $quarto2 */
         $quarto2 = QuartoTesteHelper::getRandom();
         $checkin2 = (new DateTime())->modify('+7 days');
         $checkout2 = (clone $checkin1)->modify('+1 day');
 
         $pedido = (new Pedido())
             ->setNome('Teste de Cliente')
-            ->setCpf('000.000.000-00')
+            ->setCpf(new CPF('000.000.000-00'))
             ->setTelefone('(00) 0 0000-0000')
             ->setEmail('cliente@gmail.com')
             ->setValorTotal(1234);
@@ -100,14 +106,14 @@ class ConfirmarPgtoPedidoCommandHandlerTest extends ReservasTestCase
         $pedido->addItem($quarto1, $checkin1->format('Y-m-d'), $checkout1->format('Y-m-d'), 2, 0, 616);
         $pedido->addItem($quarto2, $checkin2->format('Y-m-d'), $checkout2->format('Y-m-d'), 2, 1, 616);
 
-        /** @var \Reservas\PainelDLX\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository */
+        /** @var PedidoRepositoryInterface $pedido_repository */
         $pedido_repository = EntityManagerX::getRepository(Pedido::class);
         $pedido_repository->create($pedido);
 
         $command = new GerarReservasPedidoCommand($pedido);
         (new GerarReservasPedidoCommandHandler($quarto_repository))->handle($command);
 
-        $command = new ConfirmarPgtoPedidoCommand($pedido);
+        $command = new ConfirmarPgtoPedidoCommand($pedido, 'Teste Unitário', $usuario);
         $handler->handle($command);
 
         $has_reservas_sem_id = $pedido->getReservas()->exists(function ($key, Reserva $reserva) {

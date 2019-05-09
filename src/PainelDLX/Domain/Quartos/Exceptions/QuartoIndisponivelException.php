@@ -23,22 +23,20 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Quartos\VerificarDisponQuarto;
+namespace Reservas\PainelDLX\Domain\Quartos\Exceptions;
 
 
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
-use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
+use DateTime;
+use Exception;
 
-class VerificarDisponQuartoCommandHandler
+class QuartoIndisponivelException extends Exception
 {
     /**
-     * @param VerificarDisponQuartoCommand $command
-     * @return bool Retorna true se o quarto está disponível para o período desejado
-     *@throws QuartoIndisponivelException
+     * @param DateTime $dia
+     * @return QuartoIndisponivelException
      */
-    public function handle(VerificarDisponQuartoCommand $command): bool
+    public static function dataIndisponivel(DateTime $dia)
     {
-        $quarto = $command->getQuarto();
-        return (new VerificarDisponQuarto())->executar($quarto, $command->getCheckin(), $command->getCheckout());
+        return new self("Quarto indisponível para o dia {$dia->format('d/m/Y')}.", 10);
     }
 }

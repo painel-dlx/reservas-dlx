@@ -33,7 +33,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Contracts\QuartoMidiaCollectionInterface;
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
 use Reservas\PainelDLX\Infra\ORM\Doctrine\Collections\QuartoMidiaCollection;
 use Reservas\PainelDLX\Tests\Domain\Quartos\Entities\QuartoTest;
@@ -273,11 +273,14 @@ class Quarto extends Entity
     /**
      * @return Collection
      */
-    public function getDispon(DateTime $checkin, DateTime $chekcout): Collection
+    public function getDispon(DateTime $checkin, DateTime $checkout): Collection
     {
+        // A disponibilidade não é necessária para a data de checkout
+        $checkout = (clone $checkout)->modify('-1 day');
+
         $criteria = Criteria::create();
         $criteria->where(Criteria::expr()->gte('dia', $checkin));
-        $criteria->andWhere(Criteria::expr()->lte('dia', $chekcout));
+        $criteria->andWhere(Criteria::expr()->lte('dia', $checkout));
 
         return $this->dispon->matching($criteria);
     }
@@ -333,7 +336,7 @@ class Quarto extends Entity
      * @param DateTime $checkin
      * @param DateTime $checkout
      * @return bool
-     * @throws VerificarDisponQuartoException
+     * @throws QuartoIndisponivelException
      */
     public function isDisponivelPeriodo(DateTime $checkin, DateTime $checkout): bool
     {

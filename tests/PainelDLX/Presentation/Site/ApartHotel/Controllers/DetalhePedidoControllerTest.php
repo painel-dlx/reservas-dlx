@@ -31,6 +31,7 @@ use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Application\Factories\CommandBusFactory;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers\DetalhePedidoController;
@@ -63,8 +64,12 @@ class DetalhePedidoControllerTest extends ReservasTestCase
      */
     public function test__construct(): DetalhePedidoController
     {
+        /** @var Usuario $usuario */
+        $usuario = EntityManagerX::getReference(Usuario::class, 2); // todo: puxar um usuário qualquer do banco de dados
+
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
+        $session->set('usuario-logado', $usuario);
 
         $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
 
@@ -92,7 +97,7 @@ class DetalhePedidoControllerTest extends ReservasTestCase
      */
     public function test_DetalhePedido_deve_retornar_HtmlResponse(DetalhePedidoController $controller)
     {
-        $id = PedidoTesteHelper::getIdRandom();
+        $id = PedidoTesteHelper::getPedidoIdRandom();
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getQueryParams')->willReturn([
@@ -107,6 +112,31 @@ class DetalhePedidoControllerTest extends ReservasTestCase
 
     /**
      * @param DetalhePedidoController $controller
+     * @throws ContextoInvalidoException
+     * @throws DBALException
+     * @throws ORMException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     * @covers ::formConfirmarPgtoPedido
+     * @depends test__construct
+     */
+    public function test_FormConfirmarPgtoPedido_deve_retornar_HtmlResponse(DetalhePedidoController $controller)
+    {
+        $id = PedidoTesteHelper::getPedidoIdRandom();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getQueryParams')->willReturn([
+            'id' => $id
+        ]);
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->formConfirmarPgtoPedido($request);
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    /**
+     * @param DetalhePedidoController $controller
      * @throws DBALException
      * @throws ORMException
      * @covers ::confirmarPgtoPedido
@@ -114,16 +144,65 @@ class DetalhePedidoControllerTest extends ReservasTestCase
      */
     public function test_ConfirmarPgtoPedido_deve_retornar_JsonResponse(DetalhePedidoController $controller)
     {
-        $id = PedidoTesteHelper::getIdRandom();
+        $id = PedidoTesteHelper::getPedidoIdRandom();
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
-            'id' => $id
+            'id' => $id,
+            'motivo' => 'Teste unitário'
         ]);
 
         /** @var ServerRequestInterface $request */
 
         $response = $controller->confirmarPgtoPedido($request);
+        $this->assertInstanceOf(JsonResponse::class, $response);
+    }
+
+    /**
+     * @param DetalhePedidoController $controller
+     * @throws ContextoInvalidoException
+     * @throws DBALException
+     * @throws ORMException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     * @covers ::formCancelarPedido
+     * @depends test__construct
+     */
+    public function test_FormCancelarPedido_deve_retornar_HtmlResponse(DetalhePedidoController $controller)
+    {
+        $id = PedidoTesteHelper::getPedidoIdRandom();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getQueryParams')->willReturn([
+            'id' => $id
+        ]);
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->formCancelarPedido($request);
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    /**
+     * @param DetalhePedidoController $controller
+     * @throws DBALException
+     * @throws ORMException
+     * @covers ::cancelarPedido
+     * @depends test__construct
+     */
+    public function test_CancelarPedido_deve_retornar_JsonResponse(DetalhePedidoController $controller)
+    {
+        $id = PedidoTesteHelper::getPedidoIdRandom();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getParsedBody')->willReturn([
+            'id' => $id,
+            'motivo' => 'Teste unitário'
+        ]);
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->cancelarPedido($request);
         $this->assertInstanceOf(JsonResponse::class, $response);
     }
 }

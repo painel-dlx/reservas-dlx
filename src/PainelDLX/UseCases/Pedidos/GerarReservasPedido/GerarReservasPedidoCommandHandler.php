@@ -64,7 +64,7 @@ class GerarReservasPedidoCommandHandler
         $itens = $pedido->getItens();
 
         foreach ($itens as $item) {
-            /** @var \Reservas\PainelDLX\Domain\Quartos\Entities\Quarto $quarto */
+            /** @var Quarto $quarto */
             $quarto = $this->quarto_repository->find($item->quartoID);
             $checkin = new DateTime($item->checkin);
             $checkout = new DateTime($item->checkout);
@@ -79,11 +79,6 @@ class GerarReservasPedidoCommandHandler
             $reserva->setTelefone($pedido->getTelefone());
             $reserva->setEmail($pedido->getEmail());
             $reserva->setOrigem('Website');
-
-            // Validar a disponibilidade do quarto para o período da reserva
-            // Observação: a confirmação deve ser feita apenas após a verificação da disponibilidade
-            (new ValidarDisponQuarto())->validar($reserva);
-            $reserva->confirmada("Pedido #{$pedido->getId()} foi confirmado.", $command->getUsuario());
 
             $pedido->addReserva($reserva);
         }

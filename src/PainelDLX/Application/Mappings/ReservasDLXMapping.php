@@ -38,8 +38,12 @@ use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto\Salv
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto\SalvarDisponibilidadeQuartoCommandHandler;
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommand;
 use Reservas\PainelDLX\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommandHandler;
+use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommand;
+use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommandHandler;
+use Reservas\PainelDLX\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommand;
+use Reservas\PainelDLX\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommandHandler;
 use Reservas\PainelDLX\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
@@ -90,6 +94,8 @@ class ReservasDLXMapping
         MostrarCpfCompletoCommand::class => MostrarCpfCompletoCommandHandler::class,
         MostrarCpfCompletoPedidoCommand::class => MostrarCpfCompletoPedidoCommandHandler::class,
         EnviarNotificacaoConfirmacaoPedidoCommand::class => EnviarNotificacaoConfirmacaoPedidoCommandHandler::class,
+        CancelarPedidoCommand::class => CancelarPedidoCommandHandler::class,
+        EnviarNotificacaoCancelamentoPedidoCommand::class => EnviarNotificacaoCancelamentoPedidoCommandHandler::class,
     ];
 
     /**

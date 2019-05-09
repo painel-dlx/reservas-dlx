@@ -23,22 +23,51 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\UseCases\Quartos\VerificarDisponQuarto;
+namespace Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoCancelamentoPedido;
 
 
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
-use Reservas\PainelDLX\Domain\Quartos\Services\VerificarDisponQuarto;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
 
-class VerificarDisponQuartoCommandHandler
+/**
+ * Class EnviarNotificacaoCancelamentoPedidoCommand
+ * @package Reservas\PainelDLX\UseCases\Emails\EnviarNotificacaoCancelamentoPedido
+ * @covers EnviarNotificacaoCancelamentoPedidoCommandTest
+ */
+class EnviarNotificacaoCancelamentoPedidoCommand
 {
     /**
-     * @param VerificarDisponQuartoCommand $command
-     * @return bool Retorna true se o quarto está disponível para o período desejado
-     *@throws QuartoIndisponivelException
+     * @var Pedido
      */
-    public function handle(VerificarDisponQuartoCommand $command): bool
+    private $pedido;
+    /**
+     * @var string
+     */
+    private $motivo;
+
+    /**
+     * EnviarNotificacaoCancelamentoPedidoCommand constructor.
+     * @param Pedido $pedido
+     * @param string $motivo
+     */
+    public function __construct(Pedido $pedido, string $motivo)
     {
-        $quarto = $command->getQuarto();
-        return (new VerificarDisponQuarto())->executar($quarto, $command->getCheckin(), $command->getCheckout());
+        $this->pedido = $pedido;
+        $this->motivo = $motivo;
+    }
+
+    /**
+     * @return Pedido
+     */
+    public function getPedido(): Pedido
+    {
+        return $this->pedido;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMotivo(): string
+    {
+        return $this->motivo;
     }
 }

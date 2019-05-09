@@ -35,6 +35,7 @@ use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Reservas\Exceptions\ReservaInvalidaException;
 use Reservas\PainelDLX\Domain\Reservas\Exceptions\VisualizarCpfException;
@@ -98,41 +99,6 @@ class DetalheReservaController extends SiteController
      * @throws PaginaMestraNaoEncontradaException
      * @throws ViewNaoEncontradaException
      */
-    public function formConfirmarReserva(ServerRequestInterface $request): ResponseInterface
-    {
-        $get = filter_var_array($request->getQueryParams(), [
-            'id' => FILTER_VALIDATE_INT
-        ]);
-
-        try {
-            /** @var Reserva|null $reserva */
-            /** @see GetReservaPorIdCommandHandler */
-            $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($get['id']));
-
-            // Atributos
-            $this->view->setAtributo('titulo-pagina', "Confirmar reserva #{$reserva->getId()}");
-            $this->view->setAtributo('reserva', $reserva);
-
-            // Views
-            $this->view->addTemplate('form_confirmar_reserva');
-        } catch (UserException $e) {
-            $this->view->addTemplate('../mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
-                'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
-            ]);
-        }
-
-        return $this->view->render();
-    }
-
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
-     */
     public function detalhesReserva(ServerRequestInterface $request): ResponseInterface
     {
         $get = filter_var_array($request->getQueryParams(), [
@@ -180,6 +146,42 @@ class DetalheReservaController extends SiteController
      * @throws PaginaMestraNaoEncontradaException
      * @throws ViewNaoEncontradaException
      */
+    public function formConfirmarReserva(ServerRequestInterface $request): ResponseInterface
+    {
+        $get = filter_var_array($request->getQueryParams(), [
+            'id' => FILTER_VALIDATE_INT
+        ]);
+
+        try {
+            /** @var Reserva|null $reserva */
+            /** @see GetReservaPorIdCommandHandler */
+            $reserva = $this->command_bus->handle(new GetReservaPorIdCommand($get['id']));
+
+            // Atributos
+            $this->view->setAtributo('titulo-pagina', "Confirmar reserva #{$reserva->getId()}");
+            $this->view->setAtributo('reserva', $reserva);
+
+            // Views
+            $this->view->addTemplate('form_confirmar_reserva');
+        } catch (UserException $e) {
+            $this->view->addTemplate('../mensagem_usuario');
+            $this->view->setAtributo('mensagem', [
+                'tipo' => 'erro',
+                'mensagem' => $e->getMessage()
+            ]);
+        }
+
+        return $this->view->render();
+    }
+
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     */
     public function formCancelarReserva(ServerRequestInterface $request): ResponseInterface
     {
         $get = filter_var_array($request->getQueryParams(), [
@@ -197,7 +199,7 @@ class DetalheReservaController extends SiteController
 
             // Views
             $this->view->addTemplate('form_cancelar_reserva');
-        } catch (UserException $e) {
+        } catch (ReservaInvalidaException $e) {
             $this->view->addTemplate('../mensagem_usuario');
             $this->view->setAtributo('mensagem', [
                 'tipo' => 'erro',
@@ -244,7 +246,7 @@ class DetalheReservaController extends SiteController
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} confirmada com sucesso!";
-        } catch (ReservaInvalidaException $e) {
+        } catch (QuartoIndisponivelException | ReservaInvalidaException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

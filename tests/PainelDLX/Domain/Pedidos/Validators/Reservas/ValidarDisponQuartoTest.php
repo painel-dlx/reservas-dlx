@@ -29,7 +29,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
-use Reservas\PainelDLX\Domain\Quartos\Exceptions\VerificarDisponQuartoException;
+use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
 use Reservas\PainelDLX\Domain\Reservas\Validators\ValidarDisponQuarto;
 use Reservas\Tests\ReservasTestCase;
@@ -43,7 +43,7 @@ class ValidarDisponQuartoTest extends ReservasTestCase
 {
     /**
      * @covers ::validar
-     * @throws VerificarDisponQuartoException
+     * @throws QuartoIndisponivelException
      */
     public function test_Validar_deve_lancar_excecao_quando_quarto_nao_estiver_disponivel_em_algum_dia()
     {
@@ -53,14 +53,14 @@ class ValidarDisponQuartoTest extends ReservasTestCase
 
         $reserva = new Reserva($quarto, $checkin, $checkout, 0);
 
-        $this->expectException(VerificarDisponQuartoException::class);
+        $this->expectException(QuartoIndisponivelException::class);
         $this->expectExceptionCode(10);
         (new ValidarDisponQuarto())->validar($reserva);
     }
 
     /**
      * @covers ::validar
-     * @throws VerificarDisponQuartoException
+     * @throws QuartoIndisponivelException
      */
     public function test_Validar_retornar_true_quando_quarto_estiver_disponivel_todos_dias_da_reserva()
     {

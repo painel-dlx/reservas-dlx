@@ -23,20 +23,29 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Quartos\Exceptions;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Vilex\VileX;
 
+/**
+ * @var VileX $this
+ */
 
-use DateTime;
-use Exception;
+/** @var Pedido|null $pedido */
+$pedido = $this->getAtributo('pedido');
+?>
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
 
-class VerificarDisponQuartoException extends Exception
-{
-    /**
-     * @param DateTime $dia
-     * @return VerificarDisponQuartoException
-     */
-    public static function quartoIndisponivelData(DateTime $dia)
-    {
-        return new self("Quarto indisponível para o dia {$dia->format('d/m/Y')}.", 10);
-    }
-}
+<form id="form-cancelar-pedido" action="/painel-dlx/apart-hotel/pedidos/confirmar-pedido" method="post">
+    <input type="hidden" name="id" value="<?php echo $pedido->getId() ?>">
+
+    <p class="form-paragr">
+        <label for="txt-motivo" class="form-rotulo">Motivo:</label>
+        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea"></textarea>
+    </p>
+
+    <p class="form-botoes">
+        <button type="submit" class="botao-salvar">Confirmar</button>
+    </p>
+</form>
+[/CORPO]

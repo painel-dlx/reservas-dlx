@@ -53,3 +53,15 @@ create table reserva_historico (
     constraint FK_reserva_historico_usuario_id foreign key (usuario_id) references dlx_usuarios (usuario_id),
     constraint FK_reserva_historico_reserva_id foreign key (reserva_id) references dlx_reservas_cadastro (reserva_id) on delete cascade
 ) engine=innodb;
+
+drop table if exists dlx_pedido_historico;
+create table dlx_pedido_historico (
+    pedido_historico_id int not null auto_increment primary key,
+    pedido_id int not null,
+    usuario_id int not null,
+    data datetime not null,
+    status varchar(10) not null,
+    motivo text not null,
+    constraint FK_pedido_historico_pedido_id foreign key (pedido_id) references dlx_reservas_pedidos (pedido_id) on delete cascade,
+    constraint FK_pedido_historico_usuario_id foreign key (usuario_id) references dlx_usuarios (usuario_id)
+) engine=innodb;;
