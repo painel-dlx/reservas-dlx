@@ -54,6 +54,8 @@ use Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
 use Reservas\PainelDLX\UseCases\Pedidos\ListaPedidos\ListaPedidosCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommandHandler;
+use Reservas\PainelDLX\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommand;
+use Reservas\PainelDLX\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\PainelDLX\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
@@ -96,6 +98,7 @@ class ReservasDLXMapping
         EnviarNotificacaoConfirmacaoPedidoCommand::class => EnviarNotificacaoConfirmacaoPedidoCommandHandler::class,
         CancelarPedidoCommand::class => CancelarPedidoCommandHandler::class,
         EnviarNotificacaoCancelamentoPedidoCommand::class => EnviarNotificacaoCancelamentoPedidoCommandHandler::class,
+        GerarDisponibilidadesQuartoCommand::class => GerarDisponibilidadesQuartoCommandHandler::class,
     ];
 
     /**

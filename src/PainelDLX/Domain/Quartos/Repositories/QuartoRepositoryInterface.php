@@ -60,4 +60,12 @@ interface QuartoRepositoryInterface extends EntityRepositoryInterface
         int $qtde_hospedes,
         int $qtde_quartos
     ): array;
+
+    /**
+     * Gerar as disponibilidades de um quarto
+     * @param Quarto $quarto
+     * @param DateTime $dt_inicial
+     * @param DateTime $dt_final
+     */
+    public function gerarDisponibilidadesQuarto(Quarto $quarto, DateTime $dt_inicial, DateTime $dt_final): void;
 }

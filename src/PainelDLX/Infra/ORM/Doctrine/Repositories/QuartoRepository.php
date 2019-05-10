@@ -28,6 +28,7 @@ namespace Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories;
 
 use DateTime;
 use DLX\Infra\ORM\Doctrine\Repositories\EntityRepository;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\Query\Expr\Join;
 use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
@@ -35,7 +36,11 @@ use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\PainelDLX\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
-
+/**
+ * Class QuartoRepository
+ * @package Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories
+ * @covers QuartoRepositoryTest
+ */
 class QuartoRepository extends EntityRepository implements QuartoRepositoryInterface
 {
     /**
@@ -114,5 +119,24 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
         });
 
         return $quartos;
+    }
+
+    /**
+     * Gerar as disponibilidades de um quarto
+     * @param Quarto $quarto
+     * @param DateTime $dt_inicial
+     * @param DateTime $dt_final
+     * @throws DBALException
+     */
+    public function gerarDisponibilidadesQuarto(Quarto $quarto, DateTime $dt_inicial, DateTime $dt_final): void
+    {
+        $query = 'call gerar_calendario (:dt_inicial, :dt_final, :quarto)';
+
+        $sql = $this->_em->getConnection()->prepare($query);
+        $sql->bindValue(':dt_inicial', $dt_inicial->format('Y-m-d'), ParameterType::STRING);
+        $sql->bindValue(':dt_final', $dt_final->format('Y-m-d'), ParameterType::STRING);
+        $sql->bindValue(':quarto', $quarto->getId(), ParameterType::INTEGER);
+
+        $sql->execute();
     }
 }

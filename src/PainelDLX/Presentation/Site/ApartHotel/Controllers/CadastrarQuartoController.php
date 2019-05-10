@@ -26,6 +26,7 @@
 namespace Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers;
 
 
+use DateTime;
 use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
 use League\Tactician\CommandBus;
@@ -34,6 +35,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Quartos\Exceptions\ValidarQuartoException;
+use Reservas\PainelDLX\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommand;
+use Reservas\PainelDLX\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommandHandler;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 use Reservas\PainelDLX\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
@@ -134,8 +137,13 @@ class CadastrarQuartoController extends SiteController
                 ->setTamanhoM2($post['tamanho_m2'])
                 ->setLink($post['link']);
 
-            /** @covers SalvarQuartoCommandHandler */
-            $this->command_bus->handle(new SalvarQuartoCommand($quarto));
+            $this->transaction->transactional(function () use ($quarto) {
+                /* @see SalvarQuartoCommandHandler */
+                $this->command_bus->handle(new SalvarQuartoCommand($quarto));
+
+                /* @see GerarDisponibilidadesQuartoCommandHandler */
+                $this->command_bus->handle(new GerarDisponibilidadesQuartoCommand($quarto));
+            });
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Quarto cadastrado com sucesso!';

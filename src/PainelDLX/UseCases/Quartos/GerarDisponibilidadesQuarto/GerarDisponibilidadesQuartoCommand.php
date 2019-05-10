@@ -23,47 +23,40 @@
  * SOFTWARE.
  */
 
-namespace Reservas\PainelDLX\Domain\Disponibilidade\Repositories;
+namespace Reservas\PainelDLX\UseCases\Quartos\GerarDisponibilidadesQuarto;
 
 
 use DateTime;
-use DLX\Domain\Repositories\EntityRepositoryInterface;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 
-interface DisponibilidadeRepositoryInterface extends EntityRepositoryInterface
+/**
+ * Class GerarDisponibilidadesQuartoCommand
+ * @package Reservas\PainelDLX\UseCases\Quartos\GerarDisponibilidadesQuarto
+ * @covers GerarDisponibilidadesQuartoCommandTest
+ */
+class GerarDisponibilidadesQuartoCommand
 {
     /**
-     * @param DateTime $data_inicial
-     * @param DateTime $data_final
-     * @param Quarto|null $quarto
-     * @return array
+     * @var Quarto
      */
-    public function findDisponibilidadePorPeriodo(
-        DateTime $data_inicial,
-        DateTime $data_final,
-        ?Quarto $quarto
-    ): array;
+    private $quarto;
 
     /**
-     * Salvar disponibilidade por período
-     * @param DateTime $data_inicial
-     * @param DateTime $data_final
+     * GerarDisponibilidadesQuartoCommand constructor.
      * @param Quarto $quarto
-     * @param int $qtde
-     * @param array $valores
-     * @return bool
+     * @param DateTime $dt_inicio
+     * @param DateTime $dt_fim
      */
-    public function salvarDisponPorPeriodo(
-        DateTime $data_inicial,
-        DateTime $data_final,
-        Quarto $quarto,
-        int $qtde,
-        array $valores
-    ): bool;
+    public function __construct(Quarto $quarto)
+    {
+        $this->quarto = $quarto;
+    }
 
     /**
-     * Obter a última data com disponibilidade criada
-     * @return DateTime
+     * @return Quarto
      */
-    public function ultimaDataDisponibilidade(): DateTime;
+    public function getQuarto(): Quarto
+    {
+        return $this->quarto;
+    }
 }

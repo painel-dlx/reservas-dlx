@@ -28,11 +28,13 @@ namespace Reservas\PainelDLX\Infra\ORM\Doctrine\Repositories;
 
 use DateTime;
 use DLX\Infra\ORM\Doctrine\Repositories\EntityRepository;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
 use Exception;
 use Reservas\PainelDLX\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\PainelDLX\Domain\Quartos\Entities\Quarto;
 use Reservas\PainelDLX\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
+use Throwable;
 
 class DisponibilidadeRepository extends EntityRepository implements DisponibilidadeRepositoryInterface
 {
@@ -73,7 +75,7 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
      * @param int $qtde
      * @param array $valores
      * @return bool
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function salvarDisponPorPeriodo(DateTime $data_inicial, DateTime $data_final, Quarto $quarto, int $qtde, array $valores): bool
     {
@@ -151,5 +153,20 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
         }
 
         return true;
+    }
+
+    /**
+     * Obter a última data com disponibilidade criada
+     * @return DateTime
+     * @throws DBALException
+     * @throws Exception
+     */
+    public function ultimaDataDisponibilidade(): DateTime
+    {
+        $query = 'select max(dispon_dia) from dlx_reservas_disponibilidade';
+        $sql = $this->_em->getConnection()->executeQuery($query);
+        $data = $sql->fetchColumn();
+
+        return new DateTime($data);
     }
 }
