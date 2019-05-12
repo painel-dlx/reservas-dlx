@@ -266,4 +266,19 @@
   background: #7f7fb4;
 }
 
+.filtro-reservas {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.filtro-reservas > .filtro-registros {
+  width: 590px;
+  margin-right: 10px;
+}
+.filtro-reservas > .form-controle-data {
+  width: 150px;
+  margin-right: 10px;
+}
+
 /*# sourceMappingURL=aparthotel.tema.css.map */

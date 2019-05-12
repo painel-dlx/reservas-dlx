@@ -35,16 +35,21 @@ use PainelDLX\Presentation\Site\Controllers\SiteController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\PainelDLX\Domain\Reservas\Entities\Reserva;
+use Reservas\PainelDLX\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommand;
+use Reservas\PainelDLX\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommandHandler;
 use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
 use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommand;
 use SechianeX\Contracts\SessionInterface;
+use Vilex\Exceptions\ContextoInvalidoException;
+use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
+use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 
 /**
  * Class ListaReservasController
  * @package Reservas\PainelDLX\Presentation\Site\ApartHotel\Controllers
- * @covers ListaReservasControllerTest
+ * @see ListaReservasControllerTest
  */
 class ListaReservasController extends SiteController
 {
@@ -83,29 +88,36 @@ class ListaReservasController extends SiteController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
      */
     public function listaReservas(ServerRequestInterface $request): ResponseInterface
     {
         $get = filter_var_array($request->getQueryParams(), [
             'campos' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_REQUIRE_ARRAY],
-            'busca' => FILTER_DEFAULT
+            'busca' => FILTER_DEFAULT,
+            'data_inicial' => FILTER_DEFAULT,
+            'data_final' => FILTER_DEFAULT
         ]);
 
         try {
-            /**
-             * @var array $criteria
-             * @covers ConverterFiltro2CriteriaCommandHandler
-             */
+            /** @var array $criteria */
+            /* @see ConverterFiltro2CriteriaCommandHandler */
             $criteria = $this->command_bus->handle(new ConverterFiltro2CriteriaCommand($get['campos'], $get['busca']));
 
-            /** @covers ListaReservasCommandHandler */
+            /* @see ListaReservasCommandHandler */
             $lista_reservas = $this->command_bus->handle(new ListaReservasCommand(
                 $criteria,
                 ['e.status' => Criteria::DESC, 'e.checkin' => Criteria::ASC] // todo: verificar pq tenho que informar o alias
             ));
+
+            /* @see FiltrarReservasPorPeriodoCommandHandler */
+            $lista_reservas = $this->command_bus->handle(new FiltrarReservasPorPeriodoCommand(
+                $lista_reservas,
+                (string)$get['data_inicial'],
+                (string)$get['data_final'])
+            );
 
             // Atributos
             $this->view->setAtributo('titulo-pagina', 'Reservas');

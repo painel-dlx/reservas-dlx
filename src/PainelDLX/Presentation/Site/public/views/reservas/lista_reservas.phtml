@@ -38,29 +38,36 @@ $filtro = $this->getAtributo('filtro');
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
 
 <nav class="menu-opcoes">
-    <form id="filtro-registros" class="filtro-registros">
-        <div class="multi-select">
-            <span class="multi-select-item">Procurar em...</span>
+    <form id="filtro-registros" class="filtro-reservas">
+        <div class="filtro-registros">
+            <div class="multi-select">
+                <span class="multi-select-item">Procurar em...</span>
 
-            <div class="multi-select-itens">
-                <!-- label class="multi-select-item">
-                    <input type="checkbox" name="campos[]" value="quarto_nome"<?php echo empty($filtro['campos']) || in_array('quarto_nome', $filtro['campos']) ? ' checked' : '' ?>>
-                    Quarto
-                </label -->
+                <div class="multi-select-itens">
+                    <!-- label class="multi-select-item">
+                        <input type="checkbox" name="campos[]" value="quarto_nome"<?php echo empty($filtro['campos']) || in_array('quarto_nome', $filtro['campos']) ? ' checked' : '' ?>>
+                        Quarto
+                    </label -->
 
-                <label class="multi-select-item">
-                    <input type="checkbox" name="campos[]" value="hospede"<?php echo empty($filtro['campos']) || in_array('hospede', $filtro['campos']) ? ' checked' : '' ?>>
-                    Hóspede
-                </label>
+                    <label class="multi-select-item">
+                        <input type="checkbox" name="campos[]"
+                               value="hospede"<?php echo empty($filtro['campos']) || in_array('hospede', $filtro['campos']) ? ' checked' : '' ?>>
+                        Hóspede
+                    </label>
 
-                <label class="multi-select-item">
-                    <input type="checkbox" name="campos[]" value="status"<?php echo empty($filtro['campos']) || in_array('status', $filtro['campos']) ? ' checked' : '' ?>>
-                    Status
-                </label>
+                    <label class="multi-select-item">
+                        <input type="checkbox" name="campos[]"
+                               value="status"<?php echo empty($filtro['campos']) || in_array('status', $filtro['campos']) ? ' checked' : '' ?>>
+                        Status
+                    </label>
+                </div>
             </div>
+
+            <input type="search" name="busca" value="<?php echo $filtro['busca'] ?>" placeholder="Encontrar reservas" class="form-controle">
         </div>
 
-        <input type="search" name="busca" value="<?php echo $filtro['busca'] ?>" placeholder="Encontrar reservas" class="form-controle">
+        <input type="date" name="data_inicial" id="data-inicial" value="<?php echo $filtro['data_inicial'] ?>" class="form-controle form-controle-data">
+        <input type="date" name="data_final" id="data-final" value="<?php echo $filtro['data_final'] ?>" class="form-controle form-controle-data">
     </form>
 
     <button type="submit" form="filtro-registros" class="botao-buscar">Buscar</button>

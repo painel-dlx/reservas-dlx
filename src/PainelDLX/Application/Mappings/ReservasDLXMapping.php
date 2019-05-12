@@ -66,6 +66,8 @@ use Reservas\PainelDLX\UseCases\Reservas\CancelarReserva\CancelarReservaCommand;
 use Reservas\PainelDLX\UseCases\Reservas\CancelarReserva\CancelarReservaCommandHandler;
 use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
 use Reservas\PainelDLX\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommandHandler;
+use Reservas\PainelDLX\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommand;
+use Reservas\PainelDLX\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommandHandler;
 use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use Reservas\PainelDLX\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
 use Reservas\PainelDLX\UseCases\Reservas\ListaReservas\ListaReservasCommand;
@@ -99,6 +101,7 @@ class ReservasDLXMapping
         CancelarPedidoCommand::class => CancelarPedidoCommandHandler::class,
         EnviarNotificacaoCancelamentoPedidoCommand::class => EnviarNotificacaoCancelamentoPedidoCommandHandler::class,
         GerarDisponibilidadesQuartoCommand::class => GerarDisponibilidadesQuartoCommandHandler::class,
+        FiltrarReservasPorPeriodoCommand::class => FiltrarReservasPorPeriodoCommandHandler::class,
     ];
 
     /**

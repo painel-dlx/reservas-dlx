@@ -49,6 +49,13 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                     <span class="info-reserva-rotulo">Reserva:</span>
                     # <?php echo $reserva->getId() ?>
                 </p>
+
+                <?php if (!is_null($reserva->getPedido())) : ?>
+                    <p class="info-reserva-dado">
+                        <span class="info-reserva-rotulo">Pedido:</span>
+                        # <?php echo $reserva->getPedido()->getId() ?>
+                    </p>
+                <?php endif; ?>
             </div>
 
             <div class="info-reserva-linha">

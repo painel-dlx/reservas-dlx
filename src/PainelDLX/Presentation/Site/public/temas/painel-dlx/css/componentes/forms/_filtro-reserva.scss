@@ -1,0 +1,25 @@
+.filtro-reservas {
+    // Visual
+    display: flex;
+    align-items: center;
+
+    // Margens
+    margin-top: 0;
+    margin-bottom: 0;
+
+    > .filtro-registros {
+        // Tamanho
+        width: 590px;
+
+        // Margens
+        margin-right: 10px;
+    }
+
+    > .form-controle-data {
+        // Tamanho
+        width: 150px;
+
+        // Margens
+        margin-right: 10px;
+    }
+}
