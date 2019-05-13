@@ -48,7 +48,7 @@ class FiltrarReservasPorPeriodoCommandHandler
 
         $lista_reservas = array_filter($command->getListaReservas(), function (Reserva $reserva) use ($data_incial, $data_final) {
             return $reserva->getCheckin()->format('Y-m-d') >= $data_incial->format('Y-m-d')
-                && $reserva->getCheckin()->format('Y-m-d') <= $data_final;
+                && $reserva->getCheckin()->format('Y-m-d') <= $data_final->format('Y-m-d');
         });
 
         return $lista_reservas;
