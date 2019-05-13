@@ -43,21 +43,44 @@ class FiltrarReservasPorPeriodoCommandHandler
             return $command->getListaReservas();
         }
 
-        $s_data_inicial = $command->getDataInicial();
-        $s_data_final = $command->getDataFinal();
+        $data_incial = $this->defineDataIncial($command->getDataInicial());
+        $data_final = $this->defineDataFinal($command->getDataFinal(), $data_incial);
 
-        $dt_data_inicial = new DateTime($s_data_inicial);
-        $dt_data_final = new DateTime($s_data_final);
-
-        if (empty($s_data_final)) {
-            $dt_data_final->modify('+1 month');
-        }
-
-        $lista_reservas = array_filter($command->getListaReservas(), function (Reserva $reserva) use ($dt_data_inicial, $dt_data_final) {
-            return $reserva->getCheckin()->format('Y-m-d') >= $dt_data_inicial->format('Y-m-d')
-                && $reserva->getCheckin()->format('Y-m-d') <= $dt_data_final;
+        $lista_reservas = array_filter($command->getListaReservas(), function (Reserva $reserva) use ($data_incial, $data_final) {
+            return $reserva->getCheckin()->format('Y-m-d') >= $data_incial->format('Y-m-d')
+                && $reserva->getCheckin()->format('Y-m-d') <= $data_final;
         });
 
         return $lista_reservas;
+    }
+
+    /**
+     * Define a data inicial do período. Quando a data inicial não for informada, considera uma semana antes.
+     * @param string $s_data_inicial
+     * @return DateTime
+     * @throws Exception
+     */
+    public function defineDataIncial(string $s_data_inicial): DateTime
+    {
+        $data_inicial = new DateTime($s_data_inicial);
+
+        // Se a data inicial não foi informada, iniciar com as reservas de 1 semana atrás
+        if (empty($s_data_inicial)) {
+            $data_inicial->modify('-1 week');
+        }
+
+        return $data_inicial;
+    }
+
+    /**
+     * Define a data final do período. Quando a data final não for informada, considera 1 mês a partir da ddata inicial
+     * @param string $s_data_final
+     * @param DateTime $data_inicial
+     * @return DateTime
+     * @throws Exception
+     */
+    public function defineDataFinal(string $s_data_final, DateTime $data_inicial): DateTime
+    {
+        return empty($s_data_final) ? (clone $data_inicial)->modify('+1 month') : new DateTime($s_data_final);
     }
 }

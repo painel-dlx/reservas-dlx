@@ -25,7 +25,13 @@
 
 namespace Reservas\PainelDLX\UseCases\Reservas\FiltrarReservasPorPeriodo;
 
+use Reservas\PainelDLX\Tests\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommandTest;
 
+/**
+ * Class FiltrarReservasPorPeriodoCommand
+ * @package Reservas\PainelDLX\UseCases\Reservas\FiltrarReservasPorPeriodo
+ * @covers FiltrarReservasPorPeriodoCommandTest
+ */
 class FiltrarReservasPorPeriodoCommand
 {
     /**
