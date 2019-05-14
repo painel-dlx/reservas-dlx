@@ -26,17 +26,25 @@
 namespace Reservas\PainelDLX\Domain\Pedidos\Validators;
 
 
-use Reservas\PainelDLX\Domain\Pedidos\Validators\ValidarConfirmarPedido;
-use Reservas\PainelDLX\Domain\Pedidos\Validators\ValidarReservasGeradas;
+use Reservas\PainelDLX\Domain\Pedidos\Contracts\PedidoValidatorInterface;
+use Reservas\PainelDLX\Domain\Pedidos\Entities\Pedido;
+use Reservas\PainelDLX\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 
-class PedidoValidatorEnum
+class ValidarStatusPedido implements PedidoValidatorInterface
 {
-    const CONFIRMAR = [
-        ValidarConfirmarPedido::class,
-        ValidarReservasGeradas::class,
-    ];
 
-    const CANCELAR = [
-        ValidarStatusPedido::class
-    ];
+    /**
+     * Valida uma determinada regra sobre um pedido
+     * @param Pedido $pedido
+     * @return bool
+     * @throws PedidoInvalidoException
+     */
+    public function validar(Pedido $pedido): bool
+    {
+        if ($pedido->isCancelado()) {
+            throw PedidoInvalidoException::pedidoJaCancelado($pedido->getId());
+        }
+
+        return true;
+    }
 }
