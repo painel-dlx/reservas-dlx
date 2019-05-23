@@ -1,0 +1,12 @@
+.botao-upload {
+    @extend .botao;
+
+    // Visual
+    background: #699;
+    border-bottom-color: #4e7d7d;
+
+    &:hover {
+        // Visual
+        background: #619292;
+    }
+}

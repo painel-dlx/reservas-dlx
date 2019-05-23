@@ -1,0 +1,36 @@
+Reservas\Domain\Pedidos\Entities\PedidoHistorico:
+    type: entity
+    table: dlx_pedido_historico
+    # repositoryClass: Reservas\Infra\ORM\Doctrine\Repositories\PedidoRepository
+    id:
+        id:
+            type: integer
+            id: true
+            nullable: false
+            generator:
+                strategy: auto
+            column: pedido_historico_id
+    fields:
+        data:
+            type: datetime
+            nullable: false
+        status:
+            type: string
+            length: 10
+            nullable: false
+        motivo:
+            type: string
+            length: 255
+            nullable: false
+    manyToOne:
+        pedido:
+            targetEntity: Pedido
+            inversedBy: historico
+            joinColumns:
+                pedido_id:
+                    referencedColumnName: pedido_id
+        usuario:
+            targetEntity: PainelDLX\Domain\Usuarios\Entities\Usuario
+            joinColumns:
+                usuario_id:
+                    referencedColumnName: usuario_id

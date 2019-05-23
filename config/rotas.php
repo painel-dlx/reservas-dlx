@@ -30,11 +30,11 @@ use PainelDLX\Application\Routes\HomeRouter;
 use PainelDLX\Application\Routes\LoginRouter;
 use PainelDLX\Application\Routes\PermissoesRouter;
 use PainelDLX\Application\Routes\UsuariosRouter;
-use Reservas\PainelDLX\Application\Routes\DisponibilidadeRouter;
-use Reservas\PainelDLX\Application\Routes\EmailsRouter;
-use Reservas\PainelDLX\Application\Routes\PedidosRouter;
-use Reservas\PainelDLX\Application\Routes\QuartosRouter;
-use Reservas\PainelDLX\Application\Routes\ReservasRouter;
+use Reservas\Application\Routes\DisponibilidadeRouter;
+use Reservas\Application\Routes\EmailsRouter;
+use Reservas\Application\Routes\PedidosRouter;
+use Reservas\Application\Routes\QuartosRouter;
+use Reservas\Application\Routes\ReservasRouter;
 
 return [
     // Painel DLX

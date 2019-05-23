@@ -25,7 +25,7 @@
 
 
 use PainelDLX\Application\Mappings\PainelDLXMapping;
-use Reservas\PainelDLX\Application\Mappings\ReservasDLXMapping;
+use Reservas\Application\Mappings\ReservasDLXMapping;
 
 return array_merge(
     (new PainelDLXMapping())->getMapping(),

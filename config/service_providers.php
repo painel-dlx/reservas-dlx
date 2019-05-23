@@ -24,7 +24,7 @@
  */
 
 use PainelDLX\Application\ServiceProviders\PainelDLXServiceProvider;
-use Reservas\PainelDLX\Application\ServiceProviders\ReservasServiceProvider;
+use Reservas\Application\ServiceProviders\ReservasServiceProvider;
 
 return [
     PainelDLXServiceProvider::class,

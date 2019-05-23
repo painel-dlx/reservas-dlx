@@ -1,0 +1,27 @@
+Reservas\Domain\Reservas\Entities\VisualizacaoCpf:
+    type: entity
+    table: dlx_reserva_visualizacoes_cpf
+    # repositoryClass: Reservas\Infra\ORM\Doctrine\Repositories\VisualizacaoCpfRepository
+    id:
+        reserva:
+            associationKey: true
+            id: true
+        usuario:
+            associationKey: true
+            id: true
+    fields:
+        data:
+            type: datetime
+            nullable: false
+    manyToOne:
+        reserva:
+            targetEntity: Reserva
+            inversedBy: visualizacoes_cpf
+            joinColumns:
+                reserva_id:
+                    referencedColumnName: reserva_id
+        usuario:
+            targetEntity: \PainelDLX\Domain\Usuarios\Entities\Usuario
+            joinColumns:
+                usuario_id:
+                    referencedColumnName: usuario_id

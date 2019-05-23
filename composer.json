@@ -8,18 +8,18 @@
     "require": {
         "dlepera88-php/painel-dlx": "^2.1",
         "dlepera88-jquery/jquery-mascara": "^1.0",
-        "dlepera88-php/dlx-cpf": "^1.0"
+        "dlepera88-php/dlx-cpf": "^1.0",
+        "ckeditor/ckeditor": "^4.11"
     },
     "autoload": {
         "psr-4": {
-            "Reservas\\PainelDLX\\": "src/PainelDLX/"
+            "Reservas\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "PainelDLX\\Testes\\": "vendor/dlepera88-php/painel-dlx/tests",
-            "Reservas\\Tests\\": "tests",
-            "Reservas\\PainelDLX\\Tests\\": "tests/PainelDLX"
+            "Reservas\\Tests\\": "tests"
         }
     }
 }

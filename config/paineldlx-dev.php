@@ -43,7 +43,7 @@ return [
         'rotas' => include 'rotas.php',
         'service-providers' => include 'service_providers.php',
         'mapping' => include 'mapping.php',
-        'favicon' => PainelDLX::$dir . '/src/Presentation/Site/public/imgs/favicon.png'
+        'favicon' => PainelDLX::$dir . '/public/imgs/favicon.png'
     ],
 
     'bd' => [
@@ -52,12 +52,8 @@ return [
         'dev-mode' => true,
         //'debug' => EchoSQLLogger::class,
         'dir' => [
-            'src/PainelDLX/Infra/ORM/Doctrine/Mappings',
-            'src/PainelDLX/Infra/ORM/Doctrine/Repositories',
-
-            // todo: colocar isso no outro arquivo de configuração
-            'src/Website/Infra/ORM/Doctrine/Mappings',
-            'src/Website/Infra/ORM/Doctrine/Repositories',
+            'src/Infra/ORM/Doctrine/Mappings',
+            'src/Infra/ORM/Doctrine/Repositories',
 
             "{$dir_painel_dlx}src/Infra/ORM/Doctrine/Mappings",
             "{$dir_painel_dlx}src/Infra/ORM/Doctrine/Repositories"

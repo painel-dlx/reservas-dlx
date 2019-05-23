@@ -1,0 +1,204 @@
+<?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2018 PHP DLX
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
+use Reservas\Domain\Quartos\Entities\Quarto;
+use Vilex\VileX;
+
+/**
+ * @var Vilex $this
+ */
+
+$lista = $this->getAtributo('lista-dispon');
+$quartos = [];
+
+/** @var Disponibilidade $dispon */
+foreach ($lista as $dispon) {
+    $quartos[$dispon->getQuarto()->getId()][] = $dispon;
+}
+
+$lista_quartos = $this->getAtributo('lista-quartos');
+$filtro = $this->getAtributo('filtro');
+?>
+
+[CORPO]
+<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+
+<div class="menu-opcoes">
+    <form id="form-filtro-mapa" class="filtro-registros-mapa">
+        <label>
+            <input type="date" name="data_inicial" id="dt-data-inicial" value="<?php echo $filtro['data_inicial'] ?>"
+                   class="form-controle form-controle-data" required>
+        </label>
+
+        <label>
+            <input type="date" name="data_final" id="dt-data-final" value="<?php echo $filtro['data_final'] ?>"
+                   class="form-controle form-controle-data" required>
+        </label>
+
+        <label>
+            <select name="quarto" id="sel-quarto" class="form-controle form-controle-select">
+                <option value="">Todos os quartos</option>
+
+                <?php
+                /** @var \Reservas\Domain\Quartos\Entities\Quarto $quarto */
+                foreach ($lista_quartos as $quarto) : ?>
+                    <option value="<?php echo $quarto->getId() ?>"<?php echo (int)$filtro['quarto'] === $quarto->getId() ? ' selected' : '' ?>>
+                        <?php echo $quarto->getNome() ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+    </form>
+
+    <button type="submit" form="form-filtro-mapa" class="botao-buscar">Filtrar</button>
+    <a href="/painel-dlx/apart-hotel/disponibilidade/editar-por-periodo" class="link-inserir">Disponibilidade por período</a>
+</div>
+
+<?php if (count($quartos) < 0) : ?>
+    <p class="sem-registros">Nenhuma disponibilidade encontrada.</p>
+<?php endif;
+
+foreach ($quartos as $lista_dispon) :
+    /** @var Disponibilidade $dispon1 */
+    $dispon1 = $lista_dispon[0];
+    $lista_semana = array_chunk($lista_dispon, 14); ?>
+    <div class="calendario-dispon">
+        <div class="calendario-dispon-quarto"><?php echo $dispon1->getQuarto() ?></div>
+
+        <?php foreach ($lista_semana as $lista_dispon_semana) : ?>
+            <div class="calendario-dispon-infos">
+                <div class="calendario-dispon-labels">
+                    <div class="calendario-dispon-label -semana"></div>
+                    <div class="calendario-dispon-label -data">Data</div>
+                    <div class="calendario-dispon-label -qtde">Qtde</div>
+
+                    <?php for ($i = 1; $i <= $dispon1->getQuarto()->getMaxHospedes(); $i++) : ?>
+                        <div class="calendario-dispon-label -valor">
+                            Valor R$<br>
+                            (<?php echo $i === 1 ? '1 pessoa' : "{$i} pessoas" ?>)
+                        </div>
+                    <?php endfor; ?>
+                    <div class="calendario-dispon-label -publicado">Publicado?</div>
+                </div>
+
+                <div class="calendario-dispon-dias">
+                    <?php
+                    /** @var Disponibilidade $dispon */
+                    foreach ($lista_dispon_semana as $dispon) : ?>
+                        <form id="form-dispon-<?php echo $dispon->getId() ?>" method="post" action="/painel-dlx/apart-hotel/disponibilidade/salvar" class="calendario-dispon-dia -<?php echo $dispon->getDia()->format('D') ?>">
+                            <input type="hidden" name="id" value="<?php echo $dispon->getId() ?>">
+                            <input type="hidden" name="quarto" value="<?php echo $dispon->getQuarto()->getId() ?>">
+                            <input type="hidden" name="dia" value="<?php echo $dispon->getDia()->format('Y-m-d') ?>">
+
+                            <div class="calendario-dispon-semana -semana">
+                                <?php echo $dispon->getDia()->format('D') ?>
+                            </div>
+
+                            <div class="calendario-dispon-data -data">
+                                <?php echo $dispon->getDia()->format('d/m') ?>
+                            </div>
+
+                            <div class="calendario-dispon-campo -qtde">
+                                <label>
+                                    <input type="number" name="qtde" value="<?php echo $dispon->getQtde() ?>" min="0" max="999" required>
+                                </label>
+                            </div>
+
+                            <?php for ($i = 1; $i <= $dispon->getQuarto()->getMaxHospedes(); $i++) : ?>
+                                <div class="calendario-dispon-campo -valor">
+                                    <label>
+                                        <input type="number" name="valor[<?php echo $i ?>]" value="<?php echo $dispon->getValorPorQtdePessoas($i) ?>" min="<?php echo $dispon->getQuarto()->getValorMin() ?>" max="9999" step="0.01" required>
+                                    </label>
+                                </div>
+                            <?php endfor; ?>
+
+                            <div class="calendario-dispon-status">
+                                <span id="dispon-status-<?php echo $dispon->getId() ?>" class="status-dispon -<?php echo $dispon->isPublicado() ? 'publicado' : 'nao-publicado' ?>">
+                                    <?php echo $dispon->isPublicado() ? 'Sim' : 'Não' ?>
+                                </span>
+                            </div>
+                        </form>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endforeach; ?>
+[/CORPO]
+
+[SCRIPTS]
+<script>
+    $('#form-filtro-mapa').find('input, select').on('change', function () {
+        $(this).parents('form').submit();
+    });
+
+    var $forms_dispon = $('form[id!="form-filtro-mapa"]');
+    $forms_dispon.formAjax({
+        func_depois: function (json, form, xhr) {
+            var $form = $(form);
+
+            if (json.retorno === 'sucesso') {
+                var $inputs = $form.find('input.-pendente');
+
+                $inputs.each(function () {
+                    this.defaultValue = this.value;
+                });
+
+                $inputs.removeClass('-pendente');
+                $inputs.addClass('-salvo');
+
+                msgUsuario.mostrar('Disponibilidade salva com sucesso!', 'sucesso', xhr.id);
+            }
+
+            var $status = $form.find('.status-dispon');
+
+            if (json.publicado) {
+                $status.removeClass('-nao-publicado');
+                $status.addClass('-publicado');
+            } else {
+                $status.removeClass('-publicado');
+                $status.addClass('-nao-publicado');
+            }
+        }
+    });
+
+    $forms_dispon.find('input').on('change', function () {
+        var $this = $(this);
+        var $form = $this.parents('form');
+        var classe = '-pendente';
+
+        if (this.defaultValue !== this.value) {
+            $this.addClass(classe);
+        } else {
+            $this.removeClass(classe);
+        }
+
+        if ($form.has) {
+            $form.trigger('submit');
+        }
+    });
+</script>
+[/SCRIPTS]
