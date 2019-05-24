@@ -1,0 +1,14 @@
+@import "../painel-dlx-original/flex/flex-box";
+
+.lista-midias-quarto {
+    // Flex
+    @extend .flex-box;
+
+    > .midia-quarto {
+        @extend .flex-box-mp-col-3;
+        @extend .flex-box-pq-col-6;
+        @extend .flex-box-md-col-6;
+        @extend .flex-box-gd-col-3;
+        @extend .flex-box-mg-col-3;
+    }
+}

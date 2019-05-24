@@ -47,7 +47,7 @@ $lista_midias = $quarto->getMidias();
 <?php if ($lista_midias->count() < 1) : ?>
     <p class="sem-registros">Nenhuma mídia encontrada.</p>
 <?php else : ?>
-    <div class="midias-quarto">
+    <div class="lista-midias-quarto">
         <?php
         /** @var QuartoMidia $midia */
         foreach ($lista_midias as $midia) : ?>

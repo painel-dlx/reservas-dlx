@@ -37,6 +37,16 @@ $quarto = $this->getAtributo('quarto');
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
 
+<div class="form-botoes-externo">
+    <button type="button" onclick="popupUploadMidias()" class="botao-upload">
+        Adicionar fotos e vídeos
+    </button>
+
+    <button type="submit" form="form-quarto" class="botao-salvar" data-ajax-msg="Salvando informações do quarto.<br>Por favor aguarde...">
+        Salvar
+    </button>
+</div>
+
 <form id="form-quarto" method="post" action="<?php echo $this->getAtributo('form-action') ?>">
     <div class="layout-barra-lateral">
         <aside class="barra-lateral">
@@ -83,47 +93,17 @@ $quarto = $this->getAtributo('quarto');
                 </p>
             </fieldset>
 
-            <!-- fieldset class="form-grupo">
-                <legend class="form-titulo">Configurações</legend>
-
-                <p class="form-paragr">
-                    <label for="num-max-hospedes" class="form-rotulo">Qtde máx de hóspedes:</label>
-                    <input type="number" name="max_hospedes" id="num-max-hospedes" value="<?php echo $quarto->getMaxHospedes() ?>" min="1" max="10" class="form-controle form-controle-numero" required>
-                </p>
-
-                <p class="form-paragr">
-                    <label for="num-qtde" class="form-rotulo">Qtde de quartos disponíveis:</label>
-                    <input type="number" name="qtde" id="num-qtde" value="<?php echo $quarto->getQtde() ?>" min="1" max="99" class="form-controle form-controle-numero" required>
-                </p>
-
-                <p class="form-paragr">
-                    <label for="num-tamanho-m2" class="form-rotulo">Tamanho do quarto:</label>
-                    <input type="number" name="tamanho_m2" id="num-tamanho-m2" value="<?php echo $quarto->getTamanhoM2() ?>" min="5" max="999" class="form-controle form-controle-numero" required>
-                </p>
-
-                <p class="form-paragr">
-                    <label for="moeda-valor-min" class="form-rotulo form-controle-moeda">Valor Min.:</label>
-                    <input type="number" name="valor_min" id="moeda-valor-min" value="<?php echo $quarto->getValorMin() ?>" min="1.00" max="9999.00" step="0.01" class="form-controle form-controle-numero" required>
-                </p>
-
-                <p class="form-paragr">
-                    <label for="txt-link" class="form-rotulo form-controle-link">Link para acesso no site:</label>
-                    <input type="text" name="link" id="txt-link" value="<?php echo $quarto->getLink() ?>" max="60" class="form-controle" required>
-                </p>
-            </fieldset -->
-
             <fieldset class="form-grupo">
-                <legend class="form-titulo">Mídias</legend>
-
+                <legend class="form-titulo">Fotos & Vídeos</legend>
                 <?php include 'trecho_lista_midias.phtml' ?>
-
-                <button type="button" onclick="popupUploadMidias()" class="botao-upload">
-                    Gerenciador de Mídias
-                </button>
             </fieldset>
 
             <p class="form-botoes">
-                <button type="submit" class="botao-salvar" data-ajax-msg="Salvando informações do quarto.<br>Por favor aguarde...">
+                <button type="button" onclick="popupUploadMidias()" class="botao-upload">
+                    Adicionar fotos e vídeos
+                </button>
+
+                <button type="submit" form="form-quarto" class="botao-salvar" data-ajax-msg="Salvando informações do quarto.<br>Por favor aguarde...">
                     Salvar
                 </button>
             </p>
