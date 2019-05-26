@@ -43,7 +43,8 @@ return [
         'rotas' => include 'rotas.php',
         'service-providers' => include 'service_providers.php',
         'mapping' => include 'mapping.php',
-        'favicon' => PainelDLX::$dir . '/public/imgs/favicon.png'
+        'favicon' => PainelDLX::$dir . '/public/imgs/favicon.png',
+        'versao' => '0.1.3-beta'
     ],
 
     'bd' => [

@@ -4,10 +4,13 @@
  */
 function excluirMidiaQuarto(arquivo) {
     if (confirm('Deseja realmente excluir essa foto/vídeo?')) {
-        $.post(
-            '/painel-dlx/apart-hotel/quartos/excluir-midia',
-            {arquivo: arquivo},
-            function (json, status, xhr) {
+        $.ajax({
+            url: '/painel-dlx/apart-hotel/quartos/excluir-midia',
+            data: {arquivo: arquivo},
+            type: 'post',
+            dataType: 'json',
+            mensagem: 'Excluindo mídia do quarto.<br>Por favor aguarde...',
+            success: function (json, status, xhr) {
                 if (json.retorno === 'sucesso') {
                     msgUsuario.adicionar(json.mensagem, json.retorno, xhr.id);
                     window.location.reload();
@@ -15,8 +18,7 @@ function excluirMidiaQuarto(arquivo) {
                 }
 
                 msgUsuario.mostrar(json.mensagem, json.retorno, xhr.id);
-            },
-            'json'
-        );
+            }
+        });
     }
 }

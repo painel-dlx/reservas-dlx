@@ -28,6 +28,7 @@ namespace Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers
 
 use DateTime;
 use DLX\Contracts\TransactionInterface;
+use DLX\Core\Configure;
 use DLX\Core\Exceptions\UserException;
 use Exception;
 use League\Tactician\CommandBus;
@@ -76,7 +77,7 @@ class DisponPorPeriodoController extends PainelDLXController
         $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
         $this->view->setViewRoot('public/views/');
 
-        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
+        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css', false, Configure::get('app', 'versao'));
 
         $this->view = $view;
         $this->transaction = $transaction;
@@ -104,8 +105,9 @@ class DisponPorPeriodoController extends PainelDLXController
             $this->view->setAtributo('lista-quartos', $lista_quartos);
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js');
+            $versao = Configure::get('app', 'versao');
+            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', false, $versao);
+            $this->view->addArquivoJS('public/js/apart-hotel-min.js', false, $versao);
         } catch (UserException $e) {
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [

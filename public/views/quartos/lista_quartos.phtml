@@ -91,7 +91,7 @@ $filtro = $this->getAtributo('filtro');
         </tr>
     <?php endif;
 
-    /** @var \Reservas\Domain\Quartos\Entities\Quarto $quarto */
+    /** @var Quarto $quarto */
     foreach ($lista_reservas as $quarto) : ?>
         <tr>
             <td headers="quarto-id"><?php echo $quarto->getId() ?></td>
@@ -114,7 +114,7 @@ $filtro = $this->getAtributo('filtro');
                     Editar
                 </a>
 
-                <a href="javascript:" class="link-excluir" onclick="excluirQuarto(<?php echo $quarto->getId() ?>)" title="Excluir esse quarto" data-ajax-msg="Excluindo quarto.<br>Por favor aguarde...">
+                <a href="javascript:" class="link-excluir" onclick="excluirQuarto(<?php echo $quarto->getId() ?>)" title="Excluir esse quarto">
                     Excluir
                 </a>
             </td>

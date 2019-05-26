@@ -25,7 +25,6 @@
                         $img.appendTo($div);
                         $div.appendTo($preview);
                     };
-                    delete file_reader;
                 }
             });
 

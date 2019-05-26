@@ -48,7 +48,7 @@ $lista_quartos = $this->getAtributo('lista-quartos');
             <option value="">Selecione um quarto</option>
 
             <?php
-            /** @var \Reservas\Domain\Quartos\Entities\Quarto $quarto */
+            /** @var Quarto $quarto */
             foreach ($lista_quartos as $quarto) : ?>
                 <option value="<?php echo $quarto->getId() ?>">
                     <?php echo $quarto->getNome() ?>
@@ -81,11 +81,16 @@ $lista_quartos = $this->getAtributo('lista-quartos');
         var $this = $(this);
         var quarto_id = $this.val();
 
-        $.get(
-            '/painel-dlx/apart-hotel/disponibilidade/configuracoes-quarto',
-            {id: quarto_id, 'pg-mestra': 'vazio-master'},
-            function (html) { $('#config-quarto').html(html); }
-        );
+        $.ajax({
+            url: '/painel-dlx/apart-hotel/disponibilidade/configuracoes-quarto',
+            data: {id: quarto_id, 'pg-mestra': 'vazio-master'},
+            type: 'get',
+            mensagem: 'Carregando informações do quarto...',
+            success: function (html, status, xhr) {
+                $('#config-quarto').html(html);
+                msgUsuario.fechar(xhr.id);
+            }
+        });
     });
 
     $('#form-dispon-periodo').formAjax({
