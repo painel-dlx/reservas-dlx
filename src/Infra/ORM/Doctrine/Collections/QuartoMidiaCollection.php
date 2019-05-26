@@ -63,7 +63,7 @@ class QuartoMidiaCollection extends ArrayCollection implements QuartoMidiaCollec
      */
     public function findByArquivo(string $arquivo): ?QuartoMidia
     {
-        $midia = $this->filter(function ($key, QuartoMidia $quarto_midia) use ($arquivo) {
+        $midia = $this->filter(function (QuartoMidia $quarto_midia) use ($arquivo) {
             return $quarto_midia->getArquivo() === $arquivo;
         })->first();
 

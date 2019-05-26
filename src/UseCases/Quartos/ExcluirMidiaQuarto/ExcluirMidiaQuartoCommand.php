@@ -23,42 +23,46 @@
  * SOFTWARE.
  */
 
+namespace Reservas\UseCases\Quartos\ExcluirMidiaQuarto;
+
+
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Vilex\VileX;
 
-/**
- * @var Vilex $this
- */
+class ExcluirMidiaQuartoCommand
+{
+    /**
+     * @var Quarto
+     */
+    private $quarto;
+    /**
+     * @var string
+     */
+    private $arquivo;
 
-/** @var Quarto $quarto */
-$quarto = $this->getAtributo('quarto');
-?>
+    /**
+     * ExcluirMidiaQuartoCommand constructor.
+     * @param Quarto $quarto
+     * @param string $arquivo
+     */
+    public function __construct(Quarto $quarto, string $arquivo)
+    {
+        $this->quarto = $quarto;
+        $this->arquivo = $arquivo;
+    }
 
-[CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+    /**
+     * @return Quarto
+     */
+    public function getQuarto(): Quarto
+    {
+        return $this->quarto;
+    }
 
-<form id="form-upload" action="/painel-dlx/apart-hotel/quartos/upload-midias" method="post" enctype="multipart/form-data">
-    <div class="upload-arquivos">
-        <label class="upload-arquivos-campo">
-            <span class="upload-arquivos-label">Selecione ou arraste os arquivos para cá</span>
-            <input type="file" name="midias[]" id="upload-midias" accept="video/*,image/*" multiple required>
-        </label>
-
-        <div class="upload-arquivos-preview">
-
-        </div>
-    </div>
-
-    <p class="form-botoes">
-        <button type="submit" class="botao-upload" data-ajax-msg="Fazendo upload das mídias.<br>Por favor aguarde...">
-            Iniciar Upload
-        </button>
-    </p>
-</form>
-[/CORPO]
-
-[SCRIPTS]
-<script>
-    $('#upload-midias').uploadPreview();
-</script>
-[/SCRIPTS]
+    /**
+     * @return string
+     */
+    public function getArquivo(): string
+    {
+        return $this->arquivo;
+    }
+}

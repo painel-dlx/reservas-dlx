@@ -54,6 +54,8 @@ use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
 use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommandHandler;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommand;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommandHandler;
+use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommand;
+use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommandHandler;
 use Reservas\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommand;
 use Reservas\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommandHandler;
 use Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommand;
@@ -105,6 +107,7 @@ class ReservasDLXMapping
         GerarDisponibilidadesQuartoCommand::class => GerarDisponibilidadesQuartoCommandHandler::class,
         FiltrarReservasPorPeriodoCommand::class => FiltrarReservasPorPeriodoCommandHandler::class,
         AdicionarMidiasQuartoCommand::class => AdicionarMidiasQuartoCommandHandler::class,
+        ExcluirMidiaQuartoCommand::class => ExcluirMidiaQuartoCommandHandler::class,
     ];
 
     /**

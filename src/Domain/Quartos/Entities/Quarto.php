@@ -317,6 +317,10 @@ class Quarto extends Entity
      */
     public function getMidias(): Collection
     {
+        if (!$this->midias instanceof QuartoMidiaCollectionInterface) {
+            $this->midias = new QuartoMidiaCollection($this->midias->toArray());
+        }
+
         return $this->midias;
     }
 

@@ -95,8 +95,13 @@ class CadastrarQuartoController extends PainelDLXController
      */
     public function formNovoQuarto(ServerRequestInterface $request): ResponseInterface
     {
-        $quarto = new Quarto('', 1, 1);
-        $this->session->set('editando:quarto', $quarto);
+        /** @var Quarto $quarto */
+        $quarto = $this->session->get('editando:quarto');
+
+        if (is_null($quarto)) {
+            $quarto = new Quarto('', 1, 1);
+            $this->session->set('editando:quarto', $quarto);
+        }
 
         try {
             // Parâmetros

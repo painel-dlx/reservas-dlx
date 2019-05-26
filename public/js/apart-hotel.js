@@ -42,11 +42,15 @@ function abrirPopupExterno($container, url, dados, callback) {
 
 // CRUD
 // @codekit-append "componentes/crud/_excluir-quarto.js"
+// @codekit-append "componentes/crud/_excluir-midia-quarto.js"
 
 // POPUP
 // @codekit-append "componentes/popup/_popup-confirmar-reserva.js"
 // @codekit-append "componentes/popup/_popup-confirmar-pedido.js"
 // @codekit-append "componentes/popup/_popup-upload-midias.js"
+
+// FORM
+// @codekit-append "componentes/form/_upload-preview.js"
 
 // OUTROS
 // @codekit-append "componentes/mostrar-cpf-completo/_mostrar-cpf-completo.js"

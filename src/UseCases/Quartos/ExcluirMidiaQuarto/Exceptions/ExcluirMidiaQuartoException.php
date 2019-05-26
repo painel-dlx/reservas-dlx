@@ -23,42 +23,19 @@
  * SOFTWARE.
  */
 
-use Reservas\Domain\Quartos\Entities\Quarto;
-use Vilex\VileX;
+namespace Reservas\UseCases\Quartos\ExcluirMidiaQuarto\Exceptions;
 
-/**
- * @var Vilex $this
- */
 
-/** @var Quarto $quarto */
-$quarto = $this->getAtributo('quarto');
-?>
+use Exception;
 
-[CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
-
-<form id="form-upload" action="/painel-dlx/apart-hotel/quartos/upload-midias" method="post" enctype="multipart/form-data">
-    <div class="upload-arquivos">
-        <label class="upload-arquivos-campo">
-            <span class="upload-arquivos-label">Selecione ou arraste os arquivos para cá</span>
-            <input type="file" name="midias[]" id="upload-midias" accept="video/*,image/*" multiple required>
-        </label>
-
-        <div class="upload-arquivos-preview">
-
-        </div>
-    </div>
-
-    <p class="form-botoes">
-        <button type="submit" class="botao-upload" data-ajax-msg="Fazendo upload das mídias.<br>Por favor aguarde...">
-            Iniciar Upload
-        </button>
-    </p>
-</form>
-[/CORPO]
-
-[SCRIPTS]
-<script>
-    $('#upload-midias').uploadPreview();
-</script>
-[/SCRIPTS]
+class ExcluirMidiaQuartoException extends Exception
+{
+    /**
+     * @param string $arquivo
+     * @return ExcluirMidiaQuartoException
+     */
+    public static function arquivoNaoEncontrado(string $arquivo)
+    {
+        return new self("Arquivo de mídia {$arquivo} não encontrado.", 10);
+    }
+}

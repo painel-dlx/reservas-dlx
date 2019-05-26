@@ -68,7 +68,7 @@ $quarto = $this->getAtributo('quarto');
 
                 <p class="form-paragr">
                     <label for="moeda-valor-min" class="form-rotulo form-controle-moeda">Valor Min.:</label>
-                    <input type="number" name="valor_min" id="moeda-valor-min" value="<?php echo $quarto->getValorMin() ?>" min="1.00" max="9999.00" step="0.01" class="form-controle form-controle-numero" required>
+                    <input type="number" name="valor_min" id="moeda-valor-min" value="<?php echo number_format($quarto->getValorMin(), 2, '.', '') ?>" min="1.00" max="9999.00" step="0.01" class="form-controle form-controle-numero" required>
                 </p>
 
                 <p class="form-paragr">
@@ -111,9 +111,7 @@ $quarto = $this->getAtributo('quarto');
     </div>
 </form>
 
-<?php if (!empty($quarto->getId())) : ?>
 <div id="popup-upload-midias" class="popup-modal" style="display: none"></div>
-<?php endif; ?>
 [/CORPO]
 
 [SCRIPTS]

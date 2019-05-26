@@ -26,6 +26,7 @@
 namespace Reservas\Application\Routes;
 
 
+use Exception;
 use PainelDLX\Application\Middlewares\Autorizacao;
 use PainelDLX\Application\Middlewares\DefinePaginaMestra;
 use PainelDLX\Application\Middlewares\VerificarLogon;
@@ -40,7 +41,7 @@ class QuartosRouter extends PainelDLXRouter
 
     /**
      * Registrar todas as rotas
-     * @throws \Exception
+     * @throws Exception
      */
     public function registrar(): void
     {
@@ -117,6 +118,14 @@ class QuartosRouter extends PainelDLXRouter
         $router->post(
             '/painel-dlx/apart-hotel/quartos/upload-midias',
             [GerenciadorMidiasController::class, 'uploadMidias']
+        )->middlewares(
+            $verificar_logon,
+            $perm_editar_quarto
+        );
+
+        $router->post(
+            '/painel-dlx/apart-hotel/quartos/excluir-midia',
+            [GerenciadorMidiasController::class, 'excluirMidia']
         )->middlewares(
             $verificar_logon,
             $perm_editar_quarto

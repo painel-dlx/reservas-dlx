@@ -36,6 +36,9 @@ use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Exceptions\ValidarQuartoException;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommand;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommandHandler;
+use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\Exceptions\ExcluirMidiaQuartoException;
+use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommand;
+use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommandHandler;
 use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
 use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
@@ -133,6 +136,40 @@ class GerenciadorMidiasController extends PainelDLXController
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Mídias salvas com sucesso!';
         } catch (ValidarQuartoException | UserException $e) {
+            $json['retorno'] = 'erro';
+            $json['mensagem'] = $e->getMessage();
+        }
+
+        return new JsonResponse($json);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function excluirMidia(ServerRequestInterface $request): ResponseInterface
+    {
+        /** @var Quarto $quarto */
+        $quarto = $this->session->get('editando:quarto');
+
+        $post = filter_var_array($request->getParsedBody(), [
+            'arquivo' => FILTER_SANITIZE_STRING
+        ]);
+
+        try {
+            $this->transaction->transactional(function () use ($quarto, $post) {
+                /* @see ExcluirMidiaQuartoCommandHandler */
+                $this->command_bus->handle(new ExcluirMidiaQuartoCommand($quarto, $post['arquivo']));
+
+                if (!is_null($quarto->getId())) {
+                    /* @see SalvarQuartoCommandHandler */
+                    $this->command_bus->handle(new SalvarQuartoCommand($quarto));
+                }
+            });
+
+            $json['retorno'] = 'sucesso';
+            $json['mensagem'] = 'Arquivo de mídia excluída com sucesso!';
+        } catch (ExcluirMidiaQuartoException | ValidarQuartoException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

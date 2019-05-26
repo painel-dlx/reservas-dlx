@@ -52,6 +52,14 @@ $lista_midias = $quarto->getMidias();
         /** @var QuartoMidia $midia */
         foreach ($lista_midias as $midia) : ?>
             <div class="midia-quarto">
+                <a href="javascript:"
+                   onclick="excluirMidiaQuarto('<?php echo $midia->getArquivo() ?>')"
+                   class="link-excluir"
+                   title="Excluir essa foto / vídeo"
+                   data-ajax-msg="Excluindo mídia do quarto.<br>Por favor aguarde..."
+                >
+                    Excluir
+                </a>
                 <?php echo $midia->getTagHtml() ?>
             </div>
         <?php endforeach; ?>
