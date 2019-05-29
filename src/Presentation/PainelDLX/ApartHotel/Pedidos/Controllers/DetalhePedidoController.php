@@ -29,6 +29,7 @@ namespace Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers;
 use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
 use League\Tactician\CommandBus;
+use PainelDLX\Application\Services\Exceptions\ErroAoEnviarEmailException;
 use PainelDLX\UseCases\Usuarios\GetUsuarioPeloId\GetUsuarioPeloIdCommand;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Presentation\Site\Common\Controllers\PainelDLXController;
@@ -216,7 +217,7 @@ class DetalhePedidoController extends PainelDLXController
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Pedido #{$pedido->getId()} foi confirmado com sucesso!";
-        } catch (PedidoInvalidoException | ReservaInvalidaException | QuartoIndisponivelException $e) {
+        } catch (ErroAoEnviarEmailException | PedidoInvalidoException | ReservaInvalidaException | QuartoIndisponivelException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }
@@ -293,7 +294,7 @@ class DetalhePedidoController extends PainelDLXController
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Pedido #{$pedido->getId()} foi cancelado com sucesso!";
-        } catch (PedidoInvalidoException | ReservaInvalidaException $e) {
+        } catch (ErroAoEnviarEmailException | PedidoInvalidoException | ReservaInvalidaException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }
