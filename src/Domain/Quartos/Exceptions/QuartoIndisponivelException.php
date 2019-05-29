@@ -39,4 +39,12 @@ class QuartoIndisponivelException extends Exception
     {
         return new self("Quarto indisponível para o dia {$dia->format('d/m/Y')}.", 10);
     }
+
+    /**
+     * @return QuartoIndisponivelException
+     */
+    public static function nenhumaDisponibilidadeEncontrada(DateTime $checkin, DateTime $checkout)
+    {
+        return new self("Nenhuma disponibiliade foi encontrada para esse quarto no período de {$checkin->format('d/m/Y')} até {$checkout->format('d/m/Y')}.", 11);
+    }
 }

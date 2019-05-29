@@ -280,6 +280,7 @@ class Quarto extends Entity
         $checkout = (clone $checkout)->modify('-1 day');
 
         $criteria = Criteria::create();
+
         $criteria->where(Criteria::expr()->gte('dia', $checkin));
         $criteria->andWhere(Criteria::expr()->lte('dia', $checkout));
 

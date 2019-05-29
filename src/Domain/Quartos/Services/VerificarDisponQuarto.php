@@ -48,7 +48,7 @@ class VerificarDisponQuarto
         $dispon_quarto = $quarto->getDispon($checkin, $checkout);
 
         if ($dispon_quarto->count() < 1) {
-            throw QuartoIndisponivelException::dataIndisponivel($checkin);
+            throw QuartoIndisponivelException::nenhumaDisponibilidadeEncontrada($checkin, $checkout);
         }
 
         $dispon_quarto->map(function (Disponibilidade $dispon) {

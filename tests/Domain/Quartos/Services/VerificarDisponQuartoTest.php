@@ -28,7 +28,6 @@ namespace Reservas\Tests\Domain\Quartos\Services;
 use DateInterval;
 use DatePeriod;
 use DateTime;
-use Reservas\Domain\Exceptions\QuartoNaoDisponivelException;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\Domain\Quartos\Services\VerificarDisponQuarto;
@@ -43,7 +42,6 @@ class VerificarDisponQuartoTest extends ReservasTestCase
 {
     /**
      * @throws QuartoIndisponivelException
-     * @throws QuartoNaoDisponivelException
      * @covers ::executar
      */
     public function test_Executar_deve_lancar_excecao_quando_nao_encontrar_nenhuma_disponibilidade()
@@ -53,29 +51,27 @@ class VerificarDisponQuartoTest extends ReservasTestCase
         $checkout = (clone $checkin)->modify('+5 days');
 
         $this->expectException(QuartoIndisponivelException::class);
-        $this->expectExceptionCode(10);
+        $this->expectExceptionCode(11);
 
         (new VerificarDisponQuarto())->executar($quarto, $checkin, $checkout);
     }
 
     /**
      * @throws QuartoIndisponivelException
-     * @throws QuartoNaoDisponivelException
-     * @throws \Reservas\Domain\Exceptions\ValorMenorQueMinimoQuartoException
      * @covers ::executar
      */
     public function test_Executar_deve_lancar_excecao_quando_alguma_disponibilidade_nao_for_valida()
     {
         $quarto = new Quarto('Teste de Quarto', 10, 10);
-        $checkin = new DateTime();
-        $checkout = (clone $checkin)->modify('+1 days');
+        $checkin = (new DateTime())->setTime(0, 0,0);
+        $checkout = (clone $checkin)->modify('+3 days');
 
-        $dt_interval = new DateInterval('P1D');
-        $dt_periodo = new DatePeriod($checkin, $dt_interval, $checkout, DatePeriod::EXCLUDE_START_DATE);
+        $dt_interval = new DateInterval('P3D');
+        $dt_periodo = new DatePeriod($checkin, $dt_interval, $checkout);
 
         /** @var DateTime $data */
         foreach ($dt_periodo as $data) {
-            $quarto->addDispon($data, 1, [1 => 10]);
+            $quarto->addDispon($data, 0, [1 => 10]);
         }
 
         $this->expectException(QuartoIndisponivelException::class);
@@ -86,8 +82,6 @@ class VerificarDisponQuartoTest extends ReservasTestCase
 
     /**
      * @throws QuartoIndisponivelException
-     * @throws QuartoNaoDisponivelException
-     * @throws \Reservas\Domain\Exceptions\ValorMenorQueMinimoQuartoException
      * @covers ::executar
      */
     public function test_Executar_deve_retornar_true_quando_quarto_estiver_disponivel_para_todos_os_dias()
