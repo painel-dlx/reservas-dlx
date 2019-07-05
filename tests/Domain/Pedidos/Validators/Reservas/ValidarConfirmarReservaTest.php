@@ -25,7 +25,10 @@
 
 namespace Reservas\Tests\Domain\Validators\Reservas;
 
+use DateInterval;
+use DatePeriod;
 use DateTime;
+use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
@@ -40,6 +43,22 @@ use Reservas\Tests\ReservasTestCase;
  */
 class ValidarConfirmarReservaTest extends ReservasTestCase
 {
+    /**
+     * @param Quarto $quarto
+     * @param DateTime $data_inicial
+     * @param DateTime $data_final
+     * @throws Exception
+     */
+    private function addDisponQuarto(Quarto $quarto, DateTime $data_inicial, DateTime $data_final): void
+    {
+        $periodo = new DatePeriod($data_inicial, new DateInterval('P1D'), $data_final);
+
+        /** @var DateTime $data */
+        foreach ($periodo as $data) {
+            $quarto->addDispon($data, 10, [1 => 12.34]);
+        }
+    }
+
     /**
      * @throws ReservaInvalidaException
      * @covers ::validar
@@ -62,14 +81,17 @@ class ValidarConfirmarReservaTest extends ReservasTestCase
 
     /**
      * @throws ReservaInvalidaException
+     * @throws Exception
      * @covers ::validar
      */
     public function test_Validar_deve_lancar_excecao_quando_reserva_for_confirmada()
     {
         $quarto = new Quarto('Teste', 1, 10);
         $usuario = new Usuario('Funcionário', 'funcionario@aparthotel.com.br');
-        $data_inicial = new DateTime();
+        $data_inicial = (new DateTime())->modify('+1 day');
         $data_final = (clone $data_inicial)->modify('+2 days');
+
+        $this->addDisponQuarto($quarto, $data_inicial, $data_final);
 
         $reserva = new Reserva($quarto, $data_inicial, $data_final, 1);
         $reserva->confirmada('Teste', $usuario);

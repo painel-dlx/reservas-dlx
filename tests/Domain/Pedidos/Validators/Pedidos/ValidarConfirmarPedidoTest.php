@@ -25,10 +25,14 @@
 
 namespace Reservas\Tests\Domain\Validators\Pedidos;
 
+use DateTime;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Validators\ValidarConfirmarPedido;
 use PHPUnit\Framework\TestCase;
+use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Reservas\Entities\Reserva;
 
 /**
  * Class ValidarConfirmarPedidoTest
@@ -39,13 +43,18 @@ class ValidarConfirmarPedidoTest extends TestCase
 {
 
     /**
-     * @throws \Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException
+     * @throws PedidoInvalidoException
      */
     public function test_Validar_deve_lancar_excecao_ao_informar_Pedido_ja_cancelado()
     {
+        $motivo = '';
+        $usuario = $this->createMock(Usuario::class);
+
+        /** @var Usuario $usuario */
+
         $pedido = new Pedido();
         $pedido->setId(1);
-        $pedido->cancelado();
+        $pedido->cancelado($motivo, $usuario);
 
         $this->expectException(PedidoInvalidoException::class);
         $this->expectExceptionCode(13);
@@ -58,9 +67,27 @@ class ValidarConfirmarPedidoTest extends TestCase
      */
     public function test_Validar_deve_lancar_excecao_quando_informar_Pedido_ja_confirmado()
     {
+        $motivo = '';
+        $usuario = $this->createMock(Usuario::class);
+        $quarto = $this->createMock(Quarto::class);
+        $checkin = (new DateTime())->modify('+1 day');
+        $checkout = (clone $checkin)->modify('+2 day');
+
+        /** @var Usuario $usuario */
+        /** @var Quarto $quarto */
+
         $pedido = new Pedido();
         $pedido->setId(1);
-        $pedido->pago();
+        $pedido->addItem($quarto, $checkin->format('Y-m-d'), $checkout->format('Y-m-d'), 1, 0, 12.34);
+        $pedido->addReserva(
+            new Reserva(
+                $quarto,
+                $checkin,
+                $checkout,
+                1
+            )
+        );
+        $pedido->pago($motivo, $usuario);
 
         $this->expectException(PedidoInvalidoException::class);
         $this->expectExceptionCode(12);

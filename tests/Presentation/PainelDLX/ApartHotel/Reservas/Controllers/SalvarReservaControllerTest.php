@@ -25,6 +25,7 @@
 
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
+use DateTime;
 use DLX\Core\Configure;
 use DLX\Infra\EntityManagerX;
 use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
@@ -49,7 +50,7 @@ use Zend\Diactoros\Response\JsonResponse;
 /**
  * Class SalvarReservaControllerTest
  * @package Reservas\Tests\Presentation\Site\ApartHotel\Controllers
- * @coversDefaultClass \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\SalvarReservaController
+ * @coversDefaultClass SalvarReservaController
  */
 class SalvarReservaControllerTest extends ReservasTestCase
 {
@@ -61,7 +62,7 @@ class SalvarReservaControllerTest extends ReservasTestCase
      * @throws SessionAdapterInterfaceInvalidaException
      * @throws SessionAdapterNaoEncontradoException
      */
-    public function test__construct(): \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\SalvarReservaController
+    public function test__construct(): SalvarReservaController
     {
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
@@ -75,7 +76,7 @@ class SalvarReservaControllerTest extends ReservasTestCase
             new DoctrineTransaction(EntityManagerX::getInstance())
         );
 
-        $this->assertInstanceOf(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\SalvarReservaController::class, $controller);
+        $this->assertInstanceOf(SalvarReservaController::class, $controller);
 
         return $controller;
     }
@@ -88,7 +89,7 @@ class SalvarReservaControllerTest extends ReservasTestCase
      * @covers ::formReservarQuarto
      * @depends test__construct
      */
-    public function test_FormReservarQuarto_deve_retornar_HtmlResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\SalvarReservaController $controller)
+    public function test_FormReservarQuarto_deve_retornar_HtmlResponse(SalvarReservaController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
 
@@ -105,15 +106,17 @@ class SalvarReservaControllerTest extends ReservasTestCase
      * @covers ::criarReserva
      * @depends test__construct
      */
-    public function test_CriarReserva_deve_retornar_JsonResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\SalvarReservaController $controller)
+    public function test_CriarReserva_deve_retornar_JsonResponse(SalvarReservaController $controller)
     {
         $quarto = QuartoTesteHelper::getRandom();
+        $checkin = (new DateTime())->modify('+1 day');
+        $checkout = (clone $checkin)->modify('+2 days');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
             'quarto' => $quarto->getId(),
-            'checkin' => '2019-01-01',
-            'checkout' => '2019-01-04',
+            'checkin' => $checkin->format('Y-m-d'),
+            'checkout' => $checkout->format('Y-m-d'),
             'adultos' => 1,
             'criancas' => 0,
             'hospede' => 'Nome do Cliente',

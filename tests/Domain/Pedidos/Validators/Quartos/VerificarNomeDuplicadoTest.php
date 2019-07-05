@@ -26,7 +26,7 @@
 namespace Reservas\Tests\Validators\Quartos\Domain;
 
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Reservas\Domain\Exceptions\NomeQuartoUtilizadoException;
+use Reservas\Domain\Quartos\Exceptions\ValidarQuartoException;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Domain\Quartos\Validators\VerificarNomeDuplicado;
 use Reservas\Tests\ReservasTestCase;
@@ -39,8 +39,8 @@ use Reservas\Tests\ReservasTestCase;
 class VerificarNomeDuplicadoTest extends ReservasTestCase
 {
     /**
-     * @throws NomeQuartoUtilizadoException
      * @covers ::executar
+     * @throws ValidarQuartoException
      */
     public function test_Executar_deve_lancar_uma_excecao_quando_o_nome_ja_estiver_sendo_utilizado()
     {
@@ -49,14 +49,14 @@ class VerificarNomeDuplicadoTest extends ReservasTestCase
 
         /** @var QuartoRepositoryInterface $quarto_repository */
 
-        $this->expectException(NomeQuartoUtilizadoException::class);
+        $this->expectException(ValidarQuartoException::class);
 
         $quarto = new Quarto('Teste de quarto', 1, 10);
-        (new VerificarNomeDuplicado($quarto_repository))->executar($quarto);
+        (new VerificarNomeDuplicado($quarto_repository))->validar($quarto);
     }
 
     /**
-     * @throws NomeQuartoUtilizadoException
+     * @throws ValidarQuartoException
      * @covers ::executar
      */
     public function test_Executar_deve_retornar_true_quando_o_nome_estiver_disponivel()
@@ -67,7 +67,7 @@ class VerificarNomeDuplicadoTest extends ReservasTestCase
         /** @var QuartoRepositoryInterface $quarto_repository */
 
         $quarto = new Quarto('Teste de quarto', 1, 10);
-        $is_disponivel = (new VerificarNomeDuplicado($quarto_repository))->executar($quarto);
+        $is_disponivel = (new VerificarNomeDuplicado($quarto_repository))->validar($quarto);
         $this->assertTrue($is_disponivel);
     }
 }

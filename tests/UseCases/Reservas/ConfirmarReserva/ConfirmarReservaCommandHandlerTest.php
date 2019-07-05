@@ -27,7 +27,9 @@ namespace Reservas\Tests\UseCases\Reservas\ConfirmarReserva;
 
 use DateTime;
 use DLX\Infra\EntityManagerX;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\ORM\ORMException;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\Domain\Reservas\Entities\Reserva;
@@ -47,11 +49,11 @@ class ConfirmarReservaCommandHandlerTest extends ReservasTestCase
 
     /**
      * @return ConfirmarReservaCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): ConfirmarReservaCommandHandler
     {
-        /** @var \Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository */
+        /** @var ReservaRepositoryInterface $reserva_repository */
         $reserva_repository = EntityManagerX::getRepository(Reserva::class);
 
         $handler = new ConfirmarReservaCommandHandler($reserva_repository);
@@ -64,8 +66,8 @@ class ConfirmarReservaCommandHandlerTest extends ReservasTestCase
      * @param ConfirmarReservaCommandHandler $handler
      * @covers ::handle
      * @depends test__construct
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws ORMException
+     * @throws DBALException
      */
     public function test_Handle(ConfirmarReservaCommandHandler $handler)
     {
@@ -119,7 +121,7 @@ class ConfirmarReservaCommandHandlerTest extends ReservasTestCase
 
         $id = $con->lastInsertId();
 
-        /** @var \Reservas\Domain\Reservas\Entities\Reserva $reserva */
+        /** @var Reserva $reserva */
         $reserva = EntityManagerX::getRepository(Reserva::class)->find($id);
 
         /** @var Usuario $usuario */
