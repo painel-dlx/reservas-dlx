@@ -25,6 +25,7 @@
 
 namespace Reservas\Tests\UseCases\Reservas\SalvarReserva;
 
+use CPF\CPF;
 use DateTime;
 use DLX\Infra\EntityManagerX;
 use Doctrine\DBAL\DBALException;
@@ -52,7 +53,7 @@ class SalvarReservaCommandHandlerTest extends ReservasTestCase
      */
     public function test__construct(): SalvarReservaCommandHandler
     {
-        /** @var \Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository */
+        /** @var ReservaRepositoryInterface $reserva_repository */
         $reserva_repository = EntityManagerX::getRepository(Reserva::class);
         $handler = new SalvarReservaCommandHandler($reserva_repository);
 
@@ -77,7 +78,7 @@ class SalvarReservaCommandHandlerTest extends ReservasTestCase
         $reserva = new Reserva($quarto, $data_inicial, $data_final, 1);
         $reserva
             ->setHospede('Teste da Silva')
-            ->setCpf('000.000.000-00')
+            ->setCpf(new CPF('000.000.000-00'))
             ->setValor(10.00)
             ->setOrigem('Teste Unitário');
 

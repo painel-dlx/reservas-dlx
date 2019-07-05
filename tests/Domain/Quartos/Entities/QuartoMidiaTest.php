@@ -50,18 +50,34 @@ class QuartoMidiaTest extends TestCase
         return $midia;
     }
 
+    /**
+     * @param string $nome_arquivo
+     * @return string
+     */
+    public function findArquivo(string $nome_arquivo): string
+    {
+        $qtde = 0;
+
+        while (!file_exists($nome_arquivo) && $qtde < 5) {
+            $nome_arquivo = "../{$nome_arquivo}";
+            $qtde++;
+        }
+
+        return $nome_arquivo;
+    }
+
     public function test_GetTagHtml_deve_retornar_a_tag_html_correspondente_a_midia()
     {
         $regex_img = '~^\<figure\>~';
         $regex_video = '~^\<video\>~';
 
         $quarto = new Quarto('Teste de Quarto', 10, 10);
-
-        $arquivo_foto = '../../../../Helpers/arquivos/test_code.jpg';
+        
+        $arquivo_foto = $this->findArquivo('tests/Helpers/arquivos/test_code.jpg');
         $midia_foto = new QuartoMidia($arquivo_foto);
         $midia_foto->setQuarto($quarto);
 
-        $arquivo_video = '../../../../Helpers/arquivos/test_video.mp4';
+        $arquivo_video = $this->findArquivo('tests/Helpers/arquivos/test_video.mp4');
         $midia_video = new QuartoMidia($arquivo_video);
         $midia_video->setQuarto($quarto);
 

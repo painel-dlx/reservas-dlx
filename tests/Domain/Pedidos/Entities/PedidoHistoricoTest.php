@@ -50,7 +50,7 @@ class PedidoHistoricoTest extends TestCase
         $this->assertEquals($status, $pedido_historico->getStatus());
         $this->assertEquals($motivo, $pedido_historico->getMotivo());
 
-        $this->assertEquals(DateTime::class, $pedido_historico->getData());
+        $this->assertInstanceOf(DateTime::class, $pedido_historico->getData());
         $this->assertEquals(new DateTime(), $pedido_historico->getData(), '', 0.1);
 
         return $pedido_historico;

@@ -26,7 +26,7 @@
 namespace Reservas\Tests\Validators\Quartos\Domain;
 
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Reservas\Domain\Exceptions\LinkQuartoUtilizadoException;
+use Reservas\Domain\Quartos\Exceptions\ValidarQuartoException;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Domain\Quartos\Validators\VerificarLinkUtilizado;
 use PHPUnit\Framework\TestCase;
@@ -40,7 +40,7 @@ class VerificarLinkUtilizadoTest extends TestCase
 {
     /**
      * @covers ::executar
-     * @throws LinkQuartoUtilizadoException
+     * @throws ValidarQuartoException
      */
     public function test_Executar_deve_lancar_uma_excecao_quando_o_link_ja_estiver_sendo_utilizado()
     {
@@ -49,15 +49,15 @@ class VerificarLinkUtilizadoTest extends TestCase
 
         /** @var QuartoRepositoryInterface $quarto_repository */
 
-        $this->expectException(LinkQuartoUtilizadoException::class);
+        $this->expectException(ValidarQuartoException::class);
 
         $quarto = new Quarto('Teste', 1, 10);
         $quarto->setLink('/teste/teste-url');
-        (new VerificarLinkUtilizado($quarto_repository))->executar($quarto);
+        (new VerificarLinkUtilizado($quarto_repository))->validar($quarto);
     }
 
     /**
-     * @throws LinkQuartoUtilizadoException
+     * @throws ValidarQuartoException
      */
     public function test_Executar_deve_retornar_true_quando_o_link_estiver_disponivel()
     {
@@ -69,7 +69,7 @@ class VerificarLinkUtilizadoTest extends TestCase
         $quarto = new Quarto('Teste', 1, 10);
         $quarto->setLink('/teste/teste-url');
 
-        $is_disponivel = (new VerificarLinkUtilizado($quarto_repository))->executar($quarto);
+        $is_disponivel = (new VerificarLinkUtilizado($quarto_repository))->validar($quarto);
         $this->assertTrue($is_disponivel);
     }
 }
