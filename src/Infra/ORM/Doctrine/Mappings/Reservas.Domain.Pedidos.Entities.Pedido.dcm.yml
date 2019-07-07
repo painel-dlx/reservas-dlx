@@ -34,7 +34,7 @@ Reservas\Domain\Pedidos\Entities\Pedido:
         valor_total:
             type: float
             nullable: false
-            column: pedido_valor_total
+            column: pedido_pgto_valor
         forma_pgto:
             type: string
             nullable: false

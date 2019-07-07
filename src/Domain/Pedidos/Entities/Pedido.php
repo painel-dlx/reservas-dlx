@@ -74,6 +74,9 @@ class Pedido extends Entity
     /** @var Collection */
     private $historico;
 
+    /**
+     * Pedido constructor.
+     */
     public function __construct()
     {
         $this->reservas = new ArrayCollection();
@@ -248,6 +251,16 @@ class Pedido extends Entity
     public function getItens(): array
     {
         return $this->itens;
+    }
+
+    /**
+     * @param array $itens
+     * @return Pedido
+     */
+    public function setItens(array $itens): Pedido
+    {
+        $this->itens = $itens;
+        return $this;
     }
 
     /**
