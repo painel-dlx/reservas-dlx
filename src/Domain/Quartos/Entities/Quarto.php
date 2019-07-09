@@ -276,6 +276,9 @@ class Quarto extends Entity
      */
     public function getDispon(DateTime $checkin, DateTime $checkout): Collection
     {
+        $checkin->setTime(0, 0, 0);
+        $checkout->setTime(23, 59, 59);
+
         // A disponibilidade não é necessária para a data de checkout
         $checkout = (clone $checkout)->modify('-1 day');
 
