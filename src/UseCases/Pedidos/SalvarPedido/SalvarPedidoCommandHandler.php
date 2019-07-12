@@ -111,6 +111,7 @@ class SalvarPedidoCommandHandler
             $checkout = new DateTime($item->checkout);
             $qtde_hospedes = $item->adultos + $item->criancas;
 
+            $quarto->isDisponivelPeriodo($checkin, $checkout);
             $quarto->getDispon($checkin, $checkout)->map(function (Disponibilidade $dispon) use ($qtde_hospedes, &$valor_total) {
                 $valor_total += $dispon->getValorPorQtdePessoas($qtde_hospedes);
             });
