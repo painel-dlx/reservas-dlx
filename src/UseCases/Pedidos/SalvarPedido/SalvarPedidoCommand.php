@@ -45,10 +45,6 @@ class SalvarPedidoCommand
      */
     private $telefone;
     /**
-     * @var float
-     */
-    private $valor_total;
-    /**
      * @var array
      */
     private $itens;
@@ -67,14 +63,12 @@ class SalvarPedidoCommand
         string $cpf,
         string $email,
         string $telefone,
-        float $valor_total,
         array $itens
     ) {
         $this->nome = $nome;
         $this->cpf = $cpf;
         $this->email = $email;
         $this->telefone = $telefone;
-        $this->valor_total = $valor_total;
         $this->itens = $itens;
     }
 
@@ -108,14 +102,6 @@ class SalvarPedidoCommand
     public function getTelefone(): string
     {
         return $this->telefone;
-    }
-
-    /**
-     * @return float
-     */
-    public function getValorTotal(): float
-    {
-        return $this->valor_total;
     }
 
     /**

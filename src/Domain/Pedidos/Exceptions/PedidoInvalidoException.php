@@ -65,4 +65,12 @@ class PedidoInvalidoException extends UserException
     {
         return new self("Pedido #{$pedido_id} já está cancelado!", 13);
     }
+
+    /**
+     * @return PedidoInvalidoException
+     */
+    public static function valorTotalZerado()
+    {
+        return new self('Ocorreu um erro ao calcular o valor total do pedido! Favor tentar novamente em breve.', 14);
+    }
 }

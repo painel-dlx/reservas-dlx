@@ -27,8 +27,14 @@ namespace Reservas\UseCases\Pedidos\SalvarPedido;
 
 
 use CPF\CPF;
+use DateTime;
+use Exception;
+use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
+use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\UseCases\Pedidos\SalvarPedido\SalvarPedidoCommandHandlerTest;
 
 /**
@@ -42,34 +48,74 @@ class SalvarPedidoCommandHandler
      * @var PedidoRepositoryInterface
      */
     private $pedido_repository;
+    /**
+     * @var QuartoRepositoryInterface
+     */
+    private $quarto_repository;
 
     /**
      * SalvarPedidoCommandHandler constructor.
      * @param PedidoRepositoryInterface $pedido_repository
+     * @param QuartoRepositoryInterface $quarto_repository
      */
-    public function __construct(PedidoRepositoryInterface $pedido_repository)
-    {
+    public function __construct(
+        PedidoRepositoryInterface $pedido_repository,
+        QuartoRepositoryInterface $quarto_repository
+    ) {
         $this->pedido_repository = $pedido_repository;
+        $this->quarto_repository = $quarto_repository;
     }
 
     /**
      * @param SalvarPedidoCommand $command
      * @return Pedido
+     * @throws PedidoInvalidoException
+     * @throws Exception
      */
     public function handle(SalvarPedidoCommand $command): Pedido
     {
         $cpf = new CPF($command->getCpf());
+        $valor_total = $this->calcularValorTotal($command->getItens());
+
+        if ($valor_total === 0) {
+            throw PedidoInvalidoException::valorTotalZerado();
+        }
 
         $pedido = new Pedido();
         $pedido->setNome($command->getNome());
         $pedido->setCpf($cpf);
         $pedido->setEmail($command->getEmail());
         $pedido->setTelefone($command->getTelefone());
-        $pedido->setValorTotal($command->getValorTotal());
+        $pedido->setValorTotal($valor_total);
         $pedido->setItens($command->getItens());
 
         $this->pedido_repository->create($pedido);
 
         return $pedido;
+    }
+
+    /**
+     * Calcular o valor total do pedido
+     * @param array $itens
+     * @return float
+     * @throws Exception
+     */
+    private function calcularValorTotal(array $itens): float
+    {
+        $valor_total = 0.;
+
+        foreach ($itens as $item) {
+            /** @var Quarto $quarto */
+            $quarto = $this->quarto_repository->find($item->quartoID);
+            $checkin = new DateTime($item->checkin);
+            $checkout = new DateTime($item->checkout);
+            $qtde_hospedes = $item->adultos + $item->criancas;
+
+            $quarto->getDispon($checkin, $checkout)->map(function (Disponibilidade $dispon) use ($qtde_hospedes, &$valor_total) {
+                $valor_total += $dispon->getValorPorQtdePessoas($qtde_hospedes);
+            });
+        }
+
+        return $valor_total;
     }
 }

@@ -28,6 +28,7 @@ namespace Reservas\Tests\UseCases\Pedidos\SalvarPedido;
 use DateTime;
 use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\UseCases\Pedidos\SalvarPedido\SalvarPedidoCommand;
 use Reservas\UseCases\Pedidos\SalvarPedido\SalvarPedidoCommandHandler;
@@ -58,6 +59,7 @@ class SalvarPedidoCommandHandlerTest extends ReservasTestCase
      * @param SalvarPedidoCommandHandler $handler
      * @covers ::handle
      * @depends test__construct
+     * @throws PedidoInvalidoException
      */
     public function test_Handle_deve_salvar_novo_Pedido(SalvarPedidoCommandHandler $handler)
     {
@@ -69,7 +71,6 @@ class SalvarPedidoCommandHandlerTest extends ReservasTestCase
             '652.602.110-73',
             'teste@unitario.com',
             '(61) 9 8350-3517',
-            12.34,
             [
                 (object)[
                     'quartoID' => 1,
