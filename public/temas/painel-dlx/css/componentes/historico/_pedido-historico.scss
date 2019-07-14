@@ -1,0 +1,15 @@
+.pedido-historico,
+.reserva-historico {
+    &-titulo {
+        // Visual
+        display: block;
+
+        // Texto
+        font-weight: bold;
+    }
+
+    &-motivo {
+        // Texto
+        color: #888;
+    }
+}

@@ -25,6 +25,7 @@
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoHistorico;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Vilex\VileX;
 
@@ -136,7 +137,7 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                 </span>
 
                 <?php if ($pedido->isPago()) :
-                    /** @var \Reservas\Domain\Reservas\Entities\Reserva $reserva */
+                    /** @var Reserva $reserva */
                     $reserva = $pedido->getReservas()->first();
                     if ($reserva->podeVisualizarCpfCompleto($usuario_logado)) : ?>
                         <br>
@@ -156,6 +157,18 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                 <span class="detalhe-registro-rotulo">Email:</span>
                 <?php echo $pedido->getEmail() ?>
             </p>
+        </details>
+
+        <details class="detalhe-registro" open>
+            <summary class="detalhe-registro-titulo">Histórico</summary>
+
+            <?php
+            /** @var PedidoHistorico $historico */
+            foreach ($pedido->getHistorico() as $historico) : ?>
+                <p class="detalhe-registro-paragr">
+                    <?php echo $historico ?>
+                </p>
+            <?php endforeach; ?>
         </details>
 
         <?php if (!$pedido->hasReservas()) : ?>

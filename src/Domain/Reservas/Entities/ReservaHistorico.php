@@ -68,7 +68,16 @@ class ReservaHistorico extends Entity
      */
     public function __toString()
     {
-        return "{$this->getStatus()} em {$this->getData()->format('d/m/Y H:i')}: {$this->getMotivo()}";
+        $html = '
+            <p class="reserva-historico">
+                <span class="reserva-historico-titulo">%s</span>
+                <span class="reserva-historico-motivo">%s</span>
+            </p>
+        ';
+
+        $titulo = "{$this->getStatus()} por {$this->getUsuario()->getNome()} em {$this->getData()->format('d/m/Y H:i')}:";
+
+        return sprintf($html, $titulo, $this->getMotivo());
     }
 
     /**

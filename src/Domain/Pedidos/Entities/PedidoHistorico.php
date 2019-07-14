@@ -62,6 +62,23 @@ class PedidoHistorico
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $html = '
+            <p class="pedido-historico">
+                <span class="pedido-historico-titulo">%s</span>
+                <span class="pedido-historico-motivo">%s</span>
+            </p>
+        ';
+
+        $titulo = "{$this->getStatus()} por {$this->getUsuario()->getNome()} em {$this->getData()->format('d/m/Y H:i')}:";
+
+        return sprintf($html, $titulo, $this->getMotivo());
+    }
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
