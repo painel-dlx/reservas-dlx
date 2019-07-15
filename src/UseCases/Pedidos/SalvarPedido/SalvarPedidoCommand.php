@@ -48,6 +48,10 @@ class SalvarPedidoCommand
      * @var array
      */
     private $itens;
+    /**
+     * @var string
+     */
+    private $forma_pgto;
 
     /**
      * SalvarPedidoCommand constructor.
@@ -55,21 +59,23 @@ class SalvarPedidoCommand
      * @param string $cpf
      * @param string $email
      * @param string $telefone
-     * @param float $valor_total
      * @param array $itens
+     * @param string $forma_pgto
      */
     public function __construct(
         string $nome,
         string $cpf,
         string $email,
         string $telefone,
-        array $itens
+        array $itens,
+        string $forma_pgto = 'digitada'
     ) {
         $this->nome = $nome;
         $this->cpf = $cpf;
         $this->email = $email;
         $this->telefone = $telefone;
         $this->itens = $itens;
+        $this->forma_pgto = $forma_pgto;
     }
 
     /**
@@ -110,5 +116,13 @@ class SalvarPedidoCommand
     public function getItens(): array
     {
         return $this->itens;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormaPgto(): string
+    {
+        return $this->forma_pgto;
     }
 }

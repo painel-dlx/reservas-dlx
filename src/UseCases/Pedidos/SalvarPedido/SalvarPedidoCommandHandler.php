@@ -88,6 +88,7 @@ class SalvarPedidoCommandHandler
         $pedido->setTelefone($command->getTelefone());
         $pedido->setValorTotal($valor_total);
         $pedido->setItens($command->getItens());
+        $pedido->setFormaPgto($command->getFormaPgto());
 
         $this->pedido_repository->create($pedido);
 
