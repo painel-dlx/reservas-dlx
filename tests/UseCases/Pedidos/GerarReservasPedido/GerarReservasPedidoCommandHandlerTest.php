@@ -90,7 +90,7 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
             12.34
         );
 
-        $command = new GerarReservasPedidoCommand($pedido, $usuario);
+        $command = new GerarReservasPedidoCommand($pedido);
         $handler->handle($command);
 
         $this->assertCount(count($pedido->getItens()), $pedido->getReservas());

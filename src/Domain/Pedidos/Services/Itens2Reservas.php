@@ -23,24 +23,17 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Pedidos\GerarReservasPedido;
+namespace Reservas\Domain\Pedidos\Services;
 
 
 use DateTime;
 use Exception;
-use Reservas\Domain\Pedidos\Services\Itens2Reservas;
+use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
-use Reservas\Domain\Reservas\Validators\ValidarDisponQuarto;
+use Reservas\Domain\Reservas\Entities\Reserva;
 
-/**
- * Class GerarReservasPedidoCommandHandler
- * @package Reservas\UseCases\Pedidos\GerarReservasPedido
- * @covers GerarReservasPedidoCommandHandlerTest
- * @see GerarReservasPedidoCommand
- */
-class GerarReservasPedidoCommandHandler
+class Itens2Reservas
 {
     /**
      * @var QuartoRepositoryInterface
@@ -48,20 +41,40 @@ class GerarReservasPedidoCommandHandler
     private $quarto_repository;
 
     /**
-     * GerarReservasPedidoCommandHandler constructor.
+     * Itens2Reservas constructor.
      * @param QuartoRepositoryInterface $quarto_repository
      */
-    public function __construct(QuartoRepositoryInterface $quarto_repository) {
+    public function __construct(QuartoRepositoryInterface $quarto_repository)
+    {
         $this->quarto_repository = $quarto_repository;
     }
 
     /**
-     * @param GerarReservasPedidoCommand $command
+     * @param Pedido $pedido
      * @throws Exception
      */
-    public function handle(GerarReservasPedidoCommand $command)
+    public function executar(Pedido $pedido)
     {
-        $pedido = $command->getPedido();
-        (new Itens2Reservas($this->quarto_repository))->executar($pedido);
+        $itens = $pedido->getItens();
+
+        foreach ($itens as $item) {
+            /** @var Quarto $quarto */
+            $quarto = $this->quarto_repository->find($item->quartoID);
+            $checkin = new DateTime($item->checkin);
+            $checkout = new DateTime($item->checkout);
+
+            $reserva = new Reserva($quarto, $checkin, $checkout, $item->adultos);
+            $reserva->setCriancas($item->criancas);
+            $reserva->setValor($item->valor);
+
+            // Dados do hóspede
+            $reserva->setHospede($pedido->getNome());
+            $reserva->setCpf($pedido->getCpf());
+            $reserva->setTelefone($pedido->getTelefone());
+            $reserva->setEmail($pedido->getEmail());
+            $reserva->setOrigem('Website');
+
+            $pedido->addReserva($reserva);
+        }
     }
 }
