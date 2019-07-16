@@ -107,10 +107,10 @@ class SalvarPedidoCommandHandler
 
         foreach ($itens as $item) {
             /** @var Quarto $quarto */
-            $quarto = $this->quarto_repository->find($item->quartoID);
-            $checkin = new DateTime($item->checkin);
-            $checkout = new DateTime($item->checkout);
-            $qtde_hospedes = $item->adultos + $item->criancas;
+            $quarto = $this->quarto_repository->find($item['quartoID']);
+            $checkin = new DateTime($item['checkin']);
+            $checkout = new DateTime($item['checkout']);
+            $qtde_hospedes = $item['adultos'] + $item['criancas'];
 
             $quarto->isDisponivelPeriodo($checkin, $checkout);
             $quarto->getDispon($checkin, $checkout)->map(function (Disponibilidade $dispon) use ($qtde_hospedes, &$valor_total) {
