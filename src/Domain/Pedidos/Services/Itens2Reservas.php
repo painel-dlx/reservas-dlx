@@ -28,6 +28,7 @@ namespace Reservas\Domain\Pedidos\Services;
 
 use DateTime;
 use Exception;
+use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
@@ -62,10 +63,17 @@ class Itens2Reservas
             $quarto = $this->quarto_repository->find($item['quartoID']);
             $checkin = new DateTime($item['checkin']);
             $checkout = new DateTime($item['checkout']);
+            $qtde_hospedes = $item['adultos'] + $item['criancas'];
+
+            $valor_reserva = 0.;
+
+            $quarto->getDispon($checkin, $checkout)->map(function (Disponibilidade $dispon) use (&$valor_reserva, $qtde_hospedes) {
+                $valor_reserva += $dispon->getValorPorQtdePessoas($qtde_hospedes);
+            });
 
             $reserva = new Reserva($quarto, $checkin, $checkout, $item['adultos']);
             $reserva->setCriancas($item['criancas']);
-            $reserva->setValor($item['valor']);
+            $reserva->setValor($valor_reserva);
 
             // Dados do hóspede
             $reserva->setHospede($pedido->getNome());
