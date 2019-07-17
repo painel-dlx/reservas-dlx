@@ -59,13 +59,13 @@ class Itens2Reservas
 
         foreach ($itens as $item) {
             /** @var Quarto $quarto */
-            $quarto = $this->quarto_repository->find($item->quartoID);
-            $checkin = new DateTime($item->checkin);
-            $checkout = new DateTime($item->checkout);
+            $quarto = $this->quarto_repository->find($item['quartoID']);
+            $checkin = new DateTime($item['checkin']);
+            $checkout = new DateTime($item['checkout']);
 
-            $reserva = new Reserva($quarto, $checkin, $checkout, $item->adultos);
-            $reserva->setCriancas($item->criancas);
-            $reserva->setValor($item->valor);
+            $reserva = new Reserva($quarto, $checkin, $checkout, $item['adultos']);
+            $reserva->setCriancas($item['criancas']);
+            $reserva->setValor($item['valor']);
 
             // Dados do hóspede
             $reserva->setHospede($pedido->getNome());
