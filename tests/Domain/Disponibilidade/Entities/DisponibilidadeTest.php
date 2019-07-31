@@ -39,7 +39,6 @@ use Reservas\Tests\ReservasTestCase;
  */
 class DisponibilidadeTest extends ReservasTestCase
 {
-
     /**
      * @throws Exception
      */

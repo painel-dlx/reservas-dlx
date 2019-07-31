@@ -46,7 +46,7 @@ class ValidarReservasGeradasTest extends ReservasTestCase
     /**
      * @throws DBALException
      * @throws ORMException
-     * @throws \Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException
+     * @throws PedidoInvalidoException
      */
     public function test_Validar_deve_lancar_excecao_quando_nenhuma_reserva_tiver_sido_gerada()
     {
@@ -64,7 +64,7 @@ class ValidarReservasGeradasTest extends ReservasTestCase
     /**
      * @throws DBALException
      * @throws ORMException
-     * @throws \Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException
+     * @throws PedidoInvalidoException
      */
     public function test_Validar_deve_lancar_excecao_quando_qtde_itens_diferente_reservas()
     {

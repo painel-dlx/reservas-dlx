@@ -29,11 +29,9 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\ORMException;
 use Exception;
-use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
@@ -74,14 +72,17 @@ class ReservaTest extends ReservasTestCase
 
     /**
      * @param Reserva $reserva
-     * @throws DBALException
-     * @throws ORMException
      * @covers ::addHistorico
      * @depends test__construct
      */
     public function test_AddHistorico_deve_adicionar_um_historico_a_reserva(Reserva $reserva)
     {
-        $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
+        $usuario = $this->createMock(Usuario::class);
+        $usuario->method('getNome')->willReturn('Funcionário');
+        $usuario->method('getEmail')->willReturn('funcionario@aparthotel.com');
+
+        /** @var Usuario $usuario */
+
         $status = 'Cancelada';
         $motivo = 'Teste de motivo para cancelamento.';
 
@@ -98,15 +99,18 @@ class ReservaTest extends ReservasTestCase
 
     /**
      * @param Reserva $reserva
-     * @throws DBALException
-     * @throws ORMException
+     * @throws Exception
      * @covers ::confirmada
      * @depends test__construct
      */
     public function test_Confirmada_seta_Reserva_como_confirmada_e_retirar_Disponibilidade(Reserva $reserva)
     {
-        $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
-        // $quarto = $reserva->getQuarto();
+        $usuario = $this->createMock(Usuario::class);
+        $usuario->method('getNome')->willReturn('Funcionário');
+        $usuario->method('getEmail')->willReturn('funcionario@aparthotel.com');
+
+        /** @var Usuario $usuario */
+
         $quarto = new Quarto('Outro Teste', 10, 10);
         $reserva->setQuarto($quarto);
 
@@ -139,14 +143,17 @@ class ReservaTest extends ReservasTestCase
 
     /**
      * @param Reserva $reserva
-     * @throws DBALException
-     * @throws ORMException
      * @covers ::cancelada
      * @depends test__construct
      */
     public function test_Cancelada_seta_Reserva_como_cancelada(Reserva $reserva)
     {
-        $usuario = UsuarioTesteHelper::criarDB('Funcionario', 'funcionario@aparthotel.com', '');
+        $usuario = $this->createMock(Usuario::class);
+        $usuario->method('getNome')->willReturn('Funcionário');
+        $usuario->method('getEmail')->willReturn('funcionario@aparthotel.com');
+
+        /** @var Usuario $usuario */
+
         $reserva->cancelada('Reserva foi paga via digitação de cartão.', $usuario);
 
         $has_historico_cancelada = $reserva->getHistorico()->exists(function ($key, ReservaHistorico $reserva_historico) {
@@ -174,6 +181,7 @@ class ReservaTest extends ReservasTestCase
 
     /**
      * @param Reserva $reserva
+     * @throws Exception
      * @covers ::calcularValor
      * @depends test__construct
      */
@@ -186,7 +194,7 @@ class ReservaTest extends ReservasTestCase
 
         $qtde_quartos_dispon = 1;
         $valor_diaria = 10;
-        $valor_total = $valor_diaria * iterator_count($dt_periodo);
+        $valor_total = $valor_diaria * (iterator_count($dt_periodo) - 1);
 
         $valores_diarias = [];
         for ($i = 1; $i <= $quarto->getMaxHospedes(); $i++) {
@@ -198,7 +206,10 @@ class ReservaTest extends ReservasTestCase
             $quarto->addDispon($data, $qtde_quartos_dispon, $valores_diarias);
         }
 
+        $reserva->setAdultos($qtde_quartos_dispon);
+        $reserva->setCriancas(0);
         $reserva->calcularValor();
+
         $this->assertEquals($valor_total, $reserva->getValor());
     }
 }

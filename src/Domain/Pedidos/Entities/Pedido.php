@@ -30,6 +30,7 @@ use CPF\CPF;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use PainelDLX\Domain\Common\Entities\LogRegistroTrait;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Validators\PedidoValidator;
 use Reservas\Domain\Pedidos\Validators\PedidoValidatorEnum;
@@ -45,6 +46,9 @@ use stdClass;
  */
 class Pedido extends Entity
 {
+    const TABELA_BD = 'dlx_reservas_pedidos';
+    use LogRegistroTrait;
+
     const STATUS_PENDENTE = 'Pendente';
     const STATUS_PAGO = 'Pago';
     const STATUS_CANCELADO = 'Cancelado';
@@ -250,7 +254,7 @@ class Pedido extends Entity
      */
     public function getItens(): array
     {
-        return $this->itens;
+        return (array)$this->itens;
     }
 
     /**

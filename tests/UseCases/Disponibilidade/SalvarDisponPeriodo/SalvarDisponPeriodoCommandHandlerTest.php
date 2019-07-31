@@ -26,10 +26,12 @@
 namespace Reservas\Tests\UseCases\Disponibilidade\SalvarDisponPeriodo;
 
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\ORM\ORMException;
+use Exception;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
-use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommand;
 use Reservas\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommandHandler;
 use Reservas\Tests\ReservasTestCase;
@@ -43,11 +45,11 @@ class SalvarDisponPeriodoCommandHandlerTest extends ReservasTestCase
 {
     /**
      * @return SalvarDisponPeriodoCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): SalvarDisponPeriodoCommandHandler
     {
-        /** @var \Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface $disponibilidade_repository */
+        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
         $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
 
         $handler = new SalvarDisponPeriodoCommandHandler($disponibilidade_repository);
@@ -60,7 +62,7 @@ class SalvarDisponPeriodoCommandHandlerTest extends ReservasTestCase
      * @param SalvarDisponPeriodoCommandHandler $handler
      * @covers ::handle
      * @depends test__construct
-     * @throws \Exception
+     * @throws Exception
      */
     public function test_Handle(SalvarDisponPeriodoCommandHandler $handler)
     {

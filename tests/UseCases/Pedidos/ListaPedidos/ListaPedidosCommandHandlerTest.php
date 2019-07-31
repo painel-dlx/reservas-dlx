@@ -25,7 +25,8 @@
 
 namespace Reservas\Tests\UseCases\Pedidos\ListaPedidos;
 
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\ORM\ORMException;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
@@ -42,11 +43,11 @@ class ListaPedidosCommandHandlerTest extends ReservasTestCase
 
     /**
      * @return ListaPedidosCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): ListaPedidosCommandHandler
     {
-        /** @var \Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository */
+        /** @var PedidoRepositoryInterface $pedido_repository */
         $pedido_repository = EntityManagerX::getRepository(Pedido::class);
         $handler = new ListaPedidosCommandHandler($pedido_repository);
 

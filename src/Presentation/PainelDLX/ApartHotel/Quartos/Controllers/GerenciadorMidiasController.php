@@ -51,10 +51,6 @@ use Zend\Diactoros\Response\JsonResponse;
 class GerenciadorMidiasController extends PainelDLXController
 {
     /**
-     * @var SessionInterface
-     */
-    private $session;
-    /**
      * @var TransactionInterface
      */
     private $transaction;
@@ -65,6 +61,7 @@ class GerenciadorMidiasController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -72,12 +69,7 @@ class GerenciadorMidiasController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
-
-        $this->session = $session;
+        parent::__construct($view, $commandBus, $session);
         $this->transaction = $transaction;
     }
 

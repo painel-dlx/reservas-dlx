@@ -25,11 +25,9 @@
 
 namespace Reservas\Application\ServiceProviders;
 
-
-use Doctrine\ORM\ORMException;
 use League\Container\Container;
 use League\Container\ServiceProvider\AbstractServiceProvider;
-use PainelDLX\Infra\ORM\Doctrine\Services\RepositoryFactory;
+use PainelDLX\Infrastructure\ORM\Doctrine\Services\RepositoryFactory;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Quartos\Entities\Quarto;

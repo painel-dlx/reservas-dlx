@@ -25,18 +25,15 @@
 
 namespace Reservas\Tests\UseCases\Clientes\MostrarCpfCompletoPedido;
 
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
-use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Reservas\Entities\Reserva;
-use Reservas\Domain\Reservas\Entities\VisualizacaoCpf;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
-use PHPUnit\Framework\TestCase;
 use Reservas\Tests\Helpers\PedidoTesteHelper;
 use Reservas\Tests\Helpers\ReservasUsuarioTesteHelper;
 use Reservas\Tests\ReservasTestCase;
@@ -56,7 +53,7 @@ class MostrarCpfCompletoPedidoCommandHandlerTest extends ReservasTestCase
      */
     public function test__construct(): MostrarCpfCompletoPedidoCommandHandler
     {
-        /** @var \Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository */
+        /** @var PedidoRepositoryInterface $pedido_repository */
         $pedido_repository = EntityManagerX::getRepository(Pedido::class);
         $handler = new MostrarCpfCompletoPedidoCommandHandler($pedido_repository);
 
@@ -76,6 +73,10 @@ class MostrarCpfCompletoPedidoCommandHandlerTest extends ReservasTestCase
     {
         $pedido = PedidoTesteHelper::getRandom();
         $usuario = ReservasUsuarioTesteHelper::getUsuarioRandom();
+
+        if (is_null($pedido)) {
+            $this->markTestSkipped('Pedido não encontrado para fazer o teste.');
+        }
 
         $command = new MostrarCpfCompletoPedidoCommand($pedido, $usuario);
         $cpf = $handler->handle($command);

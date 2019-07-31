@@ -59,6 +59,8 @@ class Itens2Reservas
         $itens = $pedido->getItens();
 
         foreach ($itens as $item) {
+            $item = (array)$item;
+
             /** @var Quarto $quarto */
             $quarto = $this->quarto_repository->find($item['quartoID']);
             $checkin = new DateTime($item['checkin']);

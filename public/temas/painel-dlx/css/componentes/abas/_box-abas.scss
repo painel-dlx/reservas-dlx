@@ -1,0 +1,93 @@
+.box-abas {
+    // Tamanho
+    width: 100%;
+
+    > .aba-links {
+        // Visual
+        display: flex;
+        justify-content: space-between;
+
+        > .aba {
+            // Flex
+            flex: 33.33% 0 0;
+
+            // Texto
+            text-align: center;
+            text-decoration: none;
+            font-weight: 700;
+            color: #DDD;
+
+            // Margens
+            padding: 10px 5px;
+
+            // Visual
+            background: #FFF;
+            border-top: 3px solid #EFEFEF;
+            border-left: 1px solid #EFEFEF;
+            border-right: 1px solid #EFEFEF;
+            border-bottom: 1px solid #999;
+            border-top-right-radius: 2px;
+            border-top-left-radius: 2px;
+
+            &.-ativo {
+                // Visual
+                border-bottom: none !important;
+
+                &.-pendente {
+                    // Visual
+                    border-color: #999;
+
+                    // Texto
+                    color: #999;
+                }
+
+                &.-pago,
+                &.-confirmado {
+                    // Visual
+                    border-color: #8EC1AB;
+
+                    // Texto
+                    color: #8EC1AB;
+                }
+
+                &.-cancelado {
+                    // Visual
+                    border-color: #900;
+
+                    // Texto
+                    color: #900;
+                }
+            }
+        }
+
+        &.--pendente {
+            > .aba {
+                // Visual
+                border-bottom: 1px solid #999;
+            }
+        }
+
+        &.--pago,
+        &.--confirmado {
+            > .aba {
+                // Visual
+                border-bottom: 1px solid #8EC1AB;
+            }
+        }
+
+        &.--cancelado {
+            > .aba {
+                // Visual
+                border-bottom: 1px solid #900;
+            }
+        }
+    }
+
+    > .aba-conteudo {
+        // Visual
+        background: #FFF;
+
+        // Margens
+        padding: 15px 5px 5px;
+    }
+}

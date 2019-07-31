@@ -27,6 +27,7 @@ namespace Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto;
 
 
 use DateTime;
+use Exception;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
@@ -61,6 +62,7 @@ class GerarDisponibilidadesQuartoCommandHandler
 
     /**
      * @param GerarDisponibilidadesQuartoCommand $command
+     * @throws Exception
      */
     public function handle(GerarDisponibilidadesQuartoCommand $command)
     {

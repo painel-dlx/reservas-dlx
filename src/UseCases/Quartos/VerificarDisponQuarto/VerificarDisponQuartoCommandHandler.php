@@ -34,7 +34,7 @@ class VerificarDisponQuartoCommandHandler
     /**
      * @param VerificarDisponQuartoCommand $command
      * @return bool Retorna true se o quarto está disponível para o período desejado
-     *@throws QuartoIndisponivelException
+     * @throws QuartoIndisponivelException
      */
     public function handle(VerificarDisponQuartoCommand $command): bool
     {

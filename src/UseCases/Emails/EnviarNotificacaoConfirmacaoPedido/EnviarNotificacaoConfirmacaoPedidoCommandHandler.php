@@ -25,10 +25,9 @@
 
 namespace Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido;
 
-
-use PainelDLX\Application\Services\EnviarEmail;
 use PainelDLX\Application\Services\Exceptions\ErroAoEnviarEmailException;
 use PainelDLX\Domain\Emails\Repositories\ConfigSmtpRepositoryInterface;
+use PainelDLX\Infrastructure\Services\Email\EnviarEmail;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Reservas\Domain\Pedidos\Entities\Pedido;

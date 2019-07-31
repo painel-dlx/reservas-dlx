@@ -25,7 +25,8 @@
 
 namespace Reservas\Tests\UseCases\Reservas\ListaReservas;
 
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\ORM\ORMException;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 use Reservas\UseCases\Reservas\ListaReservas\ListaReservasCommand;
@@ -40,7 +41,7 @@ use Reservas\Tests\ReservasTestCase;
 class ListaReservasCommandHandlerTest extends ReservasTestCase
 {
     /**
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): ListaReservasCommandHandler
     {
@@ -66,7 +67,7 @@ class ListaReservasCommandHandlerTest extends ReservasTestCase
         $this->assertIsArray($lista);
 
         if (count($lista) > 0) {
-            /** @var \Reservas\Domain\Reservas\Entities\Reserva $reserva */
+            /** @var Reserva $reserva */
             foreach ($lista as $reserva) {
                 $this->assertInstanceOf(Reserva::class, $reserva);
             }

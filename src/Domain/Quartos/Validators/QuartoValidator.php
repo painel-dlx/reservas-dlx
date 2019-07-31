@@ -35,8 +35,8 @@ class QuartoValidator extends AbstractValidator
      * QuartoValidator constructor.
      * @param array $validators
      */
-    public function __construct(array $validators)
+    public function __construct(?array $validators = null)
     {
-        parent::__construct(QuartoValidatorInterface::class, $validators);
+        parent::__construct(QuartoValidatorInterface::class, $validators ?? []);
     }
 }

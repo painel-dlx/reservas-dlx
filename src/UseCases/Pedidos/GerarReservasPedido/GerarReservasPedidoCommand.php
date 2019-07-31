@@ -44,7 +44,6 @@ class GerarReservasPedidoCommand
     /**
      * GerarReservasPedidoCommand constructor.
      * @param Pedido $pedido
-     * @param Usuario $usuario
      */
     public function __construct(Pedido $pedido)
     {

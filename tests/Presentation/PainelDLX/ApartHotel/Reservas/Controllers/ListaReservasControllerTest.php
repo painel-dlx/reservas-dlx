@@ -25,11 +25,6 @@
 
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
-use DLX\Core\Configure;
-use DLX\Infra\EntityManagerX;
-use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
-use Doctrine\ORM\ORMException;
-use PainelDLX\Application\Factories\CommandBusFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\ListaReservasController;
 use Reservas\Tests\ReservasTestCase;
@@ -39,19 +34,17 @@ use SechianeX\Factories\SessionFactory;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
-use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 
 /**
  * Class ListaReservasControllerTest
  * @package Reservas\Tests\Presentation\Site\ApartHotel\Controllers
- * @coversDefaultClass \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\ListaReservasController
+ * @coversDefaultClass ListaReservasController
  */
 class ListaReservasControllerTest extends ReservasTestCase
 {
     /**
      * @return ListaReservasController
-     * @throws ORMException
      * @throws SessionAdapterInterfaceInvalidaException
      * @throws SessionAdapterNaoEncontradoException
      */
@@ -60,29 +53,22 @@ class ListaReservasControllerTest extends ReservasTestCase
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
+        $controller = self::$painel_dlx->getContainer()->get(ListaReservasController::class);
 
-        $controller = new ListaReservasController(
-            new VileX(),
-            $command_bus(),
-            $session,
-            new DoctrineTransaction(EntityManagerX::getInstance())
-        );
-
-        $this->assertInstanceOf(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\ListaReservasController::class, $controller);
+        $this->assertInstanceOf(ListaReservasController::class, $controller);
 
         return $controller;
     }
 
     /**
-     * @param \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\ListaReservasController $controller
+     * @param ListaReservasController $controller
      * @throws ContextoInvalidoException
      * @throws PaginaMestraNaoEncontradaException
      * @throws ViewNaoEncontradaException
      * @covers ::listaReservas
      * @depends test__construct
      */
-    public function test_ListaReservas_deve_retornar_HtmlResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\ListaReservasController $controller)
+    public function test_ListaReservas_deve_retornar_HtmlResponse(ListaReservasController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getQueryParams')->willReturn([

@@ -36,6 +36,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Quartos\Exceptions\QuartoNaoEncontradoException;
 use Reservas\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommand;
 use Reservas\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommandHandler;
 use Reservas\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo\ListaDisponibilidadePorPeriodoCommand;
@@ -68,6 +69,7 @@ class MapaDisponController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -75,14 +77,8 @@ class MapaDisponController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
-
+        parent::__construct($view, $commandBus, $session);
         $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
-
-        $this->view = $view;
         $this->transaction = $transaction;
     }
 
@@ -110,9 +106,13 @@ class MapaDisponController extends PainelDLXController
         }
 
         try {
-            /** @var Quarto|null $quarto */
-            /* @see GetQuartoPorIdCommandHandler */
-            $quarto = $this->command_bus->handle(new GetQuartoPorIdCommand((int)$get['quarto']));
+            try {
+                /** @var Quarto|null $quarto */
+                /* @see GetQuartoPorIdCommandHandler */
+                $quarto = $this->command_bus->handle(new GetQuartoPorIdCommand((int)$get['quarto']));
+            } catch (QuartoNaoEncontradoException $e) {
+                $quarto = null;
+            }
 
             /** @var array $lista_dispon */
             /* @see ListaDisponibilidadePorPeriodoCommandHandler */

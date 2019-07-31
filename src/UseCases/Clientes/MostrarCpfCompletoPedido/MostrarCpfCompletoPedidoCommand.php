@@ -37,7 +37,7 @@ use Reservas\Domain\Pedidos\Entities\Pedido;
 class MostrarCpfCompletoPedidoCommand
 {
     /**
-     * @var \Reservas\Domain\Pedidos\Entities\Pedido
+     * @var Pedido
      */
     private $pedido;
     /**
@@ -57,7 +57,7 @@ class MostrarCpfCompletoPedidoCommand
     }
 
     /**
-     * @return \Reservas\Domain\Pedidos\Entities\Pedido
+     * @return Pedido
      */
     public function getPedido(): Pedido
     {

@@ -27,6 +27,7 @@ namespace Reservas\Domain\Pedidos\Entities;
 
 
 use DateTime;
+use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 
 /**
@@ -53,6 +54,7 @@ class PedidoHistorico
      * PedidoHistorico constructor.
      * @param string $status
      * @param string $motivo
+     * @throws Exception
      */
     public function __construct(string $status, string $motivo)
     {

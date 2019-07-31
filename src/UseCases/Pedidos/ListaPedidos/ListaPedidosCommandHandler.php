@@ -43,7 +43,7 @@ class ListaPedidosCommandHandler
 
     /**
      * ListaPedidosCommandHandler constructor.
-     * @param \Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository
+     * @param PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
     {
@@ -51,10 +51,10 @@ class ListaPedidosCommandHandler
     }
 
     /**
-     * @param ListaRegistrosCommand $command
+     * @param ListaPedidosCommand $command
      * @return array
      */
-    public function handle(ListaRegistrosCommand $command): array
+    public function handle(ListaPedidosCommand $command): array
     {
         return $this->pedido_repository->findByLike(
             $command->getCriteria(),

@@ -28,6 +28,7 @@ namespace Reservas\Tests\UseCases\Reservas\GetReservaPorId;
 
 use DLX\Infra\EntityManagerX;
 use Reservas\Domain\Reservas\Entities\Reserva;
+use Reservas\Domain\Reservas\Exceptions\ReservaNaoEncontradaException;
 use Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 use Reservas\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use Reservas\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
@@ -41,63 +42,43 @@ use Reservas\Tests\ReservasTestCase;
 class GetReservaPorIdCommandHandlerTest extends ReservasTestCase
 {
     /**
-     * @return GetReservaPorIdCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @covers ::handle
+     * @throws ReservaNaoEncontradaException
      */
-    public function test__construct(): GetReservaPorIdCommandHandler
+    public function test_Handle_deve_lancar_excecao_quando_nao_encontrar_registro_no_bd()
     {
+        $reserva_repository = $this->createMock(ReservaRepositoryInterface::class);
+        $reserva_repository->method('find')->willReturn(null);
+
         /** @var ReservaRepositoryInterface $reserva_repository */
-        $reserva_repository = EntityManagerX::getRepository(Reserva::class);
-        $handler = new GetReservaPorIdCommandHandler($reserva_repository);
 
-        $this->assertInstanceOf(GetReservaPorIdCommandHandler::class, $handler);
+        $this->expectException(ReservaNaoEncontradaException::class);
+        $this->expectExceptionCode(10);
 
-        return $handler;
-    }
-
-    /**
-     * @param GetReservaPorIdCommandHandler $handler
-     * @covers ::handle
-     * @depends test__construct
-     */
-    public function test_Handle_deve_retornar_null_quando_nao_encontrar_registro_no_bd(GetReservaPorIdCommandHandler $handler)
-    {
         $command = new GetReservaPorIdCommand(0);
-        $reserva = $handler->handle($command);
-
-        $this->assertNull($reserva);
+        (new GetReservaPorIdCommandHandler($reserva_repository))->handle($command);
     }
 
     /**
-     * @param GetReservaPorIdCommandHandler $handler
      * @covers ::handle
-     * @depends test__construct
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ReservaNaoEncontradaException
      */
-    public function test_Handle_deve_retornar_Reserva_quando_encontrar_registro_no_bd(GetReservaPorIdCommandHandler $handler)
+    public function test_Handle_deve_retornar_Reserva_quando_encontrar_registro_no_bd()
     {
-        $query = '
-            select
-                reserva_id
-            from
-                dlx_reservas_cadastro
-            order by 
-                rand()
-            limit 1
-        ';
+        $reserva_id = mt_rand();
 
-        $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query);
-        $id = $sql->fetchColumn();
+        $reserva = $this->createMock(Reserva::class);
+        $reserva->method('getId')->willReturn($reserva_id);
 
-        if (empty($id)) {
-            $this->markTestIncomplete('Nenhuma reserva encontrada para testar.');
-        }
+        $reserva_repository = $this->createMock(ReservaRepositoryInterface::class);
+        $reserva_repository->method('find')->willReturn($reserva);
 
-        $command = new GetReservaPorIdCommand($id);
-        $reserva = $handler->handle($command);
+        /** @var ReservaRepositoryInterface $reserva_repository */
 
-        $this->assertInstanceOf(Reserva::class, $reserva);
-        $this->assertEquals($id, $reserva->getId());
+        $command = new GetReservaPorIdCommand($reserva_id);
+        $reserva_retornada = (new GetReservaPorIdCommandHandler($reserva_repository))->handle($command);
+
+        $this->assertInstanceOf(Reserva::class, $reserva_retornada);
+        $this->assertEquals($reserva_id, $reserva_retornada->getId());
     }
 }

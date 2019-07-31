@@ -40,7 +40,7 @@ class ValidarDisponQuarto implements ReservaValidatorInterface
 
     /**
      * Valida uma determinada regra sobre reserva
-     * @param \Reservas\Domain\Reservas\Entities\Reserva $reserva
+     * @param Reserva $reserva
      * @return bool
      * @throws QuartoIndisponivelException
      */

@@ -32,11 +32,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\PersistentCollection;
+use PainelDLX\Domain\Common\Entities\LogRegistroTrait;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Contracts\QuartoMidiaCollectionInterface;
 use Reservas\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\Domain\Quartos\Services\VerificarDisponQuarto;
-use Reservas\Infra\ORM\Doctrine\Collections\QuartoMidiaCollection;
+use Reservas\Infrastructure\ORM\Doctrine\Collections\QuartoMidiaCollection;
 use Reservas\Tests\Domain\Quartos\Entities\QuartoTest;
 
 /**
@@ -46,6 +47,9 @@ use Reservas\Tests\Domain\Quartos\Entities\QuartoTest;
  */
 class Quarto extends Entity
 {
+    const TABELA_BD = 'dlx_reservas_quartos';
+    use LogRegistroTrait;
+
     /** @var int|null */
     private $id;
     /** @var string */
@@ -272,6 +276,8 @@ class Quarto extends Entity
     }
 
     /**
+     * @param DateTime $checkin
+     * @param DateTime $checkout
      * @return Collection
      */
     public function getDispon(DateTime $checkin, DateTime $checkout): Collection
@@ -294,8 +300,9 @@ class Quarto extends Entity
      * @param DateTime $data
      * @param int $qtde
      * @param array $valores
+     * @return Quarto
      */
-    public function addDispon(DateTime $data, int $qtde, array $valores)
+    public function addDispon(DateTime $data, int $qtde, array $valores): self
     {
         $dispon = $this->dispon->filter(function (Disponibilidade $dispon) use ($data) {
             return $dispon->getDia()->format('Y-m-d') ===  $data->format('Y-m-d');

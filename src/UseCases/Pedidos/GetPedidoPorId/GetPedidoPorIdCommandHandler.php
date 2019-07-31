@@ -27,8 +27,14 @@ namespace Reservas\UseCases\Pedidos\GetPedidoPorId;
 
 
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Exceptions\PedidoNaoEncontradoException;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
+/**
+ * Class GetPedidoPorIdCommandHandler
+ * @package Reservas\UseCases\Pedidos\GetPedidoPorId
+ * @covers GetPedidoPorIdCommandHandlerTest
+ */
 class GetPedidoPorIdCommandHandler
 {
     /**
@@ -38,7 +44,7 @@ class GetPedidoPorIdCommandHandler
 
     /**
      * GetPedidoPorIdCommandHandler constructor.
-     * @param \Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository
+     * @param PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
     {
@@ -47,10 +53,18 @@ class GetPedidoPorIdCommandHandler
 
     /**
      * @param GetPedidoPorIdCommand $command
-     * @return \Reservas\Domain\Pedidos\Entities\Pedido|null
+     * @return Pedido|null
+     * @throws PedidoNaoEncontradoException
      */
     public function handle(GetPedidoPorIdCommand $command): ?Pedido
     {
-        return $this->pedido_repository->find($command->getId());
+        $pedido_id = $command->getId();
+        $pedido = $this->pedido_repository->find($pedido_id);
+
+        if (is_null($pedido)) {
+            throw PedidoNaoEncontradoException::porId($pedido_id);
+        }
+
+        return $pedido;
     }
 }

@@ -27,8 +27,14 @@ namespace Reservas\UseCases\Quartos\GetQuartoPorId;
 
 
 use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Quartos\Exceptions\QuartoNaoEncontradoException;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
+/**
+ * Class GetQuartoPorIdCommandHandler
+ * @package Reservas\UseCases\Quartos\GetQuartoPorId
+ * @covers GetQuartoPorIdCommandHandlerTest
+ */
 class GetQuartoPorIdCommandHandler
 {
     /**
@@ -47,10 +53,19 @@ class GetQuartoPorIdCommandHandler
 
     /**
      * @param GetQuartoPorIdCommand $command
-     * @return \Reservas\Domain\Quartos\Entities\Quarto|null
+     * @return Quarto
+     * @throws QuartoNaoEncontradoException
      */
     public function handle(GetQuartoPorIdCommand $command): ?Quarto
     {
-        return $this->quarto_repository->find($command->getQuartoId());
+        $quarto_id = $command->getId();
+
+        $quarto = $this->quarto_repository->find($quarto_id);
+
+        if (is_null($quarto)) {
+            throw QuartoNaoEncontradoException::porId($quarto_id);
+        }
+
+        return $quarto;
     }
 }

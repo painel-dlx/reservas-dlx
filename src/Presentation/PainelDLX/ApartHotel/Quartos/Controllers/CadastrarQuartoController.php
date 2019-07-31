@@ -34,10 +34,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Exceptions\ValidarQuartoException;
+use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommand;
+use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommandHandler;
 use Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommand;
 use Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommandHandler;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
@@ -53,10 +53,6 @@ use Zend\Diactoros\Response\JsonResponse;
 class CadastrarQuartoController extends PainelDLXController
 {
     /**
-     * @var SessionInterface
-     */
-    private $session;
-    /**
      * @var TransactionInterface
      */
     private $transaction;
@@ -67,6 +63,7 @@ class CadastrarQuartoController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -74,14 +71,8 @@ class CadastrarQuartoController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
-
+        parent::__construct($view, $commandBus, $session);
         $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
-
-        $this->session = $session;
         $this->transaction = $transaction;
     }
 
@@ -134,36 +125,29 @@ class CadastrarQuartoController extends PainelDLXController
      */
     public function salvarNovoQuarto(ServerRequestInterface $request): ResponseInterface
     {
-        $post = filter_var_array($request->getParsedBody(), [
-            'nome' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_EMPTY_STRING_NULL],
-            'descricao' => ['filter' => FILTER_DEFAULT, 'flags' => FILTER_FLAG_EMPTY_STRING_NULL],
-            'max_hospedes' => FILTER_VALIDATE_INT,
-            'qtde' => FILTER_VALIDATE_INT,
-            'tamanho_m2' => FILTER_VALIDATE_INT,
-            'valor_min' => FILTER_VALIDATE_FLOAT,
-            'link' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_EMPTY_STRING_NULL]
-        ]);
-
-        /** @var Quarto $quarto */
-        $quarto = $this->session->get('editando:quarto');
+        $post = $request->getParsedBody();
 
         try {
-            $quarto
-                ->setNome($post['nome'])
-                ->setQtde($post['qtde'])
-                ->setValorMin($post['valor_min'])
-                ->setDescricao($post['descricao'])
-                ->setMaxHospedes($post['max_hospedes'])
-                ->setTamanhoM2($post['tamanho_m2'])
-                ->setLink($post['link']);
+            $this->transaction->transactional(function () use ($post) {
+                /* @see CriarNovoQuartoCommandHandler */
+                $quarto = $this->command_bus->handle(new CriarNovoQuartoCommand(
+                    $post['nome'],
+                    $post['descricao'],
+                    $post['max_hospedes'],
+                    $post['qtde'],
+                    $post['tamanho_m2'],
+                    $post['valor_min'],
+                    $post['link']
+                ));
 
-            $this->transaction->transactional(function () use ($quarto) {
-                /* @see SalvarQuartoCommandHandler */
-                $this->command_bus->handle(new SalvarQuartoCommand($quarto));
+                $this->session->set('editando:quarto', $quarto);
 
                 /* @see GerarDisponibilidadesQuartoCommandHandler */
                 $this->command_bus->handle(new GerarDisponibilidadesQuartoCommand($quarto));
             });
+
+            /** @var Quarto $quarto */
+            $quarto = $this->session->get('editando:quarto');
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Quarto cadastrado com sucesso!';

@@ -25,19 +25,11 @@
 
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
-use DLX\Core\CommandBus\CommandBusAdapter;
-use DLX\Core\Configure;
-use DLX\Infra\EntityManagerX;
-use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use Exception;
-use League\Tactician\Container\ContainerLocator;
-use League\Tactician\Handler\CommandHandlerMiddleware;
-use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
-use League\Tactician\Handler\MethodNameInflector\HandleInflector;
-use PainelDLX\Application\Factories\CommandBusFactory;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\EditarQuartoController;
 use Reservas\Tests\ReservasTestCase;
@@ -47,7 +39,6 @@ use SechianeX\Factories\SessionFactory;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
-use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -62,7 +53,6 @@ class EditarQuartoControllerTest extends ReservasTestCase
 
     /**
      * @return EditarQuartoController
-     * @throws ORMException
      * @throws SessionAdapterInterfaceInvalidaException
      * @throws SessionAdapterNaoEncontradoException
      */
@@ -71,14 +61,7 @@ class EditarQuartoControllerTest extends ReservasTestCase
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
-
-        $controller = new EditarQuartoController(
-            new VileX(),
-            $command_bus(),
-            $session,
-            new DoctrineTransaction(EntityManagerX::getInstance())
-        );
+        $controller = self::$painel_dlx->getContainer()->get(EditarQuartoController::class);
 
         $this->assertInstanceOf(EditarQuartoController::class, $controller);
 
@@ -132,6 +115,26 @@ class EditarQuartoControllerTest extends ReservasTestCase
         /** @var ServerRequestInterface $request */
         $response = $controller->formEditarQuarto($request);
         $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    /**
+     * @param EditarQuartoController $controller
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     * @covers ::formEditarQuarto
+     * @depends test__construct
+     */
+    public function test_FormEditarQuarto_deve_renderizar_mensagem_de_erro_quando_nao_encontrar_Quarto(EditarQuartoController $controller)
+    {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getQueryParams')->willReturn(['id' => 0]);
+
+        /** @var ServerRequestInterface $request */
+        $response = $controller->formEditarQuarto($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertRegExp('~Quarto não encontrado com o ID informado: \d+.~', (string)$response->getBody());
     }
 
     /**

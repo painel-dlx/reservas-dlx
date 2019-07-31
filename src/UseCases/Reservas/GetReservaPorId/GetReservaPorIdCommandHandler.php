@@ -27,8 +27,14 @@ namespace Reservas\UseCases\Reservas\GetReservaPorId;
 
 
 use Reservas\Domain\Reservas\Entities\Reserva;
+use Reservas\Domain\Reservas\Exceptions\ReservaNaoEncontradaException;
 use Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 
+/**
+ * Class GetReservaPorIdCommandHandler
+ * @package Reservas\UseCases\Reservas\GetReservaPorId
+ * @covers GetReservaPorIdCommandHandlerTest
+ */
 class GetReservaPorIdCommandHandler
 {
     /**
@@ -38,7 +44,7 @@ class GetReservaPorIdCommandHandler
 
     /**
      * GetReservaPorIdCommandHandler constructor.
-     * @param \Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository
+     * @param ReservaRepositoryInterface $reserva_repository
      */
     public function __construct(ReservaRepositoryInterface $reserva_repository)
     {
@@ -48,9 +54,17 @@ class GetReservaPorIdCommandHandler
     /**
      * @param GetReservaPorIdCommand $command
      * @return Reserva|null
+     * @throws ReservaNaoEncontradaException
      */
     public function handle(GetReservaPorIdCommand $command): ?Reserva
     {
-        return $this->reserva_repository->find($command->getId());
+        $reserva_id = $command->getId();
+        $reserva = $this->reserva_repository->find($reserva_id);
+
+        if (is_null($reserva)) {
+            throw ReservaNaoEncontradaException::porId($reserva_id);
+        }
+
+        return $reserva;
     }
 }

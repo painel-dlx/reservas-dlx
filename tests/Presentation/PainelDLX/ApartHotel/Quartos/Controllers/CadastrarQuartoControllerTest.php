@@ -25,66 +25,52 @@
 
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
-use DLX\Core\CommandBus\CommandBusAdapter;
-use DLX\Core\Configure;
-use DLX\Infra\EntityManagerX;
-use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
 use Exception;
-use League\Tactician\Container\ContainerLocator;
-use League\Tactician\Handler\CommandHandlerMiddleware;
-use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
-use League\Tactician\Handler\MethodNameInflector\HandleInflector;
-use PainelDLX\Application\Factories\CommandBusFactory;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
+use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController;
 use Reservas\Tests\ReservasTestCase;
+use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
+use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
-use Vilex\VileX;
+use Vilex\Exceptions\ViewNaoEncontradaException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class CadastrarQuartoControllerTest
  * @package Reservas\Tests\Presentation\Site\ApartHotel\Controllers
- * @coversDefaultClass \Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController
+ * @coversDefaultClass CadastrarQuartoController
  */
 class CadastrarQuartoControllerTest extends ReservasTestCase
 {
     use TesteComTransaction;
 
     /**
-     * @return \Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException
-     * @throws \SechianeX\Exceptions\SessionAdapterNaoEncontradoException
+     * @return CadastrarQuartoController
+     * @throws SessionAdapterInterfaceInvalidaException
+     * @throws SessionAdapterNaoEncontradoException
      */
-    public function test__construct(): \Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController
+    public function test__construct(): CadastrarQuartoController
     {
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
+        $controller = self::$painel_dlx->getContainer()->get(CadastrarQuartoController::class);
 
-        $controller = new \Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController(
-            new VileX(),
-            $command_bus(),
-            $session,
-            new DoctrineTransaction(EntityManagerX::getInstance())
-        );
-
-        $this->assertInstanceOf(\Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController::class, $controller);
+        $this->assertInstanceOf(CadastrarQuartoController::class, $controller);
 
         return $controller;
     }
 
     /**
-     * @param \Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController $controller
+     * @param CadastrarQuartoController $controller
      * @covers ::formNovoQuarto
      * @depends test__construct
      * @throws Exception
      */
-    public function test_FormNovoQuarto_deve_retornar_HtmlResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController $controller)
+    public function test_FormNovoQuarto_deve_retornar_HtmlResponse(CadastrarQuartoController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
 
@@ -94,22 +80,27 @@ class CadastrarQuartoControllerTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController $controller
+     * @param CadastrarQuartoController $controller
+     * @throws SessionAdapterInterfaceInvalidaException
+     * @throws SessionAdapterNaoEncontradoException
      * @covers ::salvarNovoQuarto
      * @depends test__construct
      */
-    public function test_SalvarNovoQuarto_deve_retornar_JsonResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController $controller)
+    public function test_SalvarNovoQuarto_deve_retornar_JsonResponse(CadastrarQuartoController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
-            'nome' => 'TESTE UNITÁRIO',
+            'nome' => 'Teste: CadastrarQuartoController::salvarNovoQuarto',
             'descricao' => '',
             'max_hospedes' => 1,
             'qtde' => 1,
             'tamanho_m2' => 10,
-            'valor_min' => 10.00,
-            'link' => '/teste/teste'
+            'valor_min' => 12.34,
+            'link' => '/teste/unitario'
         ]);
+
+        $session = SessionFactory::createPHPSession();
+        $session->set('editando:quarto', new Quarto('', 5, 100));
 
         /** @var ServerRequestInterface $request */
         $response = $controller->salvarNovoQuarto($request);

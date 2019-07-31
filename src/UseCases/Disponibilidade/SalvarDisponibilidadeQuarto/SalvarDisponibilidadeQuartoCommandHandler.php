@@ -36,13 +36,13 @@ use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterf
 class SalvarDisponibilidadeQuartoCommandHandler
 {
     /**
-     * @var \Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface
+     * @var DisponibilidadeRepositoryInterface
      */
     private $disponibilidade_repository;
 
     /**
      * SalvarDisponibilidadeQuartoCommandHandler constructor.
-     * @param \Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface $disponibilidade_repository
+     * @param DisponibilidadeRepositoryInterface $disponibilidade_repository
      */
     public function __construct(DisponibilidadeRepositoryInterface $disponibilidade_repository)
     {
@@ -57,11 +57,7 @@ class SalvarDisponibilidadeQuartoCommandHandler
     {
         $disponibilidade = $command->getDisponibilidade();
 
-        if (is_null($disponibilidade->getId())) {
-            $this->disponibilidade_repository->create($disponibilidade);
-        } else {
-            $this->disponibilidade_repository->update($disponibilidade);
-        }
+        $this->disponibilidade_repository->save($disponibilidade);
 
         return $disponibilidade;
     }

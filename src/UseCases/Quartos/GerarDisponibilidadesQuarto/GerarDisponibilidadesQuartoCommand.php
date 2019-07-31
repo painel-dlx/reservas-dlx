@@ -44,8 +44,6 @@ class GerarDisponibilidadesQuartoCommand
     /**
      * GerarDisponibilidadesQuartoCommand constructor.
      * @param Quarto $quarto
-     * @param DateTime $dt_inicio
-     * @param DateTime $dt_fim
      */
     public function __construct(Quarto $quarto)
     {

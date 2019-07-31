@@ -26,11 +26,12 @@
 namespace Reservas\Tests\UseCases\Quartos\GerarDisponibilidadesQuarto;
 
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use Exception;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
@@ -70,11 +71,11 @@ class GerarDisponibilidadesQuartoCommandHandlerTest extends ReservasTestCase
 
     /**
      * @param GerarDisponibilidadesQuartoCommandHandler $handler
+     * @throws DBALException
+     * @throws ORMException
+     * @throws Exception
      * @covers ::handle
      * @depends test__construct
-     * @throws ORMException
-     * @throws DBALException
-     * @throws \Reservas\Domain\Quartos\Exceptions\QuartoIndisponivelException
      */
     public function test_Handle_deve_criar_disponibilidade_para_determinado_quarto(GerarDisponibilidadesQuartoCommandHandler $handler)
     {

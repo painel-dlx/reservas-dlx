@@ -54,6 +54,10 @@ use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
 use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommandHandler;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommand;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommandHandler;
+use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommand;
+use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommandHandler;
+use Reservas\UseCases\Quartos\EditarQuarto\EditarQuartoCommand;
+use Reservas\UseCases\Quartos\EditarQuarto\EditarQuartoCommandHandler;
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommand;
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommandHandler;
 use Reservas\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommand;
@@ -84,7 +88,8 @@ class ReservasDLXMapping
     private $mapping = [
         GetQuartoPorIdCommand::class => GetQuartoPorIdCommandHandler::class,
         ListaQuartosCommand::class => ListaQuartosCommandHandler::class,
-        SalvarQuartoCommand::class => SalvarQuartoCommandHandler::class,
+        CriarNovoQuartoCommand::class => CriarNovoQuartoCommandHandler::class,
+        EditarQuartoCommand::class => EditarQuartoCommandHandler::class,
         ExcluirQuartoCommand::class => ExcluirQuartoCommandHandler::class,
         GetDisponibilidadePorDataQuartoCommand::class => GetDisponibilidadePorDataQuartoCommandHandler::class,
         ListaDisponibilidadePorPeriodoCommand::class => ListaDisponibilidadePorPeriodoCommandHandler::class,

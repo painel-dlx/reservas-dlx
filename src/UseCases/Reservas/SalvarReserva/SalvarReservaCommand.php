@@ -42,7 +42,7 @@ class SalvarReservaCommand
 
     /**
      * ReservarQuartoCommand constructor.
-     * @param \Reservas\Domain\Reservas\Entities\Reserva $reserva
+     * @param Reserva $reserva
      */
     public function __construct(Reserva $reserva)
     {

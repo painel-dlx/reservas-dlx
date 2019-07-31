@@ -56,13 +56,14 @@ class ListaQuartosCommandHandler
      */
     public function handle(ListaQuartosCommand $command): array
     {
-        $lista = $this->quarto_repository->findByLike(
-            $command->getCriteria(),
+        $criteria = $command->getCriteria();
+        $criteria['and'] = ['deletado' => false];
+
+        return $this->quarto_repository->findByLike(
+            $criteria,
             $command->getOrderBy(),
             $command->getLimit(),
             $command->getOffset()
         );
-
-        return array_filter($lista, function (Quarto $quarto) { return !$quarto->isDeletado(); });
     }
 }

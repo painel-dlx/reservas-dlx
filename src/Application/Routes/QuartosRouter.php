@@ -28,17 +28,19 @@ namespace Reservas\Application\Routes;
 
 use Exception;
 use PainelDLX\Application\Middlewares\Autorizacao;
+use PainelDLX\Application\Middlewares\ConfigurarPaginacao;
 use PainelDLX\Application\Middlewares\DefinePaginaMestra;
 use PainelDLX\Application\Middlewares\VerificarLogon;
 use PainelDLX\Application\Routes\PainelDLXRouter;
+use PainelDLX\Application\Services\PainelDLX;
 use Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\GerenciadorMidiasController;
 use Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\CadastrarQuartoController;
 use Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\EditarQuartoController;
 use Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Controllers\ListaQuartosController;
+use Reservas\Presentation\PainelDLX\ApartHotel\Quartos\Middlewares\SalvarQuartoFilter;
 
 class QuartosRouter extends PainelDLXRouter
 {
-
     /**
      * Registrar todas as rotas
      * @throws Exception
@@ -46,22 +48,31 @@ class QuartosRouter extends PainelDLXRouter
     public function registrar(): void
     {
         $router = $this->getRouter();
+        $container = PainelDLX::getInstance()->getContainer();
 
-        // Middlewares
-        $verificar_logon = new VerificarLogon($this->session);
-        $define_pagina_mestra = new DefinePaginaMestra($this->painel_dlx->getServerRequest(), $this->session);
+        /** @var VerificarLogon $verificar_logon */
+        $verificar_logon = $container->get(VerificarLogon::class);
+        /** @var DefinePaginaMestra $define_pagina_mestra */
+        $define_pagina_mestra = $container->get(DefinePaginaMestra::class);
+        /** @var Autorizacao $autorizacao */
+        $autorizacao = $container->get(Autorizacao::class);
+        /** @var ConfigurarPaginacao $paginacao */
+        $paginacao = $container->get(ConfigurarPaginacao::class);
+        /** @var SalvarQuartoFilter $salvar_quarto_filter */
+        $salvar_quarto_filter = $container->get(SalvarQuartoFilter::class);
 
         // Permissões
-        $perm_cadastrar_quarto = new Autorizacao('CADASTRAR_NOVO_QUARTO');
-        $perm_editar_quarto = new Autorizacao('EDITAR_QUARTO');
+        $autorizacao_cadastrar_quarto = $autorizacao->necessitaPermissoes('CADASTRAR_NOVO_QUARTO');
+        $autorizacao_editar_quarto = $autorizacao->necessitaPermissoes('EDITAR_QUARTO');
 
         $router->get(
             '/painel-dlx/apart-hotel/quartos',
             [ListaQuartosController::class, 'listaQuartos']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            new Autorizacao('VER_LISTA_QUARTOS'),
-            $define_pagina_mestra
+            $autorizacao->necessitaPermissoes('VER_LISTA_QUARTOS'),
+            $paginacao
         );
 
         $router->post(
@@ -69,16 +80,16 @@ class QuartosRouter extends PainelDLXRouter
             [ListaQuartosController::class, 'excluirQuarto']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('EXCLUIR_QUARTO')
+            $autorizacao->necessitaPermissoes('EXCLUIR_QUARTO')
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/quartos/novo',
             [CadastrarQuartoController::class, 'formNovoQuarto']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            $perm_cadastrar_quarto,
-            $define_pagina_mestra
+            $autorizacao_cadastrar_quarto
         );
 
         $router->post(
@@ -86,16 +97,17 @@ class QuartosRouter extends PainelDLXRouter
             [CadastrarQuartoController::class, 'salvarNovoQuarto']
         )->middlewares(
             $verificar_logon,
-            $perm_cadastrar_quarto
+            $autorizacao_cadastrar_quarto,
+            $salvar_quarto_filter
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/quartos/editar',
             [EditarQuartoController::class, 'formEditarQuarto']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            $perm_editar_quarto,
-            $define_pagina_mestra
+            $autorizacao_editar_quarto
         );
 
         $router->post(
@@ -103,16 +115,17 @@ class QuartosRouter extends PainelDLXRouter
             [EditarQuartoController::class, 'editarInformacoesQuarto']
         )->middlewares(
             $verificar_logon,
-            $perm_editar_quarto
+            $autorizacao_editar_quarto,
+            $salvar_quarto_filter
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/quartos/upload-midias',
             [GerenciadorMidiasController::class, 'formUpload']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            $perm_editar_quarto,
-            $define_pagina_mestra
+            $autorizacao_editar_quarto
         );
 
         $router->post(
@@ -120,7 +133,7 @@ class QuartosRouter extends PainelDLXRouter
             [GerenciadorMidiasController::class, 'uploadMidias']
         )->middlewares(
             $verificar_logon,
-            $perm_editar_quarto
+            $autorizacao_editar_quarto
         );
 
         $router->post(
@@ -128,7 +141,7 @@ class QuartosRouter extends PainelDLXRouter
             [GerenciadorMidiasController::class, 'excluirMidia']
         )->middlewares(
             $verificar_logon,
-            $perm_editar_quarto
+            $autorizacao_editar_quarto
         );
     }
 }

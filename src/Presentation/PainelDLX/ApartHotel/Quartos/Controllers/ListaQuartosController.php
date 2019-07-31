@@ -49,10 +49,6 @@ use Zend\Diactoros\Response\JsonResponse;
 class ListaQuartosController extends PainelDLXController
 {
     /**
-     * @var SessionInterface
-     */
-    private $session;
-    /**
      * @var TransactionInterface
      */
     private $transaction;
@@ -63,6 +59,7 @@ class ListaQuartosController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -70,12 +67,7 @@ class ListaQuartosController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
-
-        $this->session = $session;
+        parent::__construct($view, $commandBus, $session);
         $this->transaction = $transaction;
     }
 
@@ -90,24 +82,40 @@ class ListaQuartosController extends PainelDLXController
     {
         $get = filter_var_array($request->getQueryParams(), [
             'campos' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_REQUIRE_ARRAY],
-            'busca' => FILTER_DEFAULT
+            'busca' => FILTER_DEFAULT,
+            'pg' => FILTER_VALIDATE_INT,
+            'qtde' => FILTER_VALIDATE_INT,
+            'offset' => FILTER_VALIDATE_INT
         ]);
 
         try {
+            $this->session->unset('editando:quarto');
+
             /** @var array $criteria */
             /* @see ConverterFiltro2CriteriaCommandHandler */
             $criteria = $this->command_bus->handle(new ConverterFiltro2CriteriaCommand($get['campos'], $get['busca']));
 
             /* @see ListaQuartosCommandHandler */
-            $lista_quartos = $this->command_bus->handle(new ListaQuartosCommand($criteria));
+            $lista_quartos = $this->command_bus->handle(new ListaQuartosCommand(
+                $criteria,
+                [],
+                $get['qtde'],
+                $get['offset']
+            ));
 
             // Atributos
             $this->view->setAtributo('titulo-pagina', 'Quartos');
             $this->view->setAtributo('lista-quartos', $lista_quartos);
             $this->view->setAtributo('filtro', $get);
 
+            // Paginação
+            $this->view->setAtributo('pagina-atual', $get['pg']);
+            $this->view->setAtributo('qtde-registros-pagina', $get['qtde']);
+            $this->view->setAtributo('qtde-registros-lista', count($lista_quartos));
+
             // Views
             $this->view->addTemplate('quartos/lista_quartos');
+            $this->view->addTemplate('common/paginacao');
 
             // JS
             $this->view->addArquivoJS('public/js/apart-hotel-min.js');

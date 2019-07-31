@@ -26,6 +26,7 @@
 namespace Reservas\Tests\Domain\Pedidos\Entities;
 
 use DateTime;
+use Exception;
 use Reservas\Domain\Pedidos\Entities\PedidoHistorico;
 use PHPUnit\Framework\TestCase;
 
@@ -38,6 +39,7 @@ class PedidoHistoricoTest extends TestCase
 {
     /**
      * @return PedidoHistorico
+     * @throws Exception
      */
     public function test__construct(): PedidoHistorico
     {

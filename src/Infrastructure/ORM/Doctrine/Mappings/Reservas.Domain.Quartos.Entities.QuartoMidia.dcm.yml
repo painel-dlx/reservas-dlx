@@ -1,0 +1,27 @@
+Reservas\Domain\Quartos\Entities\QuartoMidia:
+    type: entity
+    table: dlx_reservas_quartos_midias
+    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\QuartoMidiaRepository
+    id:
+        quarto:
+            associationKey: true
+            id: true
+    fields:
+        arquivo:
+            type: string
+            nullable: false
+            length: 255
+            id: true
+            column: midia_arquivo
+        mini:
+            type: string
+            nullable: true
+            length: 255
+            column: midia_mini
+    manyToOne:
+        quarto:
+            targetEntity: Quarto
+            inversedBy: midias
+            joinColumns:
+                midia_quarto:
+                    referencedColumnName: quarto_id

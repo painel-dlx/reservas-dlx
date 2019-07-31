@@ -36,13 +36,13 @@ use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 class SalvarDisponibilidadeQuartoCommand
 {
     /**
-     * @var \Reservas\Domain\Disponibilidade\Entities\Disponibilidade
+     * @var Disponibilidade
      */
     private $disponibilidade;
 
     /**
      * SalvarDisponibilidadeQuartoCommand constructor.
-     * @param \Reservas\Domain\Disponibilidade\Entities\Disponibilidade $disponibilidade
+     * @param Disponibilidade $disponibilidade
      */
     public function __construct(Disponibilidade $disponibilidade)
     {

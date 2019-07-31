@@ -25,65 +25,58 @@
 
 namespace Reservas\Tests\UseCases\Pedidos\GetPedidoPorId;
 
-use DLX\Infra\EntityManagerX;
-use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\ORMException;
+use PHPUnit\Framework\TestCase;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Exceptions\PedidoNaoEncontradoException;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler;
-use Reservas\Tests\Helpers\PedidoTesteHelper;
-use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class GetPedidoPorIdCommandHandlerTest
  * @package Reservas\Tests\UseCases\Pedidos\GetPedidoPorId
  * @coversDefaultClass \Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler
  */
-class GetPedidoPorIdCommandHandlerTest extends ReservasTestCase
+class GetPedidoPorIdCommandHandlerTest extends TestCase
 {
     /**
-     * @return GetPedidoPorIdCommandHandler
-     * @throws ORMException
-     */
-    public function test__construct(): GetPedidoPorIdCommandHandler
-    {
-        /** @var \Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository */
-        $pedido_repository = EntityManagerX::getRepository(Pedido::class);
-        $handler = new GetPedidoPorIdCommandHandler($pedido_repository);
-
-        $this->assertInstanceOf(GetPedidoPorIdCommandHandler::class, $handler);
-
-        return $handler;
-    }
-
-    /**
-     * @param GetPedidoPorIdCommandHandler $handler
      * @covers ::handle
-     * @depends test__construct
+     * @throws PedidoNaoEncontradoException
      */
-    public function test_Handle_deve_retornar_null_quando_nao_encontrar_registro_bd(GetPedidoPorIdCommandHandler $handler)
+    public function test_Handle_deve_lancar_excecao_quando_nao_encontrar_registro_no_bd()
     {
+        $pedido_repository = $this->createMock(PedidoRepositoryInterface::class);
+        $pedido_repository->method('find')->willReturn(null);
+
+        /** @var PedidoRepositoryInterface $pedido_repository */
+
+        $this->expectException(PedidoNaoEncontradoException::class);
+        $this->expectExceptionCode(10);
+
         $command = new GetPedidoPorIdCommand(0);
-        $pedido = $handler->handle($command);
-
-        $this->assertNull($pedido);
+        (new GetPedidoPorIdCommandHandler($pedido_repository))->handle($command);
     }
 
     /**
-     * @param GetPedidoPorIdCommandHandler $handler
      * @covers ::handle
-     * @depends test__construct
-     * @throws ORMException
-     * @throws DBALException
+     * @throws PedidoNaoEncontradoException
      */
-    public function test_Handle_deve_retornar_Pedido_quando_encontrar_registro_bd(GetPedidoPorIdCommandHandler $handler)
+    public function test_Handle_deve_retornar_Pedido_quando_encontrar_registro_no_bd()
     {
-        $id = PedidoTesteHelper::getPedidoIdRandom();
+        $pedido_id = mt_rand();
 
-        $command = new GetPedidoPorIdCommand($id);
-        $pedido = $handler->handle($command);
+        $pedido = $this->createMock(Pedido::class);
+        $pedido->method('getId')->willReturn($pedido_id);
 
-        $this->assertInstanceOf(Pedido::class, $pedido);
+        $pedido_repository = $this->createMock(PedidoRepositoryInterface::class);
+        $pedido_repository->method('find')->willReturn($pedido);
+
+        /** @var PedidoRepositoryInterface $pedido_repository */
+
+        $command = new GetPedidoPorIdCommand($pedido_id);
+        $pedido_retornado = (new GetPedidoPorIdCommandHandler($pedido_repository))->handle($command);
+
+        $this->assertInstanceOf(Pedido::class, $pedido_retornado);
+        $this->assertEquals($pedido_id, $pedido_retornado->getId());
     }
 }

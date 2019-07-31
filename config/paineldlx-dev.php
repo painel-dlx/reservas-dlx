@@ -40,11 +40,12 @@ return [
         'nome-amigavel' => 'Painel DLX',
         'base-html' => '/',
         'base-url' => 'http://reservas-dlx.localhost/',
-        'rotas' => include 'rotas.php',
-        'service-providers' => include 'service_providers.php',
-        'mapping' => include 'mapping.php',
+        'diretorios' => include 'painel-dlx/diretorios.php',
+        'rotas' => include 'painel-dlx/rotas.php',
+        'service-providers' => include 'painel-dlx/service_providers.php',
+        'mapping' => include 'painel-dlx/mapping.php',
         'favicon' => PainelDLX::$dir . '/public/imgs/favicon.png',
-        'versao' => '0.1.17-beta'
+        'versao' => '1.0'
     ],
 
     'bd' => [
@@ -53,11 +54,11 @@ return [
         'dev-mode' => true,
         //'debug' => EchoSQLLogger::class,
         'dir' => [
-            'src/Infra/ORM/Doctrine/Mappings',
-            'src/Infra/ORM/Doctrine/Repositories',
+            'src/Infrastructure/ORM/Doctrine/Mappings',
+            'src/Infrastructure/ORM/Doctrine/Repositories',
 
-            "{$dir_painel_dlx}src/Infra/ORM/Doctrine/Mappings",
-            "{$dir_painel_dlx}src/Infra/ORM/Doctrine/Repositories"
+            "{$dir_painel_dlx}src/Infrastructure/ORM/Doctrine/Mappings",
+            "{$dir_painel_dlx}src/Infrastructure/ORM/Doctrine/Repositories"
         ],
         'types' => [
             'cpf' => CPFType::class

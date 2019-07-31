@@ -26,8 +26,11 @@
 namespace Reservas\Application\Routes;
 
 
+use PainelDLX\Application\Middlewares\Autorizacao;
+use PainelDLX\Application\Middlewares\DefinePaginaMestra;
 use PainelDLX\Application\Middlewares\VerificarLogon;
 use PainelDLX\Application\Routes\PainelDLXRouter;
+use PainelDLX\Application\Services\PainelDLX;
 use Reservas\Presentation\PainelDLX\ApartHotel\Emails\Controllers\EmailPedidosController;
 
 class EmailsRouter extends PainelDLXRouter
@@ -39,9 +42,10 @@ class EmailsRouter extends PainelDLXRouter
     public function registrar(): void
     {
         $router = $this->getRouter();
+        $container = PainelDLX::getInstance()->getContainer();
 
-        // Middlewares
-        $verificar_logon = new VerificarLogon($this->session);
+        /** @var VerificarLogon $verificar_logon */
+        $verificar_logon = $container->get(VerificarLogon::class);
 
         $router->get(
             '/painel-dlx/apart-hotel/emails/confirmacao-pedido',

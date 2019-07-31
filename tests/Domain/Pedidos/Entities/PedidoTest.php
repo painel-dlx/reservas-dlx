@@ -26,15 +26,13 @@
 namespace Reservas\Tests\Domain\Pedidos\Entities;
 
 use CPF\CPF;
-use DateInterval;
-use DatePeriod;
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\ORMException;
 use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;

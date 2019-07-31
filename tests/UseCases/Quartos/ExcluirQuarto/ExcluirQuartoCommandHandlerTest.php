@@ -25,15 +25,21 @@
 
 namespace Reservas\Tests\UseCases\Quartos\ExcluirQuarto;
 
-use DLX\Infra\EntityManagerX;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
+use Reservas\Domain\Quartos\Validators\QuartoValidator;
 use Reservas\Tests\ReservasTestCase;
+use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommand;
+use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommandHandler;
 use Reservas\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommand;
 use Reservas\UseCases\Quartos\ExcluirQuarto\ExcluirQuartoCommandHandler;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
+use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
+use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
+use SechianeX\Factories\SessionFactory;
 
 /**
  * Class ExcluirQuartoCommandHandlerTest
@@ -46,7 +52,7 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
 
     /**
      * @return ExcluirQuartoCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): ExcluirQuartoCommandHandler
     {
@@ -61,24 +67,38 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
 
     /**
      * @param ExcluirQuartoCommandHandler $handler
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Reservas\Domain\Exceptions\LinkQuartoUtilizadoException
-     * @throws \Reservas\Domain\Exceptions\NomeQuartoUtilizadoException
+     * @throws ORMException
+     * @throws SessionAdapterInterfaceInvalidaException
+     * @throws SessionAdapterNaoEncontradoException
      * @covers ::handle
      * @depends test__construct
      */
     public function test_Handle_retorna_true_caso_consiga_excluir_Quarto(ExcluirQuartoCommandHandler $handler)
     {
-        /** @var QuartoRepositoryInterface $quarto_repository */
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
 
-        // Salvar um novo quarto para testar a exclusão
-        $quarto = new Quarto('QUARTO TESTE UNITÁRIO', 5, 100);
-        $quarto
-            ->setTamanhoM2(30)
-            ->setLink('teste/teste');
-        $command = new SalvarQuartoCommand($quarto);
-        (new SalvarQuartoCommandHandler($quarto_repository))->handle($command);
+        $validator = $this->createMock(QuartoValidator::class);
+        $validator->method('validar')->willReturn(true);
+
+        $quarto = new Quarto('OUTRO QUARTO', 2, 1);
+
+        /** @var QuartoRepositoryInterface $quarto_repository */
+        /** @var QuartoValidator $validator */
+
+        $session = SessionFactory::createPHPSession();
+        $session->set('editando:quarto', $quarto);
+
+        $command = new CriarNovoQuartoCommand(
+            'QUARTO TESTE UNITÁRIO',
+            '',
+            3,
+            5,
+            30,
+            100,
+            'teste/teste'
+        );
+
+        (new CriarNovoQuartoCommandHandler($quarto_repository, $session, $validator))->handle($command);
 
         // Excluir o quarto
         $command = new ExcluirQuartoCommand($quarto);
@@ -90,8 +110,8 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
 
     /**
      * @param ExcluirQuartoCommandHandler $handler
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws DBALException
+     * @throws ORMException
      * @covers ::handle
      * @depends test__construct
      */
@@ -121,7 +141,7 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
         // e marca a transação para rollback!
         // EntityManagerX::beginTransaction();
 
-        /** @var \Reservas\Domain\Quartos\Entities\Quarto $quarto */
+        /** @var Quarto $quarto */
         $quarto = EntityManagerX::getRepository(Quarto::class)->find($quarto_id);
         $command = new ExcluirQuartoCommand($quarto);
         $handler->handle($command);

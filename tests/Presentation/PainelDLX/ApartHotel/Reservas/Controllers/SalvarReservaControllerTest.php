@@ -26,13 +26,8 @@
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
 use DateTime;
-use DLX\Core\Configure;
-use DLX\Infra\EntityManagerX;
-use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
-use Doctrine\ORM\ORMException;
 use Exception;
-use PainelDLX\Application\Factories\CommandBusFactory;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\SalvarReservaController;
 use Reservas\Tests\Helpers\QuartoTesteHelper;
@@ -43,7 +38,6 @@ use SechianeX\Factories\SessionFactory;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
-use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -58,7 +52,6 @@ class SalvarReservaControllerTest extends ReservasTestCase
 
     /**
      * @return SalvarReservaController
-     * @throws ORMException
      * @throws SessionAdapterInterfaceInvalidaException
      * @throws SessionAdapterNaoEncontradoException
      */
@@ -67,14 +60,7 @@ class SalvarReservaControllerTest extends ReservasTestCase
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
-
-        $controller = new SalvarReservaController(
-            new VileX(),
-            $command_bus(),
-            $session,
-            new DoctrineTransaction(EntityManagerX::getInstance())
-        );
+        $controller = self::$painel_dlx->getContainer()->get(SalvarReservaController::class);
 
         $this->assertInstanceOf(SalvarReservaController::class, $controller);
 

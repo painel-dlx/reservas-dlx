@@ -25,11 +25,6 @@
 
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
-use DLX\Core\Configure;
-use DLX\Infra\EntityManagerX;
-use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
-use Doctrine\ORM\ORMException;
-use PainelDLX\Application\Factories\CommandBusFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\ListaPedidosController;
 use Reservas\Tests\ReservasTestCase;
@@ -39,7 +34,6 @@ use SechianeX\Factories\SessionFactory;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
-use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 
 /**
@@ -51,7 +45,6 @@ class ListaPedidosControllerTest extends ReservasTestCase
 {
     /**
      * @return ListaPedidosController
-     * @throws ORMException
      * @throws SessionAdapterInterfaceInvalidaException
      * @throws SessionAdapterNaoEncontradoException
      */
@@ -60,14 +53,7 @@ class ListaPedidosControllerTest extends ReservasTestCase
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
-
-        $controller = new ListaPedidosController(
-            new VileX(),
-            $command_bus(),
-            $session,
-            new DoctrineTransaction(EntityManagerX::getInstance())
-        );
+        $controller = self::$painel_dlx->getContainer()->get(ListaPedidosController::class);
 
         $this->assertInstanceOf(ListaPedidosController::class, $controller);
 

@@ -27,8 +27,14 @@ namespace Reservas\UseCases\Quartos\GetQuartoPorLink;
 
 
 use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Quartos\Exceptions\QuartoNaoEncontradoException;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
+/**
+ * Class GetQuartoPorLinkCommandHandler
+ * @package Reservas\UseCases\Quartos\GetQuartoPorLink
+ * @covers GetQuartoPorLinkCommandHandlerTest
+ */
 class GetQuartoPorLinkCommandHandler
 {
     /**
@@ -47,12 +53,22 @@ class GetQuartoPorLinkCommandHandler
 
     /**
      * @param GetQuartoPorLinkCommand $command
-     * @return Quarto|null
+     * @return Quarto
+     * @throws QuartoNaoEncontradoException
      */
     public function handle(GetQuartoPorLinkCommand $command): ?Quarto
     {
-        return $this->quarto_repository->findOneBy([
-            'link' => $command->getLink()
+        $link = $command->getLink();
+
+        $quarto = $this->quarto_repository->findOneBy([
+            'link' => $link,
+            'deletado' => false
         ]);
+
+        if (is_null($quarto)) {
+            throw QuartoNaoEncontradoException::porLink($link);
+        }
+
+        return $quarto;
     }
 }

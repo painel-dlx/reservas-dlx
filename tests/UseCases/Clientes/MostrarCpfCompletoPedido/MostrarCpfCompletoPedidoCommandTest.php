@@ -26,6 +26,7 @@
 namespace Reservas\Tests\UseCases\Clientes\MostrarCpfCompletoPedido;
 
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use PainelDLX\Domain\Usuarios\Exceptions\UsuarioJaPossuiGrupoException;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use PHPUnit\Framework\TestCase;
@@ -39,6 +40,7 @@ class MostrarCpfCompletoPedidoCommandTest extends TestCase
 {
     /**
      * @return MostrarCpfCompletoPedidoCommand
+     * @throws UsuarioJaPossuiGrupoException
      */
     public function test__construct(): MostrarCpfCompletoPedidoCommand
     {

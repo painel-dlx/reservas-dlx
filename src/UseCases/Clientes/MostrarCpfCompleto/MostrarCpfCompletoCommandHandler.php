@@ -31,13 +31,13 @@ use Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 class MostrarCpfCompletoCommandHandler
 {
     /**
-     * @var \Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface
+     * @var ReservaRepositoryInterface
      */
     private $reserva_repository;
 
     /**
      * MostrarCpfCompletoCommandHandler constructor.
-     * @param \Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface $reserva_repository
+     * @param ReservaRepositoryInterface $reserva_repository
      */
     public function __construct(ReservaRepositoryInterface $reserva_repository)
     {

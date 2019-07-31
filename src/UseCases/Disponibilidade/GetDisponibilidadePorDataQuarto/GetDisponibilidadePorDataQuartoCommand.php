@@ -47,7 +47,7 @@ class GetDisponibilidadePorDataQuartoCommand
 
     /**
      * GetDisponibilidadePorDataQuartoCommand constructor.
-     * @param \Reservas\Domain\Quartos\Entities\Quarto $quarto
+     * @param Quarto $quarto
      * @param DateTime $data
      */
     public function __construct(Quarto $quarto, DateTime $data)
@@ -57,7 +57,7 @@ class GetDisponibilidadePorDataQuartoCommand
     }
 
     /**
-     * @return \Reservas\Domain\Quartos\Entities\Quarto
+     * @return Quarto
      */
     public function getQuarto(): Quarto
     {

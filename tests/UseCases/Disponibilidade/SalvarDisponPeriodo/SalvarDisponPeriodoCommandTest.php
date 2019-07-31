@@ -26,6 +26,7 @@
 namespace Reservas\Tests\UseCases\Disponibilidade\SalvarDisponPeriodo;
 
 use DateTime;
+use Exception;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommand;
 use Reservas\Tests\ReservasTestCase;
@@ -39,7 +40,7 @@ class SalvarDisponPeriodoCommandTest extends ReservasTestCase
 {
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function test__construct(): SalvarDisponPeriodoCommand
     {

@@ -26,6 +26,7 @@
 namespace Reservas\Tests\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto;
 
 use DateTime;
+use Exception;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommand;
 use Reservas\Tests\ReservasTestCase;
@@ -39,7 +40,7 @@ class GetDisponibilidadePorDataQuartoCommandTest extends ReservasTestCase
 {
     /**
      * @covers ::__construct
-     * @throws \Exception
+     * @throws Exception
      */
     public function test__construct(): GetDisponibilidadePorDataQuartoCommand
     {

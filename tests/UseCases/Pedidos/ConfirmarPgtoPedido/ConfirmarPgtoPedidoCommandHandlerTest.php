@@ -27,13 +27,14 @@ namespace Reservas\Tests\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 use CPF\CPF;
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
 use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
+use PHPUnit\Framework\TestCase;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
@@ -51,50 +52,41 @@ use Reservas\Tests\ReservasTestCase;
  * @package Reservas\Tests\UseCases\Pedidos\ConfirmarPgtoPedido
  * @coversDefaultClass \Reservas\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommandHandler
  */
-class ConfirmarPgtoPedidoCommandHandlerTest extends ReservasTestCase
+class ConfirmarPgtoPedidoCommandHandlerTest extends TestCase
 {
-    use TesteComTransaction;
-
     /**
-     * @return ConfirmarPgtoPedidoCommandHandler
-     * @throws ORMException
-     */
-    public function test__construct(): ConfirmarPgtoPedidoCommandHandler
-    {
-        /** @var PedidoRepositoryInterface $pedido_repository */
-        $pedido_repository = EntityManagerX::getRepository(Pedido::class);
-        $handler = new ConfirmarPgtoPedidoCommandHandler($pedido_repository);
-
-        $this->assertInstanceOf(ConfirmarPgtoPedidoCommandHandler::class, $handler);
-
-        return $handler;
-    }
-
-    /**
-     * @param ConfirmarPgtoPedidoCommandHandler $handler
-     * @throws DBALException
-     * @throws ORMException
      * @throws Exception
      * @covers ::handle
-     * @depends test__construct
      */
-    public function test_Handle_deve_salvar_Pedido_como_pago_e_criar_Reservas(ConfirmarPgtoPedidoCommandHandler $handler)
+    public function test_Handle_deve_configurar_Pedido_como_pago_e_criar_Reservas()
     {
-        /** @var Usuario|null $usuario */
-        $usuario = EntityManagerX::getReference(Usuario::class, 2);
+        $quarto1 = $this->createMock(Quarto::class);
+        $quarto1->method('isDisponivelPeriodo')->willReturn(true);
 
-        /** @var QuartoRepositoryInterface $quarto_repository */
-        $quarto_repository = EntityManagerX::getRepository(Quarto::class);
-
-        /** @var Quarto $quarto1 */
-        $quarto1 = QuartoTesteHelper::getRandom();
         $checkin1 = new DateTime();
         $checkout1 = (clone $checkin1)->modify('+1 day');
 
-        /** @var Quarto $quarto2 */
-        $quarto2 = QuartoTesteHelper::getRandom();
+        $quarto2 = $this->createMock(Quarto::class);
+        $quarto2->method('isDisponivelPeriodo')->willReturn(true);
+
         $checkin2 = (new DateTime())->modify('+7 days');
         $checkout2 = (clone $checkin1)->modify('+1 day');
+
+        $usuario = $this->createMock(Usuario::class);
+        $usuario->method('getId')->willReturn(mt_rand());
+        $usuario->method('getNome')->willReturn('Teste de Usuário');
+
+        $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
+        $quarto_repository->method('find')->willReturnOnConsecutiveCalls($quarto1, $quarto2);
+
+        $pedido_repository = $this->createMock(PedidoRepositoryInterface::class);
+        $pedido_repository->method('update')->willReturn(null);
+
+        /** @var Quarto $quarto1 */
+        /** @var Quarto $quarto2 */
+        /** @var Usuario $usuario */
+        /** @var QuartoRepositoryInterface $quarto_repository */
+        /** @var PedidoRepositoryInterface $pedido_repository */
 
         $pedido = (new Pedido())
             ->setNome('Teste de Cliente')
@@ -106,39 +98,13 @@ class ConfirmarPgtoPedidoCommandHandlerTest extends ReservasTestCase
         $pedido->addItem($quarto1, $checkin1->format('Y-m-d'), $checkout1->format('Y-m-d'), 2, 0, 616);
         $pedido->addItem($quarto2, $checkin2->format('Y-m-d'), $checkout2->format('Y-m-d'), 2, 1, 616);
 
-        /** @var PedidoRepositoryInterface $pedido_repository */
-        $pedido_repository = EntityManagerX::getRepository(Pedido::class);
-        $pedido_repository->create($pedido);
-
         $command = new GerarReservasPedidoCommand($pedido);
         (new GerarReservasPedidoCommandHandler($quarto_repository))->handle($command);
 
         $command = new ConfirmarPgtoPedidoCommand($pedido, 'Teste Unitário', $usuario);
-        $handler->handle($command);
+        (new ConfirmarPgtoPedidoCommandHandler($pedido_repository))->handle($command);
 
-        $has_reservas_sem_id = $pedido->getReservas()->exists(function ($key, Reserva $reserva) {
-            return is_null($reserva->getId());
-        });
-
-        $this->assertNotNull($pedido->getId());
-        $this->assertFalse($has_reservas_sem_id);
-
-        // Vefificar se as reservas foram salvas no banco de dados
-        $query = '
-            select
-                *
-            from
-                dlx_reservas_cadastro
-            where 
-                reserva_pedido = :pedido_id
-        ';
-
-        $con = EntityManagerX::getInstance()->getConnection();
-
-        $sql = $con->prepare($query);
-        $sql->bindValue(':pedido_id', $pedido->getId(), ParameterType::INTEGER);
-        $sql->execute();
-
-        $this->assertEquals($pedido->getReservas()->count(), $sql->rowCount());
+        $this->assertTrue($pedido->isPago());
+        $this->assertCount(count($pedido->getItens()), $pedido->getReservas());
     }
 }

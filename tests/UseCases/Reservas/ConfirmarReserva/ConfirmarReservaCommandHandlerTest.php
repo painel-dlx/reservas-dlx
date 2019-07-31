@@ -26,109 +26,46 @@
 namespace Reservas\Tests\UseCases\Reservas\ConfirmarReserva;
 
 use DateTime;
-use DLX\Infra\EntityManagerX;
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\ParameterType;
-use Doctrine\ORM\ORMException;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PHPUnit\Framework\TestCase;
+use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface;
 use Reservas\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
 use Reservas\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommandHandler;
-use Reservas\Tests\ReservasTestCase;
 
 /**
  * Class ConfirmarReservaCommandHandlerTest
  * @package Reservas\Tests\UseCases\Reservas\ConfirmarReserva
  * @coversDefaultClass \Reservas\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommandHandler
  */
-class ConfirmarReservaCommandHandlerTest extends ReservasTestCase
+class ConfirmarReservaCommandHandlerTest extends TestCase
 {
-    use TesteComTransaction;
-
     /**
-     * @return ConfirmarReservaCommandHandler
-     * @throws ORMException
-     */
-    public function test__construct(): ConfirmarReservaCommandHandler
-    {
-        /** @var ReservaRepositoryInterface $reserva_repository */
-        $reserva_repository = EntityManagerX::getRepository(Reserva::class);
-
-        $handler = new ConfirmarReservaCommandHandler($reserva_repository);
-        $this->assertInstanceOf(ConfirmarReservaCommandHandler::class, $handler);
-
-        return $handler;
-    }
-
-    /**
-     * @param ConfirmarReservaCommandHandler $handler
      * @covers ::handle
-     * @depends test__construct
-     * @throws ORMException
-     * @throws DBALException
      */
-    public function test_Handle(ConfirmarReservaCommandHandler $handler)
+    public function test_Handle_deve_configurar_reserva_como_confirmada()
     {
-        $checkin = new DateTime();
-        $checkout = (clone $checkin)->modify('+2 days');
+        $reserva_repository = $this->createMock(ReservaRepositoryInterface::class);
+        $reserva_repository->method('update')->willReturn(null);
 
-        $query = 'insert into dlx_reservas_cadastro (
-                                    reserva_quarto,
-                                    reserva_hospede, 
-                                    reserva_cpf, 
-                                    reserva_telefone, 
-                                    reserva_email, 
-                                    reserva_checkin, 
-                                    reserva_checkout, 
-                                    reserva_adultos, 
-                                    reserva_criancas, 
-                                    reserva_valor, 
-                                    reserva_status, 
-                                    reserva_origem
-                                ) values (
-                                    :quarto,
-                                    :hospede,
-                                    :cpf,
-                                    :telefone,
-                                    :email,
-                                    :checkin,
-                                    :checkout,
-                                    :adultos,
-                                    :criancas,
-                                    :valor,
-                                    :status,
-                                    :origem
-                                )';
+        $quarto = $this->createMock(Quarto::class);
+        $quarto->method('isDisponivelPeriodo')->willReturn(true);
 
-        $con = EntityManagerX::getInstance()->getConnection();
+        $usuario = $this->createMock(Usuario::class);
+        $usuario->method('getId')->willReturn(mt_rand());
 
-        $sql = $con->prepare($query);
-        $sql->bindValue(':quarto', 1, ParameterType::INTEGER);
-        $sql->bindValue(':hospede', 'Teste de Cliente', ParameterType::STRING);
-        $sql->bindValue(':cpf', '000.000.000-00', ParameterType::STRING);
-        $sql->bindValue(':telefone', '(00) 0000-0000', ParameterType::STRING);
-        $sql->bindValue(':email', 'cliente@gmail.com', ParameterType::STRING);
-        $sql->bindValue(':checkin', $checkin->format('Y-m-d'), ParameterType::STRING);
-        $sql->bindValue(':checkout', $checkout->format('Y-m-d'), ParameterType::STRING);
-        $sql->bindValue(':adultos', 2, ParameterType::INTEGER);
-        $sql->bindValue(':criancas', 0, ParameterType::INTEGER);
-        $sql->bindValue(':valor', 0, ParameterType::INTEGER);
-        $sql->bindValue(':status', 'Pendente', ParameterType::STRING);
-        $sql->bindValue(':origem', 'Teste Unitário', ParameterType::STRING);
-        $sql->execute();
-
-        $id = $con->lastInsertId();
-
-        /** @var Reserva $reserva */
-        $reserva = EntityManagerX::getRepository(Reserva::class)->find($id);
-
+        /** @var ReservaRepositoryInterface $reserva_repository */
+        /** @var Quarto $quarto */
         /** @var Usuario $usuario */
-        $usuario = EntityManagerX::getRepository(Usuario::class)->find(2);
 
-        $command = new ConfirmarReservaCommand($reserva, $usuario, 'Reserva confirmada.');
-        $handler->handle($command);
+        $checkin = (new DateTime())->modify('+1 day');
+        $checkout = (clone $checkin)->modify('+3 days');
+
+        $reserva = new Reserva($quarto, $checkin, $checkout, 1);
+
+        $command = new ConfirmarReservaCommand($reserva, $usuario, 'Teste');
+        (new ConfirmarReservaCommandHandler($reserva_repository))->handle($command);
 
         $this->assertTrue($reserva->isConfirmada());
     }

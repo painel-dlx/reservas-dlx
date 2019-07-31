@@ -35,7 +35,7 @@ class GetQuartoPorIdCommandTest extends ReservasTestCase
         $quarto_id = mt_rand(1000, 9999);
         $command = new GetQuartoPorIdCommand($quarto_id);
 
-        $this->assertIsInt($command->getQuartoId());
-        $this->assertEquals($quarto_id, $command->getQuartoId());
+        $this->assertIsInt($command->getId());
+        $this->assertEquals($quarto_id, $command->getId());
     }
 }

@@ -194,18 +194,18 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                     </tr>
                     <?php endif;
 
-                    /** @var stdClass $item */
+                    /** @var stdClass|array $item */
                     foreach ($pedido->getItens() as $item) :
-                        $checkin = new DateTime($item->checkin);
-                        $checkout = new DateTime($item->checkout); ?>
+                        $checkin = new DateTime($item['checkin']);
+                        $checkout = new DateTime($item['checkout']); ?>
                         <tr>
-                            <td headers="quarto>"><?php echo "{$item->quartoNome} ({$item->quartoID})" ?></td>
+                            <td headers="quarto>"><?php echo "{$item['quartoNome']} ({$item['quartoID']})" ?></td>
                             <td headers="checkin"><?php echo $checkin->format('d/m/Y') ?></td>
                             <td headers="checkout"><?php echo $checkout->format('d/m/Y') ?></td>
                             <td headers="hospedes" style="text-align: center">
-                                <?php printf('%d adultos, %d crianças', $item->adultos, $item->criancas) ?>
+                                <?php printf('%d adultos, %d crianças', $item['adultos'], $item['criancas']) ?>
                             </td>
-                            <td headers="valor"><?php echo 'R$ ' . number_format($item->valor, 2, ',', '') ?></td>
+                            <td headers="valor"><?php echo 'R$ ' . number_format($item['valor'], 2, ',', '') ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

@@ -26,7 +26,10 @@
 namespace Reservas\Tests\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto;
 
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
+use Exception;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
@@ -43,11 +46,11 @@ class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
 {
     /**
      * @return GetDisponibilidadePorDataQuartoCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): GetDisponibilidadePorDataQuartoCommandHandler
     {
-        /** @var \Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface $disponibilidade_repository */
+        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
         $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
         $handler = new GetDisponibilidadePorDataQuartoCommandHandler($disponibilidade_repository);
 
@@ -57,7 +60,7 @@ class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      * @covers ::handle
      * @depends test__construct
      */
@@ -75,7 +78,9 @@ class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
     }
 
     /**
-     * @throws \Exception
+     * @param GetDisponibilidadePorDataQuartoCommandHandler $handler
+     * @throws ORMException
+     * @throws DBALException
      * @covers ::handle
      * @depends test__construct
      */
