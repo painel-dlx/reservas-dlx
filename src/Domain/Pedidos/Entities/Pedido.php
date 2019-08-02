@@ -27,6 +27,7 @@ namespace Reservas\Domain\Pedidos\Entities;
 
 
 use CPF\CPF;
+use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -71,7 +72,7 @@ class Pedido extends Entity
     private $status = 'Pendente';
     /** @var PedidoPgtoCartao|null */
     private $pgto_cartao;
-    /** @var array */
+    /** @var Collection */
     private $itens;
     /** @var Collection */
     private $reservas;
@@ -83,6 +84,7 @@ class Pedido extends Entity
      */
     public function __construct()
     {
+        $this->itens = new ArrayCollection();
         $this->reservas = new ArrayCollection();
         $this->historico = new ArrayCollection();
     }
@@ -250,44 +252,42 @@ class Pedido extends Entity
     }
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function getItens(): array
+    public function getItens(): Collection
     {
-        return (array)$this->itens;
-    }
-
-    /**
-     * @param array $itens
-     * @return Pedido
-     */
-    public function setItens(array $itens): Pedido
-    {
-        $this->itens = $itens;
-        return $this;
+        return $this->itens;
     }
 
     /**
      * @param Quarto $quarto
-     * @param string $checkin
-     * @param string $checkout
+     * @param DateTime $checkin
+     * @param DateTime $checkout
+     * @param int $quantidade
      * @param int $adultos
      * @param int $criancas
-     * @param float $valor
      * @return Pedido
      */
-    public function addItem(Quarto $quarto, string $checkin, string $checkout, int $adultos, int $criancas, float $valor): self
+    public function addItem(
+        Quarto $quarto,
+        DateTime $checkin,
+        DateTime $checkout,
+        int $quantidade,
+        int $adultos,
+        int $criancas
+    ): self
     {
-        $item = new stdClass();
-        $item->quartoID = $quarto->getId();
-        $item->quartoNome = $quarto->getNome();
-        $item->checkin = $checkin;
-        $item->checkout = $checkout;
-        $item->adultos = $adultos;
-        $item->criancas = $criancas;
-        $item->valor = $valor;
+        $pedido_item = new PedidoItem(
+            $this,
+            $quarto,
+            $checkin,
+            $checkout,
+            $quantidade,
+            $adultos,
+            $criancas
+        );
 
-        $this->itens[] = $item;
+        $this->itens->add($pedido_item);
         return $this;
     }
 

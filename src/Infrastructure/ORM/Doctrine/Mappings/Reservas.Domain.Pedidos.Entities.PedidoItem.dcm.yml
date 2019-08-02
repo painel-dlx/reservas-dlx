@@ -1,0 +1,43 @@
+Reservas\Domain\Pedidos\Entities\PedidoItem:
+    type: entity
+    table: reservas_pedido_itens
+    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoItemRepository
+    id:
+        id:
+            type: integer
+            id: true
+            nullable: false
+            generator:
+                strategy: auto
+            column: pedido_item_id
+    fields:
+        checkin:
+            type: datetime
+            nullable: false
+        checkout:
+            type: datetime
+            nullable: false
+        quantidade:
+            type: integer
+            nullable: false
+        adultos:
+            type: integer
+            nullable: false
+        criancas:
+            type: integer
+            nullable: false
+        valor_total:
+            type: float
+            nullable: false
+    manyToOne:
+        pedido:
+            targetEntity: Pedido
+            inversedBy: itens
+            joinColumns:
+                pedido_id:
+                    referencedColumnName: pedido_id
+        quarto:
+            targetEntity: Reservas\Domain\Quartos\Entities\Quarto
+            joinColumns:
+                quarto_id:
+                    referencedColumnName: quarto_id

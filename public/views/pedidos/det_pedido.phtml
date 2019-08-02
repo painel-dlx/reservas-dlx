@@ -26,6 +26,7 @@
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoHistorico;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Vilex\VileX;
 
@@ -188,24 +189,24 @@ $usuario_logado = $this->getAtributo('usuario-logado');
 
                     <tbody>
                     <?php
-                    if (count($pedido->getItens()) < 1) : ?>
-                    <tr>
-                        <td colspan="5">Nenhum item adicionado ao pedido.</td>
-                    </tr>
+                    if ($pedido->getItens()->isEmpty()) : ?>
+                        <tr>
+                            <td colspan="5">Nenhum item adicionado ao pedido.</td>
+                        </tr>
                     <?php endif;
 
-                    /** @var stdClass|array $item */
-                    foreach ($pedido->getItens() as $item) :
-                        $checkin = new DateTime($item['checkin']);
-                        $checkout = new DateTime($item['checkout']); ?>
+                    /** @var PedidoItem $pedido_item */
+                    foreach ($pedido->getItens() as $pedido_item) :  ?>
                         <tr>
-                            <td headers="quarto>"><?php echo "{$item['quartoNome']} ({$item['quartoID']})" ?></td>
-                            <td headers="checkin"><?php echo $checkin->format('d/m/Y') ?></td>
-                            <td headers="checkout"><?php echo $checkout->format('d/m/Y') ?></td>
-                            <td headers="hospedes" style="text-align: center">
-                                <?php printf('%d adultos, %d crianças', $item['adultos'], $item['criancas']) ?>
+                            <td headers="quarto>">
+                                <?php echo $pedido_item->getQuarto() ?>
                             </td>
-                            <td headers="valor"><?php echo 'R$ ' . number_format($item['valor'], 2, ',', '') ?></td>
+                            <td headers="checkin"><?php echo $pedido_item->getCheckin()->format('d/m/Y') ?></td>
+                            <td headers="checkout"><?php echo $pedido_item->getCheckout()->format('d/m/Y') ?></td>
+                            <td headers="hospedes" style="text-align: center">
+                                <?php printf('%d adultos, %d crianças', $pedido_item->getAdultos(), $pedido_item->getCriancas()) ?>
+                            </td>
+                            <td headers="valor"><?php echo 'R$ ' . number_format($pedido_item->getValorTotal(), 2, ',', '') ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

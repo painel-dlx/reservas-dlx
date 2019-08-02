@@ -111,7 +111,7 @@ $status = $this->getAtributo('status-pedidos');
                             <?php echo $pedido->getEmail() ?>
                         </span>
                     </td>
-                    <td headers="itens" style="text-align: center"><?php echo count($pedido->getItens()) ?></td>
+                    <td headers="itens" style="text-align: center"><?php echo $pedido->getItens()->count() ?></td>
                     <td headers="valor"><?php echo 'R$ ' . number_format($pedido->getValorTotal(), 2, ',', '') ?></td>
                     <td headers="status">
                         <span class="status-pedido -<?php echo strtolower($pedido->getStatus()) ?>">

@@ -64,4 +64,18 @@ create table dlx_pedido_historico (
     motivo text not null,
     constraint FK_pedido_historico_pedido_id foreign key (pedido_id) references dlx_reservas_pedidos (pedido_id) on delete cascade,
     constraint FK_pedido_historico_usuario_id foreign key (usuario_id) references dlx_usuarios (usuario_id)
-) engine=innodb;;
+) engine=innodb;
+
+-- Itens de pedidos ----------------------------------------------------------------------------------------------------
+drop table if exists reservas_pedido_itens;
+create table reservas_pedido_itens (
+    pedido_item_id int not null auto_increment primary key,
+    pedido_id int not null references dlx_reservas_pedidos (pedido_id),
+    quarto_id int not null references dlx_reservas_quartos (quarto_id),
+    checkin datetime not null,
+    checkout datetime  not null,
+    quantidade int not null check (quantidade > 0),
+    adultos int not null check (adultos > 0),
+    criancas int not null,
+    valor_total decimal(10,4)
+) engine=innodb;

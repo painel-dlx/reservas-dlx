@@ -47,10 +47,6 @@ Reservas\Domain\Pedidos\Entities\Pedido:
             option:
                 default: Pendente
             column: pedido_status
-        itens:
-            type: object
-            nullable: false
-            column: pedido_itens
     oneToOne:
         pgto_cartao:
             targetEntity: PedidoPgtoCartao
@@ -59,6 +55,12 @@ Reservas\Domain\Pedidos\Entities\Pedido:
                 pedido_id:
                     referencedColumnName: pgto_pedido
     oneToMany:
+        itens:
+            targetEntity: PedidoItem
+            mappedBy: pedido
+            orderBy: { checkin: asc }
+            cascade:
+                - persist
         reservas:
             targetEntity: Reservas\Domain\Reservas\Entities\Reserva
             mappedBy: pedido
