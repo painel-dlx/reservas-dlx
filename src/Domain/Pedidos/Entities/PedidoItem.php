@@ -83,6 +83,8 @@ class PedidoItem extends Entity
         $this->quantidade = $quantidade;
         $this->adultos = $adultos;
         $this->criancas = $criancas;
+
+        $this->calcularValorTotal();
     }
 
     /**
@@ -154,6 +156,16 @@ class PedidoItem extends Entity
      */
     public function getValorTotal(): ?float
     {
+        $this->calcularValorTotal();
+        return $this->valor_total;
+    }
+
+    /**
+     * Calcular o valor total do item
+     * @return void
+     */
+    private function calcularValorTotal(): void
+    {
         $this->valor_total = 0;
         $qtde_hospedes = $this->getAdultos() + $this->getCriancas();
 
@@ -162,7 +174,5 @@ class PedidoItem extends Entity
         });
 
         $this->valor_total *= $qtde_hospedes;
-
-        return $this->valor_total;
     }
 }
