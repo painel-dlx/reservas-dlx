@@ -198,6 +198,17 @@ class Pedido extends Entity
     }
 
     /**
+     * Adicionar um valor ao valor total do pedido
+     * @param float $valor
+     * @return Pedido
+     */
+    public function addValor(float $valor): self
+    {
+        $this->valor_total += $valor;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getFormaPgto(): string
@@ -286,6 +297,8 @@ class Pedido extends Entity
             $adultos,
             $criancas
         );
+
+        $this->addValor($pedido_item->getValorTotal());
 
         $this->itens->add($pedido_item);
         return $this;
