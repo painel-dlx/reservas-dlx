@@ -28,6 +28,7 @@ namespace Reservas\Domain\Pedidos\Entities;
 
 use DateTime;
 use DLX\Domain\Entities\Entity;
+use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
 
 /**
@@ -153,6 +154,15 @@ class PedidoItem extends Entity
      */
     public function getValorTotal(): ?float
     {
+        $this->valor_total = 0;
+        $qtde_hospedes = $this->getAdultos() + $this->getCriancas();
+
+        $this->getQuarto()->getDispon($this->getCheckin(), $this->getCheckout())->map(function (Disponibilidade $disponibilidade) use ($qtde_hospedes) {
+            $this->valor_total += $disponibilidade->getValorPorQtdePessoas($qtde_hospedes);
+        });
+
+        $this->valor_total *= $qtde_hospedes;
+
         return $this->valor_total;
     }
 }
