@@ -31,6 +31,7 @@ use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Exception;
 use PainelDLX\Domain\Common\Entities\LogRegistroTrait;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Validators\PedidoValidator;
@@ -209,6 +210,17 @@ class Pedido extends Entity
     }
 
     /**
+     * Excluir um determinado valor do total do pedido
+     * @param float $valor
+     * @return Pedido
+     */
+    public function subtrairValor(float $valor): self
+    {
+        $this->valor_total -= $valor;
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getFormaPgto(): string
@@ -305,6 +317,22 @@ class Pedido extends Entity
     }
 
     /**
+     * @param int $indice
+     * @return Pedido
+     */
+    public function retirarItem(int $indice): self
+    {
+        /** @var PedidoItem $item_retirar */
+        $item_retirar = $this->itens->get($indice);
+        $valor_item = $item_retirar->getValorTotal();
+
+        $this->itens->removeElement($item_retirar);
+        $this->subtrairValor($valor_item);
+
+        return $this;
+    }
+
+    /**
      * @return Collection
      */
     public function getReservas(): Collection
@@ -346,6 +374,7 @@ class Pedido extends Entity
      * @param string $motivo
      * @param Usuario $usuario
      * @return Pedido
+     * @throws Exception
      */
     public function addHistorico(string $status, string $motivo, Usuario $usuario): self
     {
@@ -389,6 +418,7 @@ class Pedido extends Entity
      * @param string $motivo
      * @param Usuario $usuario
      * @return Pedido
+     * @throws Exception
      */
     public function pago(string $motivo, Usuario $usuario): self
     {
@@ -411,6 +441,7 @@ class Pedido extends Entity
      * @param string $motivo
      * @param Usuario $usuario
      * @return Pedido
+     * @throws Exception
      */
     public function cancelado(string $motivo, Usuario $usuario): self
     {
