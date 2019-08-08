@@ -157,7 +157,7 @@ class PedidoItem extends Entity
     public function getValorTotal(): ?float
     {
         //$this->calcularValorTotal();
-        return $this->valor_total;
+        return $this->valor_total ?? 0;
     }
 
     /**
