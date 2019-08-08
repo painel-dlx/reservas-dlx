@@ -48,12 +48,22 @@ Reservas\Domain\Pedidos\Entities\Pedido:
                 default: Pendente
             column: pedido_status
     oneToOne:
-        pgto_cartao:
-            targetEntity: PedidoPgtoCartao
+        cartao_credito:
+            targetEntity: PedidoCartaoCredito
             mappedBy: pedido
+            cascade:
+                - persist
             joinColumns:
                 pedido_id:
-                    referencedColumnName: pgto_pedido
+                    referencedColumnName: pedido_id
+        endereco:
+            targetEntity: PedidoEndereco
+            mappedBy: pedido
+            cascade:
+                - persist
+            joinColumns:
+                pedido_id:
+                    referencedColumnName: pedido_id
     oneToMany:
         itens:
             targetEntity: PedidoItem

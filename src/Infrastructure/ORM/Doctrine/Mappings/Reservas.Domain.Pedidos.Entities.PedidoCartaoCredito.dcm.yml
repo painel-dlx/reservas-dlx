@@ -1,0 +1,40 @@
+Reservas\Domain\Pedidos\Entities\PedidoCartaoCredito:
+    type: entity
+    table: reservas_pedido_cartao_credito
+    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoCartaoCreditoRepository
+    id:
+        pedido:
+            associationKey: true
+            id: true
+    fields:
+        dono:
+            type: string
+            nullable: false
+            length: 100
+        numero_cartao:
+            type: string
+            nullable: false
+            length: 20
+        validade:
+            type: string
+            nullable: false
+            length: 7
+        codigo_seguranca:
+            type: string
+            nullable: false
+            length: 5
+        valor:
+            type: float
+            nullable: false
+        parcelas:
+            type: integer
+            nullable: false
+            options:
+                default: 1
+    oneToOne:
+        pedido:
+            targetEntity: Pedido
+            inversedBy: cartao_credito
+            joinColumns:
+                pedido_id:
+                    referencedColumnName: pedido_id

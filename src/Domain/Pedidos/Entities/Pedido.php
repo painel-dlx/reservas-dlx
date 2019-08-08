@@ -71,8 +71,10 @@ class Pedido extends Entity
     private $forma_pgto = 'digitada';
     /** @var string */
     private $status = 'Pendente';
-    /** @var PedidoPgtoCartao|null */
-    private $pgto_cartao;
+    /** @var PedidoCartaoCredito|null */
+    private $cartao_credito;
+    /** @var PedidoEndereco|null */
+    private $endereco;
     /** @var Collection */
     private $itens;
     /** @var Collection */
@@ -257,20 +259,38 @@ class Pedido extends Entity
     }
 
     /**
-     * @return PedidoPgtoCartao|null
+     * @return PedidoCartaoCredito|null
      */
-    public function getPgtoCartao(): ?PedidoPgtoCartao
+    public function getCartaoCredito(): ?PedidoCartaoCredito
     {
-        return $this->pgto_cartao;
+        return $this->cartao_credito;
     }
 
     /**
-     * @param PedidoPgtoCartao|null $pgto_cartao
+     * @param PedidoCartaoCredito|null $cartao_credito
      * @return Pedido
      */
-    public function setPgtoCartao(?PedidoPgtoCartao $pgto_cartao): Pedido
+    public function setCartaoCredito(?PedidoCartaoCredito $cartao_credito): Pedido
     {
-        $this->pgto_cartao = $pgto_cartao;
+        $this->cartao_credito = $cartao_credito;
+        return $this;
+    }
+
+    /**
+     * @return PedidoEndereco|null
+     */
+    public function getEndereco(): ?PedidoEndereco
+    {
+        return $this->endereco;
+    }
+
+    /**
+     * @param PedidoEndereco|null $endereco
+     * @return Pedido
+     */
+    public function setEndereco(?PedidoEndereco $endereco): Pedido
+    {
+        $this->endereco = $endereco;
         return $this;
     }
 

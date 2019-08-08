@@ -146,6 +146,7 @@ class PedidoTest extends ReservasTestCase
     /**
      * @param Pedido $pedido
      * @throws UsuarioJaPossuiGrupoException
+     * @throws Exception
      * @covers ::addHistorico
      * @depends test__construct
      */
@@ -226,6 +227,7 @@ class PedidoTest extends ReservasTestCase
     /**
      * @param Pedido $pedido
      * @throws UsuarioJaPossuiGrupoException
+     * @throws Exception
      * @covers ::pago
      * @depends test__construct
      */

@@ -79,3 +79,31 @@ create table reservas_pedido_itens (
     criancas int not null,
     valor_total decimal(10,4)
 ) engine=innodb;
+
+
+-- Dados do Cartão de Crédito ------------------------------------------------------------------------------------------
+drop table if exists reservas_pedido_cartao_credito;
+create table reservas_pedido_cartao_credito (
+    pedido_id int not null references dlx_reservas_pedidos (pedido_id),
+    dono varchar(100) not null,
+    numero_cartao varchar(20) not null,
+    validade varchar(7) not null,
+    codigo_seguranca varchar(5),
+    valor float not null,
+    parcelas int not null default 1 check (parcelas > 0)
+) engine=innodb;
+
+drop table if exists reservas_pedidos_enderecos;
+create table reservas_pedidos_enderecos (
+    pedido_id int not null references dlx_reservas_pedidos (pedido_id),
+    cep varchar(8) not null,
+    logradouro varchar(200) not null,
+    numero varchar(10),
+    bairro varchar(50) not null,
+    cidade varchar(50) not null,
+    uf char(2) not null,
+    complemento varchar(200)
+) engine=innodb;
+
+insert into reservas_pedido_cartao_credito (pedido_id, dono, numero_cartao, validade, codigo_seguranca, valor, parcelas)
+    select pgto_pedido, pgto_cartao_dono, pgto_cartao_numero, pgto_cartao_expiracao, pgto_cartao_codseg, pgto_valor, pgto_parcelas from dlx_reservas_pgto_cartao

@@ -1,0 +1,44 @@
+Reservas\Domain\Pedidos\Entities\PedidoEndereco:
+    type: entity
+    table: reservas_pedidos_enderecos
+    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoEnderecoRepository
+    id:
+        pedido:
+            associationKey: true
+            id: true
+    fields:
+        cep:
+            type: string
+            nullable: false
+            length: 8
+        logradouro:
+            type: string
+            nullable: false
+            length: 200
+        numero:
+            type: string
+            nullable: true
+            length: 10
+        bairro:
+            type: string
+            nullable: false
+            length: 50
+        cidade:
+            type: string
+            nullable: false
+            length: 50
+        uf:
+            type: string
+            nullable: false
+            length: 2
+        complemento:
+            type: string
+            nullable: true
+            length: 200
+    oneToOne:
+        pedido:
+            targetEntity: Pedido
+            inversedBy: endereco
+            joinColumns:
+                pedido_id:
+                    referencedColumnName: pedido_id

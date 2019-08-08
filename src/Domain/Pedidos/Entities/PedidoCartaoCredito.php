@@ -27,38 +27,55 @@ namespace Reservas\Domain\Pedidos\Entities;
 
 
 use DLX\Domain\Entities\Entity;
-use Reservas\Domain\Pedidos\Entities\Pedido;
 
-class PedidoPgtoCartao extends Entity
+/**
+ * Class PedidoCartaoCredito
+ * @package Reservas\Domain\Pedidos\Entities
+ * @covers PedidoCartaoCreditoTest
+ */
+class PedidoCartaoCredito extends Entity
 {
     /** @var Pedido */
     private $pedido;
-    /** @var float */
-    private $valor;
+    /** @var string */
+    private $dono;
     /** @var string */
     private $numero_cartao;
     /** @var string */
-    private $dono_cartao;
-    /** @var string */
-    private $expiracao;
+    private $validade;
     /** @var string */
     private $codigo_seguranca;
+    /** @var float */
+    private $valor;
     /** @var int */
-    private $qtde_parcelas = 1;
+    private $parcelas = 1;
 
     /**
      * PedidoPgtoCartao constructor.
+     * @param Pedido $pedido
+     * @param string $dono
      * @param string $numero_cartao
-     * @param string $dono_cartao
-     * @param string $expiracao
+     * @param string $validade
      * @param string $codigo_seguranca
+     * @param float $valor
+     * @param int $parcelas
      */
-    public function __construct(string $numero_cartao, string $dono_cartao, string $expiracao, string $codigo_seguranca)
-    {
+    public function __construct(
+        Pedido $pedido,
+        string $dono,
+        string $numero_cartao,
+        string $validade,
+        string $codigo_seguranca,
+        float $valor,
+        int $parcelas = 1
+    ) {
+        $this->pedido = $pedido;
+        $this->dono = $dono;
         $this->numero_cartao = $numero_cartao;
-        $this->dono_cartao = $dono_cartao;
-        $this->expiracao = $expiracao;
+        $this->validade = $validade;
         $this->codigo_seguranca = $codigo_seguranca;
+        $this->valor = $valor;
+        $this->parcelas = $parcelas;
     }
 
     /**
@@ -70,11 +87,11 @@ class PedidoPgtoCartao extends Entity
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getValor(): float
+    public function getDono(): string
     {
-        return $this->valor;
+        return $this->dono;
     }
 
     /**
@@ -88,17 +105,9 @@ class PedidoPgtoCartao extends Entity
     /**
      * @return string
      */
-    public function getDonoCartao(): string
+    public function getValidade(): string
     {
-        return $this->dono_cartao;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExpiracao(): string
-    {
-        return $this->expiracao;
+        return $this->validade;
     }
 
     /**
@@ -110,10 +119,18 @@ class PedidoPgtoCartao extends Entity
     }
 
     /**
+     * @return float
+     */
+    public function getValor(): float
+    {
+        return $this->valor;
+    }
+
+    /**
      * @return int
      */
-    public function getQtdeParcelas(): int
+    public function getParcelas(): int
     {
-        return $this->qtde_parcelas;
+        return $this->parcelas;
     }
 }
