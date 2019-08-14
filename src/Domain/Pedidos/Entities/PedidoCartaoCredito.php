@@ -27,6 +27,7 @@ namespace Reservas\Domain\Pedidos\Entities;
 
 
 use DLX\Domain\Entities\Entity;
+use Reservas\Domain\Pedidos\Services\IdentificarBandeiraCartao;
 
 /**
  * Class PedidoCartaoCredito
@@ -39,6 +40,8 @@ class PedidoCartaoCredito extends Entity
     private $pedido;
     /** @var string */
     private $dono;
+    /** @var string|null */
+    private $bandeira;
     /** @var string */
     private $numero_cartao;
     /** @var string */
@@ -76,6 +79,8 @@ class PedidoCartaoCredito extends Entity
         $this->codigo_seguranca = $codigo_seguranca;
         $this->valor = $valor;
         $this->parcelas = $parcelas;
+
+        $this->identificarBandeira();
     }
 
     /**
@@ -92,6 +97,14 @@ class PedidoCartaoCredito extends Entity
     public function getDono(): string
     {
         return $this->dono;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBandeira(): ?string
+    {
+        return $this->bandeira;
     }
 
     /**
@@ -132,5 +145,15 @@ class PedidoCartaoCredito extends Entity
     public function getParcelas(): int
     {
         return $this->parcelas;
+    }
+
+    /**
+     * Identificar a bandeira do número de cartão de crédito
+     * @return PedidoCartaoCredito
+     */
+    private function identificarBandeira(): self
+    {
+        $this->bandeira = (new IdentificarBandeiraCartao())->executar($this->getNumeroCartao());
+        return $this;
     }
 }

@@ -46,7 +46,7 @@ class PedidoCartaoCreditoTest extends TestCase
         $pedido = $this->createMock(Pedido::class);
 
         $dono = 'Dono do Cartão';
-        $numero_cartao = '0000-0000-0000-0000';
+        $numero_cartao = '5400-0000-0000-0000';
         $validade = '12/2030';
         $codigo_seguranca = '123';
         $valor = 1234.;
@@ -68,6 +68,9 @@ class PedidoCartaoCreditoTest extends TestCase
         $this->assertSame($codigo_seguranca, $cartao_credito->getCodigoSeguranca());
         $this->assertSame($valor, $cartao_credito->getValor());
         $this->assertEquals(1, $cartao_credito->getParcelas());
+
+        // O construct identifica a bandeira do cartão
+        $this->assertEquals('MasterCard', $cartao_credito->getBandeira());
 
         return $cartao_credito;
     }
