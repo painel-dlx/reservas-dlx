@@ -104,6 +104,10 @@ class PedidoCartaoCredito extends Entity
      */
     public function getBandeira(): ?string
     {
+        if (is_null($this->bandeira)) {
+            $this->identificarBandeira();
+        }
+
         return $this->bandeira;
     }
 
