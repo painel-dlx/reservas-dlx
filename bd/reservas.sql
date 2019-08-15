@@ -96,7 +96,7 @@ create table reservas_pedido_cartao_credito (
 drop table if exists reservas_pedidos_enderecos;
 create table reservas_pedidos_enderecos (
     pedido_id int not null references dlx_reservas_pedidos (pedido_id),
-    cep varchar(8) not null,
+    cep varchar(9) not null,
     logradouro varchar(200) not null,
     numero varchar(10),
     bairro varchar(50) not null,
@@ -106,4 +106,8 @@ create table reservas_pedidos_enderecos (
 ) engine=innodb;
 
 insert into reservas_pedido_cartao_credito (pedido_id, dono, numero_cartao, validade, codigo_seguranca, valor, parcelas)
-    select pgto_pedido, pgto_cartao_dono, pgto_cartao_numero, pgto_cartao_expiracao, pgto_cartao_codseg, pgto_valor, pgto_parcelas from dlx_reservas_pgto_cartao
+    select pgto_pedido, pgto_cartao_dono, pgto_cartao_numero, pgto_cartao_expiracao, pgto_cartao_codseg, pgto_valor, pgto_parcelas from dlx_reservas_pgto_cartao;
+
+-- Excluir o campo pedido_itens da tabela dlx_reservas_pedidos pois não será mais utilizados
+-- OBS: Executar esse drop apenas depois de ajustar os registros do PedidoItem
+alter table dlx_reservas_pedidos drop pedido_itens;
