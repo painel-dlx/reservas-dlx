@@ -27,9 +27,10 @@ namespace Reservas\Infrastructure\ORM\Doctrine\Repositories;
 
 
 use DLX\Infrastructure\ORM\Doctrine\Repositories\EntityRepository;
+use PainelDLX\Infrastructure\ORM\Doctrine\Repositories\AbstractPainelDLXRepository;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
-class PedidoRepository extends EntityRepository implements PedidoRepositoryInterface
+class PedidoRepository extends AbstractPainelDLXRepository implements PedidoRepositoryInterface
 {
 
 }

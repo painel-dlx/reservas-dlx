@@ -26,30 +26,13 @@
 namespace Reservas\Domain\Pedidos\Services;
 
 
-use DateTime;
 use Exception;
-use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Reservas\Domain\Quartos\Entities\Quarto;
-use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Reservas\Entities\Reserva;
 
 class Itens2Reservas
 {
-    /**
-     * @var QuartoRepositoryInterface
-     */
-    private $quarto_repository;
-
-    /**
-     * Itens2Reservas constructor.
-     * @param QuartoRepositoryInterface $quarto_repository
-     */
-    public function __construct(QuartoRepositoryInterface $quarto_repository)
-    {
-        $this->quarto_repository = $quarto_repository;
-    }
-
     /**
      * @param Pedido $pedido
      * @throws Exception
@@ -58,26 +41,18 @@ class Itens2Reservas
     {
         $itens = $pedido->getItens();
 
+        /** @var PedidoItem $item */
         foreach ($itens as $item) {
-            $item = (array)$item;
+            $reserva = new Reserva(
+                $item->getQuarto(),
+                $item->getCheckin(),
+                $item->getCheckout(),
+                $item->getAdultos()
+            );
 
-            /** @var Quarto $quarto */
-            $quarto = $this->quarto_repository->find($item['quartoID']);
-            $checkin = new DateTime($item['checkin']);
-            $checkout = new DateTime($item['checkout']);
-            $qtde_hospedes = $item['adultos'] + $item['criancas'];
+            $reserva->setValor($item->getValorTotal());
+            $reserva->setCriancas($item->getCriancas());
 
-            $valor_reserva = 0.;
-
-            $quarto->getDispon($checkin, $checkout)->map(function (Disponibilidade $dispon) use (&$valor_reserva, $qtde_hospedes) {
-                $valor_reserva += $dispon->getValorPorQtdePessoas($qtde_hospedes);
-            });
-
-            $reserva = new Reserva($quarto, $checkin, $checkout, $item['adultos']);
-            $reserva->setCriancas($item['criancas']);
-            $reserva->setValor($valor_reserva);
-
-            // Dados do hóspede
             $reserva->setHospede($pedido->getNome());
             $reserva->setCpf($pedido->getCpf());
             $reserva->setTelefone($pedido->getTelefone());

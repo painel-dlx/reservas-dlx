@@ -100,7 +100,7 @@ class ListaPedidosController extends PainelDLXController
             /* @see ListaPedidosCommandHandler */
             $lista_pedidos = $this->command_bus->handle(new ListaPedidosCommand(
                 $criteria,
-                ['e.status' => 'desc'],
+                ['e.id' => 'asc'],
                 $get['qtde'],
                 $get['offset']
             ));
