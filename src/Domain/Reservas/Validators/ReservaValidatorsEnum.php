@@ -46,7 +46,7 @@ class ReservaValidatorsEnum
     ];
 
     const CANCELAR = [
-        ValidarCheckinReserva::class,
+        // ValidarCheckinReserva::class, @todo: retirado para verificar se não dá problema.
         ValidarCancelarReserva::class
     ];
 }
