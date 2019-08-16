@@ -176,6 +176,6 @@ class PedidoItem extends Entity
             $this->valor_total += $disponibilidade->getValorPorQtdePessoas($qtde_hospedes);
         });
 
-        $this->valor_total *= $qtde_hospedes;
+        $this->valor_total *= $this->getQuantidade();
     }
 }
