@@ -48,10 +48,10 @@ class PedidoCartaoCredito extends Entity
     private $validade;
     /** @var string */
     private $codigo_seguranca;
-    /** @var float */
-    private $valor;
     /** @var int */
     private $parcelas = 1;
+    /** @var float */
+    private $valor;
 
     /**
      * PedidoPgtoCartao constructor.
@@ -60,7 +60,6 @@ class PedidoCartaoCredito extends Entity
      * @param string $numero_cartao
      * @param string $validade
      * @param string $codigo_seguranca
-     * @param float $valor
      * @param int $parcelas
      */
     public function __construct(
@@ -69,7 +68,6 @@ class PedidoCartaoCredito extends Entity
         string $numero_cartao,
         string $validade,
         string $codigo_seguranca,
-        float $valor,
         int $parcelas = 1
     ) {
         $this->pedido = $pedido;
@@ -77,8 +75,8 @@ class PedidoCartaoCredito extends Entity
         $this->numero_cartao = $numero_cartao;
         $this->validade = $validade;
         $this->codigo_seguranca = $codigo_seguranca;
-        $this->valor = $valor;
         $this->parcelas = $parcelas;
+        $this->valor = $pedido->getValorTotal();
 
         $this->identificarBandeira();
     }
@@ -140,6 +138,7 @@ class PedidoCartaoCredito extends Entity
      */
     public function getValor(): float
     {
+        $this->valor = $this->getPedido()->getValorTotal();
         return $this->valor;
     }
 

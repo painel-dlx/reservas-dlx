@@ -36,28 +36,28 @@ use PHPUnit\Framework\TestCase;
  */
 class PedidoCartaoCreditoTest extends TestCase
 {
-
     /**
      * @return PedidoCartaoCredito
      */
     public function test__construct(): PedidoCartaoCredito
     {
-        /** @var Pedido $pedido */
-        $pedido = $this->createMock(Pedido::class);
-
         $dono = 'Dono do Cartão';
         $numero_cartao = '5400-0000-0000-0000';
         $validade = '12/2030';
         $codigo_seguranca = '123';
         $valor = 1234.;
 
+        $pedido = $this->createMock(Pedido::class);
+        $pedido->method('getValorTotal')->willReturn($valor);
+
+        /** @var Pedido $pedido */
+
         $cartao_credito = new PedidoCartaoCredito(
             $pedido,
             $dono,
             $numero_cartao,
             $validade,
-            $codigo_seguranca,
-            $valor
+            $codigo_seguranca
         );
 
         $this->assertInstanceOf(PedidoCartaoCredito::class, $cartao_credito);
