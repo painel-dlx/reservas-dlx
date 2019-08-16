@@ -26,6 +26,7 @@
 namespace Reservas\UseCases\Pedidos\CancelarPedido;
 
 
+use Exception;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
@@ -48,6 +49,7 @@ class CancelarPedidoCommandHandler
     /**
      * @param CancelarPedidoCommand $command
      * @return Pedido|null
+     * @throws Exception
      */
     public function handle(CancelarPedidoCommand $command): ?Pedido
     {

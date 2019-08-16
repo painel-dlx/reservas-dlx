@@ -25,6 +25,7 @@
 
 use DLX\Core\Configure;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Vilex\VileX;
 
 /**
@@ -121,16 +122,18 @@ $base_url = Configure::get('app', 'base-url');
         </thead>
 
         <tbody>
-        <?php foreach ($pedido->getItens() as $item) : ?>
+        <?php
+        /** @var PedidoItem $item */
+        foreach ($pedido->getItens() as $item) : ?>
         <tr style="border-bottom: 1px solid #efefef;">
-            <td headers="quarto" style="padding: 10px 0"><?php echo $item->quartoNome ?></td>
-            <td headers="checkin"><?php echo (new DateTime($item->checkin))->format('d/m/Y') ?></td>
-            <td headers="checkout"><?php echo (new DateTime($item->checkout))->format('d/m/Y') ?></td>
+            <td headers="quarto" style="padding: 10px 0"><?php echo $item->getQuarto() ?></td>
+            <td headers="checkin"><?php echo $item->getCheckin()->format('d/m/Y') ?></td>
+            <td headers="checkout"><?php echo $item->getCheckout()->format('d/m/Y') ?></td>
             <td headers="qtde">
-                <?php printf('%d adultos, %d crianças', $item->adultos, $item->criancas) ?>
+                <?php printf('%d adultos, %d crianças', $item->getAdultos(), $item->getCriancas()) ?>
             </td>
             <td headers="valor" style="text-align: right">
-                <?php echo 'R$ ' . number_format($item->valor, 2, ',', '') ?>
+                <?php echo 'R$ ' . number_format($item->getValorTotal(), 2, ',', '') ?>
             </td>
         </tr>
         <?php endforeach; ?>
