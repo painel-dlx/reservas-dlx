@@ -71,7 +71,7 @@ class PedidoCartaoCredito extends Entity
         int $parcelas = 1
     ) {
         $this->pedido = $pedido;
-        $this->dono = $dono;
+        $this->dono = strtoupper($dono);
         $this->numero_cartao = $numero_cartao;
         $this->validade = $validade;
         $this->codigo_seguranca = $codigo_seguranca;
