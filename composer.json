@@ -12,9 +12,6 @@
         "google/apiclient": "^2.0",
         "docs-br/cpf": "^1.0"
     },
-    "replace": {
-        "dlepera88-php/painel-dlx": "*"
-    },
     "autoload": {
         "psr-4": {
             "Reservas\\": "src/"
