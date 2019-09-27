@@ -23,46 +23,61 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Pedidos\ConfirmarPgtoPedido;
+namespace Reservas\UseCases\Pedidos\PagamentoNaoEfetuado;
 
 
-use Exception;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
-/**
- * Class ConfirmarPgtoPedidoCommandHandler
- * @package Reservas\UseCases\Pedidos\ConfirmarPgtoPedido
- * @covers ConfirmarPgtoPedidoCommandHandlerTest
- */
-class ConfirmarPgtoPedidoCommandHandler
+class PagamentoNaoEfetuadoCommand
 {
     /**
-     * @var PedidoRepositoryInterface
+     * @var Pedido
      */
-    private $pedido_repository;
+    private $pedido;
+    /**
+     * @var Usuario
+     */
+    private $usuario;
+    /**
+     * @var string
+     */
+    private $motivo;
 
     /**
-     * ConfirmarPgtoPedidoCommandHandler constructor.
-     * @param PedidoRepositoryInterface $pedido_repository
+     * AdicionarHistoricoCommand constructor.
+     * @param Pedido $pedido
+     * @param Usuario $usuario
+     * @param string $motivo
      */
-    public function __construct(PedidoRepositoryInterface $pedido_repository)
+    public function __construct(Pedido $pedido, Usuario $usuario, string $motivo)
     {
-        $this->pedido_repository = $pedido_repository;
+        $this->pedido = $pedido;
+        $this->usuario = $usuario;
+        $this->motivo = $motivo;
     }
 
     /**
-     * @param ConfirmarPgtoPedidoCommand $command
      * @return Pedido
-     * @throws Exception
      */
-    public function handle(ConfirmarPgtoPedidoCommand $command): Pedido
+    public function getPedido(): Pedido
     {
-        $pedido = $command->getPedido();
+        return $this->pedido;
+    }
 
-        $pedido->pago($command->getMotivo(), $command->getUsuario());
-        $this->pedido_repository->update($pedido);
+    /**
+     * @return Usuario
+     */
+    public function getUsuario(): Usuario
+    {
+        return $this->usuario;
+    }
 
-        return $pedido;
+    /**
+     * @return string
+     */
+    public function getMotivo(): string
+    {
+        return $this->motivo;
     }
 }

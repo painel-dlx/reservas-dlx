@@ -41,6 +41,7 @@ use Reservas\Tests\UseCases\Pedidos\SalvarPedido\SalvarPedidoCommandHandlerTest;
  * Class SalvarPedidoCommandHandler
  * @package Reservas\UseCases\Pedidos\SalvarPedido
  * @covers SalvarPedidoCommandHandlerTest
+ * @deprecated Está sendo usado?
  */
 class SalvarPedidoCommandHandler
 {

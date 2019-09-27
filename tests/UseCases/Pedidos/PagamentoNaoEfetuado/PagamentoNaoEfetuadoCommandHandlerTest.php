@@ -23,46 +23,43 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Pedidos\ConfirmarPgtoPedido;
-
+namespace Reservas\Tests\UseCases\Pedidos\PagamentoNaoEfetuado;
 
 use Exception;
+use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
+use Reservas\UseCases\Pedidos\PagamentoNaoEfetuado\PagamentoNaoEfetuadoCommand;
+use Reservas\UseCases\Pedidos\PagamentoNaoEfetuado\PagamentoNaoEfetuadoCommandHandler;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class ConfirmarPgtoPedidoCommandHandler
- * @package Reservas\UseCases\Pedidos\ConfirmarPgtoPedido
- * @covers ConfirmarPgtoPedidoCommandHandlerTest
+ * Class PagamentoNaoEfetuadoCommandHandlerTest
+ * @package Reservas\Tests\UseCases\Pedidos\PagamentoNaoEfetuado
+ * @coversDefaultClass \Reservas\UseCases\Pedidos\PagamentoNaoEfetuado\PagamentoNaoEfetuadoCommandHandler
  */
-class ConfirmarPgtoPedidoCommandHandler
+class PagamentoNaoEfetuadoCommandHandlerTest extends TestCase
 {
     /**
-     * @var PedidoRepositoryInterface
-     */
-    private $pedido_repository;
-
-    /**
-     * ConfirmarPgtoPedidoCommandHandler constructor.
-     * @param PedidoRepositoryInterface $pedido_repository
-     */
-    public function __construct(PedidoRepositoryInterface $pedido_repository)
-    {
-        $this->pedido_repository = $pedido_repository;
-    }
-
-    /**
-     * @param ConfirmarPgtoPedidoCommand $command
-     * @return Pedido
+     * @covers ::handle
      * @throws Exception
      */
-    public function handle(ConfirmarPgtoPedidoCommand $command): Pedido
+    public function test_Handle_deve_adicionar_historico_de_tentativa_de_pagamento()
     {
-        $pedido = $command->getPedido();
+        $pedido_repository = $this->createMock(PedidoRepositoryInterface::class);
+        $pedido_repository->method('update')->with($this->isInstanceOf(Pedido::class));
 
-        $pedido->pago($command->getMotivo(), $command->getUsuario());
-        $this->pedido_repository->update($pedido);
+        $usuario = $this->createMock(Usuario::class);
+        $motivo = 'Teste';
 
-        return $pedido;
+        /** @var PedidoRepositoryInterface $pedido_repository */
+        /** @var Usuario $usuario */
+
+        $pedido = new Pedido();
+
+        $command = new PagamentoNaoEfetuadoCommand($pedido, $usuario, $motivo);
+        (new PagamentoNaoEfetuadoCommandHandler($pedido_repository))->handle($command);
+
+        $this->assertCount(1, $pedido->getHistorico());
     }
 }

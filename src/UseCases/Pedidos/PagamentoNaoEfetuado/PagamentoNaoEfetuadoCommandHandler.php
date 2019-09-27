@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Pedidos\ConfirmarPgtoPedido;
+namespace Reservas\UseCases\Pedidos\PagamentoNaoEfetuado;
 
 
 use Exception;
@@ -31,11 +31,11 @@ use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
 /**
- * Class ConfirmarPgtoPedidoCommandHandler
- * @package Reservas\UseCases\Pedidos\ConfirmarPgtoPedido
- * @covers ConfirmarPgtoPedidoCommandHandlerTest
+ * Class PagamentoNaoEfetuadoCommandHandler
+ * @package Reservas\UseCases\Pedidos\PagamentoNaoEfetuado
+ * @covers PagamentoNaoEfetuadoCommandHandlerTest
  */
-class ConfirmarPgtoPedidoCommandHandler
+class PagamentoNaoEfetuadoCommandHandler
 {
     /**
      * @var PedidoRepositoryInterface
@@ -43,7 +43,7 @@ class ConfirmarPgtoPedidoCommandHandler
     private $pedido_repository;
 
     /**
-     * ConfirmarPgtoPedidoCommandHandler constructor.
+     * AdicionarHistoricoCommandHandler constructor.
      * @param PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
@@ -52,15 +52,19 @@ class ConfirmarPgtoPedidoCommandHandler
     }
 
     /**
-     * @param ConfirmarPgtoPedidoCommand $command
+     * @param PagamentoNaoEfetuadoCommand $command
      * @return Pedido
      * @throws Exception
      */
-    public function handle(ConfirmarPgtoPedidoCommand $command): Pedido
+    public function handle(PagamentoNaoEfetuadoCommand $command): Pedido
     {
         $pedido = $command->getPedido();
+        $pedido->addHistorico(
+            Pedido::STATUS_PENDENTE,
+            $command->getMotivo(),
+            $command->getUsuario()
+        );
 
-        $pedido->pago($command->getMotivo(), $command->getUsuario());
         $this->pedido_repository->update($pedido);
 
         return $pedido;
