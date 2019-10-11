@@ -1,6 +1,6 @@
 {
     "name": "dlepera88-php/reservas-dlx",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "license": "MIT",
     "require-dev": {
         "phpunit/phpunit": "^7.5"
