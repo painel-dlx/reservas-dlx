@@ -27,25 +27,26 @@ namespace Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers;
 
 
 use DLX\Contracts\TransactionInterface;
-use DLX\Core\Exceptions\UserException;
+use DLX\Core\Configure;
 use League\Tactician\CommandBus;
-use PainelDLX\UseCases\ListaRegistros\ConverterFiltro2Criteria\ConverterFiltro2CriteriaCommand;
 use PainelDLX\Presentation\Site\Common\Controllers\PainelDLXController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
+use Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus\QuantidadePedidosPorStatusCommand;
+use Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus\QuantidadePedidosPorStatusCommandHandler;
 use SechianeX\Contracts\SessionInterface;
+use Throwable;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
 
 /**
- * Class ListaPedidoController
- * @package Reservas\Presentation\Site\ApartHotel\Controllers
- * @covers ListaPedidoControllerTest
+ * Class WidgetPedidoController
+ * @package Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers
+ * @covers WidgetPedidoControllerTest
  */
-class ListaPedidosController extends PainelDLXController
+class WidgetPedidoController extends PainelDLXController
 {
     /**
      * @var TransactionInterface
@@ -53,7 +54,7 @@ class ListaPedidosController extends PainelDLXController
     private $transaction;
 
     /**
-     * ListaPedidosController constructor.
+     * WidgetPedidoController constructor.
      * @param VileX $view
      * @param CommandBus $commandBus
      * @param SessionInterface $session
@@ -67,7 +68,7 @@ class ListaPedidosController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
+        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css', false, Configure::get('app', 'versao'));
         $this->transaction = $transaction;
     }
 
@@ -79,55 +80,25 @@ class ListaPedidosController extends PainelDLXController
      * @throws PaginaMestraNaoEncontradaException
      * @throws ViewNaoEncontradaException
      */
-    public function listaPedidos(ServerRequestInterface $request, array $args = []): ResponseInterface
+    public function quantidadePedidosPorStatus(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
-        $get = filter_var_array($request->getQueryParams(), [
-            'campos' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_REQUIRE_ARRAY],
-            'busca' => FILTER_DEFAULT,
-            'pg' => FILTER_VALIDATE_INT,
-            'qtde' => FILTER_VALIDATE_INT,
-            'offset' => FILTER_VALIDATE_INT
-        ]);
-
-        $status = preg_replace('~s$~', '', $args['status']);
-        $status = $status === 'confirmado' ? 'pago' : $status;
+        $get = array_merge($request->getQueryParams(), $args);
 
         try {
-            /** @var array $criteria */
-            /* @see ConverterFiltro2CriteriaCommandHandler */
-            $criteria = $this->command_bus->handle(new ConverterFiltro2CriteriaCommand($get['campos'], $get['busca']));
-            $criteria['and'] = ['status' => $status];
+            /** @var int $quantidade_pedidos */
+            /* @see QuantidadePedidosPorStatusCommandHandler */
+            $quantidade_pedidos = $this->command_bus->handle(new QuantidadePedidosPorStatusCommand($get['status'], $get['data_inicial'], $get['data_final']));
 
-            /* @see ListaPedidosCommandHandler */
-            $lista_pedidos = $this->command_bus->handle(new ListaPedidosCommand(
-                $criteria,
-                ['e.id' => $status === 'pendente' ? 'asc' : 'desc'],
-                $get['qtde'],
-                $get['offset']
-            ));
+            // View
+            $this->view->setAtributo('status', $get['status']);
+            $this->view->setAtributo('quantidade-pedidos', $quantidade_pedidos);
 
-            // Atributos
-            $this->view->setAtributo('titulo-pagina', 'Pedidos');
-            $this->view->setAtributo('lista-pedidos', $lista_pedidos);
-            $this->view->setAtributo('filtro', $get);
-            $this->view->setAtributo('status-pedidos', $status);
-
-            // Paginação
-            $this->view->setAtributo('pagina-atual', $get['pg']);
-            $this->view->setAtributo('qtde-registros-pagina', $get['qtde']);
-            $this->view->setAtributo('qtde-registros-lista', count($lista_pedidos));
-
-            // Views
-            $this->view->addTemplate('pedidos/lista_pedidos');
-            $this->view->addTemplate('common/paginacao');
-
-            // JS
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js');
-        } catch (UserException $e) {
+            $this->view->addTemplate('pedidos/widgets/quantidade_pedidos');
+        } catch (Throwable $e) {
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 

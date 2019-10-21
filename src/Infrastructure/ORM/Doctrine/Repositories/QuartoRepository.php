@@ -100,8 +100,8 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
                 ->addGroupBy('q.tamanho_m2')
                 ->addGroupBy('q.link')
             ->having('count(d.dia) >= :qtde_diarias')
-            ->setParameter(':dt_checkin', $checkin->format('Y-m-d'), ParameterType::INTEGER)
-            ->setParameter(':dt_checkout', $checkout->format('Y-m-d'), ParameterType::INTEGER)
+            ->setParameter(':dt_checkin', $checkin->format('Y-m-d'), ParameterType::STRING)
+            ->setParameter(':dt_checkout', $checkout->format('Y-m-d'), ParameterType::STRING)
             ->setParameter(':qtde_quartos', $qtde_quartos, ParameterType::INTEGER)
             ->setParameter(':qtde_hospedes', $qtde_hospedes, ParameterType::INTEGER)
             ->setParameter(':qtde_diarias', $qtde_diarias_desejadas, ParameterType::INTEGER);

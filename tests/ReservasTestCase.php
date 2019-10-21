@@ -49,7 +49,7 @@ class ReservasTestCase extends TestCase
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        PainelDLX::$dir = 'vendor/dlepera88-php/painel-dlx';
+        PainelDLX::$dir = 'vendor/painel-dlx/painel-dlx';
         self::start();
         self::$painel_dlx->adicionarDiretorioInclusao(getcwd() .'/' . PainelDLX::$dir);
     }

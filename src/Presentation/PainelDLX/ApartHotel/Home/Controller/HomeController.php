@@ -23,20 +23,28 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Domain\Pedidos\Repositories;
+namespace Reservas\Presentation\PainelDLX\ApartHotel\Home\Controller;
 
 
-use DateTime;
-use DLX\Domain\Repositories\EntityRepositoryInterface;
+use DLX\Core\Configure;
+use League\Tactician\CommandBus;
+use PainelDLX\Presentation\Site\Home\Controllers\PaginaInicialController;
+use SechianeX\Contracts\SessionInterface;
+use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\VileX;
 
-interface PedidoRepositoryInterface extends EntityRepositoryInterface
+class HomeController extends PaginaInicialController
 {
     /**
-     * Quantidade de pedidos no status solicitado com filtro adicional (e opcional) de data
-     * @param string $status Status desejado
-     * @param DateTime|null $data_inicial
-     * @param DateTime|null $data_final
-     * @return int
+     * HomeController constructor.
+     * @param VileX $view
+     * @param CommandBus $commandBus
+     * @param SessionInterface $session
+     * @throws ViewNaoEncontradaException
      */
-    public function getQuantidadePedidosPorStatus(string $status, ?DateTime $data_inicial, ?DateTime $data_final):int;
+    public function __construct(VileX $view, CommandBus $commandBus, SessionInterface $session)
+    {
+        parent::__construct($view, $commandBus, $session);
+        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css', false, Configure::get('app', 'versao'));
+    }
 }

@@ -23,20 +23,60 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Domain\Pedidos\Repositories;
+namespace Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus;
 
 
 use DateTime;
-use DLX\Domain\Repositories\EntityRepositoryInterface;
 
-interface PedidoRepositoryInterface extends EntityRepositoryInterface
+class QuantidadePedidosPorStatusCommand
 {
     /**
-     * Quantidade de pedidos no status solicitado com filtro adicional (e opcional) de data
-     * @param string $status Status desejado
+     * @var string
+     */
+    private $status;
+    /**
+     * @var DateTime|null
+     */
+    private $data_inicial;
+    /**
+     * @var DateTime|null
+     */
+    private $data_final;
+
+    /**
+     * QuantidadePedidosPorStatusCommand constructor.
+     * @param string $status
      * @param DateTime|null $data_inicial
      * @param DateTime|null $data_final
-     * @return int
      */
-    public function getQuantidadePedidosPorStatus(string $status, ?DateTime $data_inicial, ?DateTime $data_final):int;
+    public function __construct(string $status, ?DateTime $data_inicial, ?DateTime $data_final)
+    {
+        $this->status = $status;
+        $this->data_inicial = $data_inicial;
+        $this->data_final = $data_final;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDataInicial(): ?DateTime
+    {
+        return $this->data_inicial;
+    }
+
+    /**
+     * @return DateTime|null
+     */
+    public function getDataFinal(): ?DateTime
+    {
+        return $this->data_final;
+    }
 }

@@ -24,5 +24,5 @@
  */
 
 return [
-    'vendor/dlepera88-php/painel-dlx/'
+    'vendor/painel-dlx/painel-dlx/'
 ];

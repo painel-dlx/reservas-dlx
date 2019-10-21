@@ -23,20 +23,42 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Domain\Pedidos\Repositories;
+namespace Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus;
 
 
-use DateTime;
-use DLX\Domain\Repositories\EntityRepositoryInterface;
+use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
-interface PedidoRepositoryInterface extends EntityRepositoryInterface
+/**
+ * Class QuantidadePedidosPorStatusCommandHandler
+ * @package Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus
+ * @covers QuantidadePedidosPorStatusCommandHandlerTest
+ */
+class QuantidadePedidosPorStatusCommandHandler
 {
     /**
-     * Quantidade de pedidos no status solicitado com filtro adicional (e opcional) de data
-     * @param string $status Status desejado
-     * @param DateTime|null $data_inicial
-     * @param DateTime|null $data_final
+     * @var PedidoRepositoryInterface
+     */
+    private $pedido_repository;
+
+    /**
+     * QuantidadePedidosPorStatusCommandHandler constructor.
+     * @param PedidoRepositoryInterface $pedido_repository
+     */
+    public function __construct(PedidoRepositoryInterface $pedido_repository)
+    {
+        $this->pedido_repository = $pedido_repository;
+    }
+
+    /**
+     * @param QuantidadePedidosPorStatusCommand $command
      * @return int
      */
-    public function getQuantidadePedidosPorStatus(string $status, ?DateTime $data_inicial, ?DateTime $data_final):int;
+    public function handle(QuantidadePedidosPorStatusCommand $command): int
+    {
+        return $this->pedido_repository->getQuantidadePedidosPorStatus(
+            $command->getStatus(),
+            $command->getDataInicial(),
+            $command->getDataFinal()
+        );
+    }
 }

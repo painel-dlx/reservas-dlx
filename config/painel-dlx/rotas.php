@@ -26,19 +26,19 @@
 use PainelDLX\Application\Routes\ConfigSmtpRouter;
 use PainelDLX\Application\Routes\ErrosRouter;
 use PainelDLX\Application\Routes\GruposUsuariosRouter;
-use PainelDLX\Application\Routes\HomeRouter;
 use PainelDLX\Application\Routes\LoginRouter;
 use PainelDLX\Application\Routes\PermissoesRouter;
 use PainelDLX\Application\Routes\UsuariosRouter;
 use Reservas\Application\Routes\DisponibilidadeRouter;
 use Reservas\Application\Routes\EmailsRouter;
+use Reservas\Application\Routes\HomeRouter;
 use Reservas\Application\Routes\PedidosRouter;
 use Reservas\Application\Routes\QuartosRouter;
 use Reservas\Application\Routes\ReservasRouter;
 
 return [
     // Painel DLX
-    HomeRouter::class,
+    // HomeRouter::class,
     ErrosRouter::class,
     UsuariosRouter::class,
     PermissoesRouter::class,
@@ -47,6 +47,7 @@ return [
     ConfigSmtpRouter::class,
 
     // Reservas / Apart Hotel
+    HomeRouter::class,
     QuartosRouter::class,
     DisponibilidadeRouter::class,
     ReservasRouter::class,

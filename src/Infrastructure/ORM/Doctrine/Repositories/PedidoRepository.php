@@ -26,11 +26,47 @@
 namespace Reservas\Infrastructure\ORM\Doctrine\Repositories;
 
 
-use DLX\Infrastructure\ORM\Doctrine\Repositories\EntityRepository;
+use DateTime;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\Expr\Join;
+use PainelDLX\Domain\Common\Entities\LogRegistro;
 use PainelDLX\Infrastructure\ORM\Doctrine\Repositories\AbstractPainelDLXRepository;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
 class PedidoRepository extends AbstractPainelDLXRepository implements PedidoRepositoryInterface
 {
 
+    /**
+     * Quantidade de pedidos no status solicitado com filtro adicional (e opcional) de data
+     * @param string $status Status desejado
+     * @param DateTime|null $data_inicial
+     * @param DateTime|null $data_final
+     * @return int
+     * @throws NoResultException
+     * @throws NonUniqueResultException
+     */
+    public function getQuantidadePedidosPorStatus(string $status, ?DateTime $data_inicial, ?DateTime $data_final): int
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->select('COUNT(p.id)')
+            ->innerJoin(LogRegistro::class, 'lr', Join::WITH, 'lr.tabela = :tabela and lr.registro_id = p.id')
+            ->setParameter(':tabela', 'dlx_reservas_pedidos');
+
+        if (!is_null($data_inicial)) {
+            $data_inicial->setTime(0, 0,  0);
+            $qb->andWhere('p.data >= :data_inicial');
+            $qb->setParameter(':data_inicial', $data_inicial->format('Y-m-d H:i:s'));
+        }
+
+        if (!is_null($data_final)) {
+            $data_final->setTime(23, 59, 59);
+            $qb->andWhere('p.data <= :data_final');
+            $qb->setParameter(':data_final', $data_final->format('Y-m-d H:i:s'));
+        }
+
+        $sql = $qb->getQuery();
+
+        return (int)current($sql->getSingleResult());
+    }
 }

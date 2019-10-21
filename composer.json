@@ -20,8 +20,7 @@
     "autoload-dev": {
         "psr-4": {
             "Reservas\\Tests\\": "tests",
-            "PainelDLX\\Tests\\": "vendor/dlepera88-php/painel-dlx/tests",
-            "PainelDLX\\Testes\\": "vendor/dlepera88-php/painel-dlx/tests"
+            "PainelDLX\\Tests\\": "vendor/painel-dlx/painel-dlx/tests"
         }
     }
 }

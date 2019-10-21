@@ -1,0 +1,36 @@
+.qtde-pedidos-status {
+    &::first-line {
+        // Texto
+        font-size: 40px;
+        font-weight: bold;
+    }
+
+    // Texto
+    text-align: center;
+    font-size: large;
+
+    > .botao-salvar {
+        // Margens
+        margin-top: 10px;
+    }
+
+    &.-pendentes {
+        // Texto
+        color: gray;
+
+        &.-sucesso {
+            // Texto
+            color: green;
+        }
+
+        &.-atencao {
+            // Texto
+            color: orange;
+        }
+
+        &.-erro {
+            // Texto
+            color: darkred;
+        }
+    }
+}

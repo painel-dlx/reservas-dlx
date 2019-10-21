@@ -34,6 +34,7 @@ use PainelDLX\Application\Routes\PainelDLXRouter;
 use PainelDLX\Application\Services\PainelDLX;
 use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\DetalhePedidoController;
 use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\ListaPedidosController;
+use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\WidgetPedidoController;
 
 class PedidosRouter extends PainelDLXRouter
 {
@@ -104,6 +105,14 @@ class PedidosRouter extends PainelDLXRouter
             '/painel-dlx/apart-hotel/pedidos/cancelar-pedido',
             [DetalhePedidoController::class, 'cancelarPedido']
         )->middlewares(
+            $verificar_logon
+        );
+
+        $router->get(
+            '/painel-dlx/apart-hotel/pedidos/quantidade-pedidos-{status}',
+            [WidgetPedidoController::class, 'quantidadePedidosPorStatus']
+        )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon
         );
     }

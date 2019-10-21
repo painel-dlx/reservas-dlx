@@ -52,6 +52,8 @@ use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler;
 use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
 use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommandHandler;
+use Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus\QuantidadePedidosPorStatusCommand;
+use Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus\QuantidadePedidosPorStatusCommandHandler;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommand;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommandHandler;
 use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommand;
@@ -113,6 +115,7 @@ class ReservasDLXMapping
         FiltrarReservasPorPeriodoCommand::class => FiltrarReservasPorPeriodoCommandHandler::class,
         AdicionarMidiasQuartoCommand::class => AdicionarMidiasQuartoCommandHandler::class,
         ExcluirMidiaQuartoCommand::class => ExcluirMidiaQuartoCommandHandler::class,
+        QuantidadePedidosPorStatusCommand::class => QuantidadePedidosPorStatusCommandHandler::class,
     ];
 
     /**

@@ -23,20 +23,27 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Domain\Pedidos\Repositories;
+use Vilex\VileX;
 
+/** @var $this Vilex */
 
-use DateTime;
-use DLX\Domain\Repositories\EntityRepositoryInterface;
+$status = $this->getAtributo('status');
+$qtde_pedidos = $this->getAtributo('quantidade-pedidos');
+$cor = '-sucesso';
 
-interface PedidoRepositoryInterface extends EntityRepositoryInterface
-{
-    /**
-     * Quantidade de pedidos no status solicitado com filtro adicional (e opcional) de data
-     * @param string $status Status desejado
-     * @param DateTime|null $data_inicial
-     * @param DateTime|null $data_final
-     * @return int
-     */
-    public function getQuantidadePedidosPorStatus(string $status, ?DateTime $data_inicial, ?DateTime $data_final):int;
+if ($qtde_pedidos > 0) {
+    $cor = '-atencao';
 }
+
+if ($qtde_pedidos > 5) {
+    $cor = '-erro';
+}
+?>
+
+[CORPO]
+<p class="qtde-pedidos-status <?php echo "-{$status} ", $cor ?>">
+    <?php echo $qtde_pedidos, '<br>', $status ?>
+    <br>
+    <a href="/painel-dlx/apart-hotel/pedidos-<?php echo $status ?>" class="botao-salvar">Ver todos</a>
+</p>
+[/CORPO]
