@@ -26,9 +26,17 @@
 namespace Reservas\Domain\Pedidos\Repositories;
 
 
+use DateTime;
 use DLX\Domain\Repositories\EntityRepositoryInterface;
 
 interface PedidoRepositoryInterface extends EntityRepositoryInterface
 {
-
+    /**
+     * Quantidade de pedidos no status solicitado com filtro adicional (e opcional) de data
+     * @param string $status Status desejado
+     * @param DateTime|null $data_inicial
+     * @param DateTime|null $data_final
+     * @return int
+     */
+    public function getQuantidadePedidosPorStatus(string $status, ?DateTime $data_inicial, ?DateTime $data_final):int;
 }

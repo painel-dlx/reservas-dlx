@@ -25,8 +25,10 @@
 
 namespace Reservas\Tests\UseCases\Quartos\FindQuartosDisponiveis;
 
-use DLX\Infra\EntityManagerX;
+use DateTime;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\ORM\ORMException;
+use Exception;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\UseCases\Quartos\FindQuartosDisponiveis\FindQuartosDisponiveisCommand;
@@ -57,12 +59,13 @@ class FindQuartosDisponiveisCommandHandlerTest extends ReservasTestCase
 
     /**
      * @param FindQuartosDisponiveisCommandHandler $handler
+     * @throws Exception
      * @covers ::handle
      * @depends test__construct
      */
     public function test_Handle_deve_retornar_um_array_com_Quartos_disponiveis(FindQuartosDisponiveisCommandHandler $handler)
     {
-        $checkin = new \DateTime();
+        $checkin = new DateTime();
         $checkout = (clone $checkin)->modify('+2 days');
         $command = new FindQuartosDisponiveisCommand($checkin, $checkout, 1, 1);
 

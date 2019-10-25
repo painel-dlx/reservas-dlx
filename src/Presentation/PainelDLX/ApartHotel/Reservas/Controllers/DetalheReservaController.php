@@ -38,6 +38,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Reservas\Exceptions\ReservaInvalidaException;
+use Reservas\Domain\Reservas\Exceptions\ReservaNaoEncontradaException;
 use Reservas\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommand;
 use Reservas\UseCases\Clientes\MostrarCpfCompleto\MostrarCpfCompletoCommandHandler;
@@ -61,10 +62,6 @@ use Zend\Diactoros\Response\JsonResponse;
 class DetalheReservaController extends PainelDLXController
 {
     /**
-     * @var SessionInterface
-     */
-    private $session;
-    /**
      * @var TransactionInterface
      */
     private $transaction;
@@ -75,6 +72,7 @@ class DetalheReservaController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -82,13 +80,8 @@ class DetalheReservaController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
+        parent::__construct($view, $commandBus, $session);
         $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
-
-        $this->session = $session;
         $this->transaction = $transaction;
     }
 
@@ -124,11 +117,13 @@ class DetalheReservaController extends PainelDLXController
             // JS
             $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
             $this->view->addArquivoJS('public/js/apart-hotel-min.js');
-        } catch (UserException $e) {
+        } catch (ReservaNaoEncontradaException | UserException $e) {
+            $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
+
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
-                'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'tipo' => $tipo,
+                'texto' => $e->getMessage()
             ]);
         }
 
@@ -159,11 +154,13 @@ class DetalheReservaController extends PainelDLXController
 
             // Views
             $this->view->addTemplate('reservas/form_confirmar_reserva');
-        } catch (UserException $e) {
+        } catch (ReservaNaoEncontradaException | UserException $e) {
+            $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
+
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
-                'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'tipo' => $tipo,
+                'texto' => $e->getMessage()
             ]);
         }
 
@@ -195,10 +192,12 @@ class DetalheReservaController extends PainelDLXController
 
             // Views
             $this->view->addTemplate('reservas/form_cancelar_reserva');
-        } catch (ReservaInvalidaException $e) {
+        } catch (ReservaNaoEncontradaException | ReservaInvalidaException $e) {
+            $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
+
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
-                'tipo' => 'erro',
+                'tipo' => $tipo,
                 'mensagem' => $e->getMessage()
             ]);
         }
@@ -234,7 +233,7 @@ class DetalheReservaController extends PainelDLXController
 
             /** @var Usuario|null $usuario */
             /* @see GetUsuarioPeloIdCommandHandler */
-            $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getUsuarioId()));
+            $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getId()));
 
             $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
                 /* @see ConfirmarReservaCommandHandler */
@@ -243,8 +242,10 @@ class DetalheReservaController extends PainelDLXController
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} confirmada com sucesso!";
-        } catch (QuartoIndisponivelException | ReservaInvalidaException $e) {
-            $json['retorno'] = 'erro';
+        } catch (ReservaNaoEncontradaException | QuartoIndisponivelException | ReservaInvalidaException $e) {
+            $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
+
+            $json['retorno'] = $tipo;
             $json['mensagem'] = $e->getMessage();
         }
 
@@ -279,7 +280,7 @@ class DetalheReservaController extends PainelDLXController
 
             /** @var Usuario|null $usuario */
             /* @see GetUsuarioPeloIdCommandHandler */
-            $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getUsuarioId()));
+            $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getId()));
 
             $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
                 /* @see CancelarReservaCommandHandler */
@@ -288,8 +289,10 @@ class DetalheReservaController extends PainelDLXController
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} cancelada com sucesso!";
-        } catch (ReservaInvalidaException $e) {
-            $json['retorno'] = 'erro';
+        } catch (ReservaNaoEncontradaException | ReservaInvalidaException $e) {
+            $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
+
+            $json['retorno'] = $tipo;
             $json['mensagem'] = $e->getMessage();
         }
 
@@ -317,7 +320,7 @@ class DetalheReservaController extends PainelDLXController
 
             /** @var Usuario $usuario_logado */
             /* @see GetUsuarioPeloIdCommandHandler */
-            $usuario_logado = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getUsuarioId()));
+            $usuario_logado = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario_logado->getId()));
 
             /** @var string $cpf */
             /* @see MostrarCpfCompletoCommandHandler */
@@ -325,8 +328,10 @@ class DetalheReservaController extends PainelDLXController
 
             $json['retorno'] = 'sucesso';
             $json['cpf'] = $cpf;
-        } catch (VisualizarCpfException $e) {
-            $json['retorno'] = 'erro';
+        } catch (ReservaNaoEncontradaException | VisualizarCpfException $e) {
+            $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
+
+            $json['retorno'] = $tipo;
             $json['mensagem'] = $e->getMessage();
         }
 

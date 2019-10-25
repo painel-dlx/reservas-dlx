@@ -38,13 +38,13 @@ use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 class MostrarCpfCompletoPedidoCommandHandler
 {
     /**
-     * @var \Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface
+     * @var PedidoRepositoryInterface
      */
     private $pedido_repository;
 
     /**
      * MostrarCpfCompletoPedidoCommandHandler constructor.
-     * @param \Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface $pedido_repository
+     * @param PedidoRepositoryInterface $pedido_repository
      */
     public function __construct(PedidoRepositoryInterface $pedido_repository)
     {

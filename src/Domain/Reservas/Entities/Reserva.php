@@ -32,6 +32,7 @@ use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use PainelDLX\Domain\Common\Entities\LogRegistroTrait;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
@@ -48,13 +49,16 @@ use Reservas\Domain\Reservas\Validators\ReservaValidatorsEnum;
  */
 class Reserva extends Entity
 {
+    const TABELA_BD = 'dlx_reservas_cadastro';
+    use LogRegistroTrait;
+
     const STATUS_PENDENTE = 'Pendente';
     const STATUS_CONFIRMADA = 'Confirmada';
     const STATUS_CANCELADA = 'Cancelada';
 
     /** @var int|null */
     private $id;
-    /** @var \Reservas\Domain\Pedidos\Entities\Pedido|null */
+    /** @var Pedido|null */
     private $pedido;
     /** @var Quarto */
     private $quarto;
@@ -121,18 +125,18 @@ class Reserva extends Entity
     }
 
     /**
-     * @return \Reservas\Domain\Pedidos\Entities\Pedido|null
+     * @return Pedido|null
      */
-    public function getPedido(): ?\Reservas\Domain\Pedidos\Entities\Pedido
+    public function getPedido(): ?Pedido
     {
         return $this->pedido;
     }
 
     /**
-     * @param \Reservas\Domain\Pedidos\Entities\Pedido|null $pedido
+     * @param Pedido|null $pedido
      * @return Reserva
      */
-    public function setPedido(?\Reservas\Domain\Pedidos\Entities\Pedido $pedido): Reserva
+    public function setPedido(?Pedido $pedido): Reserva
     {
         $this->pedido = $pedido;
         return $this;

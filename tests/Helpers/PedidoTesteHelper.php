@@ -26,7 +26,7 @@
 namespace Reservas\Tests\Helpers;
 
 
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use Reservas\Domain\Pedidos\Entities\Pedido;
@@ -34,7 +34,7 @@ use Reservas\Domain\Pedidos\Entities\Pedido;
 class PedidoTesteHelper
 {
     /**
-     * @return \Reservas\Domain\Pedidos\Entities\Pedido|null
+     * @return Pedido|null
      * @throws DBALException
      * @throws ORMException
      */
@@ -42,7 +42,7 @@ class PedidoTesteHelper
     {
         $id = self::getPedidoIdRandom();
 
-        /** @var \Reservas\Domain\Pedidos\Entities\Pedido $pedido */
+        /** @var Pedido $pedido */
         $pedido = EntityManagerX::getRepository(Pedido::class)->find($id);
 
         return $pedido;

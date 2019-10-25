@@ -63,7 +63,7 @@ class ConfirmarPgtoPedidoCommand
     }
 
     /**
-     * @return \Reservas\Domain\Pedidos\Entities\Pedido
+     * @return Pedido
      */
     public function getPedido(): Pedido
     {

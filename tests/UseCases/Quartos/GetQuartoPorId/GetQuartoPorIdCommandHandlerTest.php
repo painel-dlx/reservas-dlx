@@ -27,6 +27,7 @@ namespace Reservas\Tests\UseCases\Quartos\GetQuartoPorId;
 
 use DLX\Infra\EntityManagerX;
 use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Quartos\Exceptions\QuartoNaoEncontradoException;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
@@ -40,68 +41,43 @@ use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler;
 class GetQuartoPorIdCommandHandlerTest extends ReservasTestCase
 {
     /**
-     * @return GetQuartoPorIdCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws QuartoNaoEncontradoException
+     * @covers ::handle
      */
-    public function test__construct():GetQuartoPorIdCommandHandler
+    public function test_Handle_deve_lancar_excecao_quando_nao_encontrar_registro_no_bd()
     {
+        $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
+        $quarto_repository->method('find')->willReturn(null);
+
         /** @var QuartoRepositoryInterface $quarto_repository */
-        $quarto_repository = EntityManagerX::getRepository(Quarto::class);
-        $handler = new GetQuartoPorIdCommandHandler($quarto_repository);
 
-        $this->assertInstanceOf(GetQuartoPorIdCommandHandler::class, $handler);
+        $this->expectException(QuartoNaoEncontradoException::class);
+        $this->expectExceptionCode(10);
 
-        return $handler;
+        $command = new GetQuartoPorIdCommand(0);
+        (new GetQuartoPorIdCommandHandler($quarto_repository))->handle($command);
     }
 
-
     /**
-     * @param GetQuartoPorIdCommandHandler $handler
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws QuartoNaoEncontradoException
      * @covers ::handle
-     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_Quarto_se_encontrar_no_BD(GetQuartoPorIdCommandHandler $handler)
+    public function test_Handle_deve_retornar_Quarto_quando_encontrar_registro_no_bd()
     {
-        $query = '
-            select
-                quarto_id
-            from
-                dlx_reservas_quartos
-            where
-                quarto_delete = 0
-                and quarto_publicar = 1
-            order by 
-                rand()
-            limit 1
-        ';
+        $quarto_id = mt_rand();
 
-        $sql = EntityManagerX::getInstance()->getConnection()->prepare($query);
-        $sql->execute();
+        $quarto = $this->createMock(Quarto::class);
+        $quarto->method('getId')->willReturn($quarto_id);
 
-        $quarto_id = $sql->fetchColumn();
+        $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
+        $quarto_repository->method('find')->willReturn($quarto);
 
-        if (empty($quarto_id)) {
-            $this->markTestSkipped('Nenhum quarto encontrado no banco de dados');
-        }
+        /** @var QuartoRepositoryInterface $quarto_repository */
 
         $command = new GetQuartoPorIdCommand($quarto_id);
-        $quarto = $handler->handle($command);
+        $quarto_retornado = (new GetQuartoPorIdCommandHandler($quarto_repository))->handle($command);
 
-        $this->assertInstanceOf(Quarto::class, $quarto);
-    }
-
-    /**
-     * @param GetQuartoPorIdCommandHandler $handler
-     * @covers ::handle
-     * @depends test__construct
-     */
-    public function test_Handle_deve_retornar_null_se_encontrar_Quarto_no_BD(GetQuartoPorIdCommandHandler $handler)
-    {
-        $command = new GetQuartoPorIdCommand(0);
-        $quarto = $handler->handle($command);
-
-        $this->assertNull($quarto);
+        $this->assertInstanceOf(Quarto::class, $quarto_retornado);
+        $this->assertEquals($quarto_id, $quarto_retornado->getId());
     }
 }

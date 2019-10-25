@@ -54,7 +54,7 @@ class ValidarDisponQuartoTest extends ReservasTestCase
         $reserva = new Reserva($quarto, $checkin, $checkout, 0);
 
         $this->expectException(QuartoIndisponivelException::class);
-        $this->expectExceptionCode(10);
+        $this->expectExceptionCode(11);
         (new ValidarDisponQuarto())->validar($reserva);
     }
 

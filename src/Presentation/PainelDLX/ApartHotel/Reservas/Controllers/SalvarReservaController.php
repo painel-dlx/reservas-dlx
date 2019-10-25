@@ -52,10 +52,6 @@ use Zend\Diactoros\Response\JsonResponse;
 class SalvarReservaController extends PainelDLXController
 {
     /**
-     * @var SessionInterface
-     */
-    private $session;
-    /**
      * @var TransactionInterface
      */
     private $transaction;
@@ -66,6 +62,7 @@ class SalvarReservaController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -73,13 +70,8 @@ class SalvarReservaController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
+        parent::__construct($view, $commandBus, $session);
         $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
-
-        $this->session = $session;
         $this->transaction = $transaction;
     }
 

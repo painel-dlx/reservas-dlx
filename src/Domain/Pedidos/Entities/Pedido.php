@@ -27,9 +27,12 @@ namespace Reservas\Domain\Pedidos\Entities;
 
 
 use CPF\CPF;
+use DateTime;
 use DLX\Domain\Entities\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Exception;
+use PainelDLX\Domain\Common\Entities\LogRegistroTrait;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Validators\PedidoValidator;
 use Reservas\Domain\Pedidos\Validators\PedidoValidatorEnum;
@@ -45,6 +48,9 @@ use stdClass;
  */
 class Pedido extends Entity
 {
+    const TABELA_BD = 'dlx_reservas_pedidos';
+    use LogRegistroTrait;
+
     const STATUS_PENDENTE = 'Pendente';
     const STATUS_PAGO = 'Pago';
     const STATUS_CANCELADO = 'Cancelado';
@@ -65,9 +71,11 @@ class Pedido extends Entity
     private $forma_pgto = 'digitada';
     /** @var string */
     private $status = 'Pendente';
-    /** @var PedidoPgtoCartao|null */
-    private $pgto_cartao;
-    /** @var array */
+    /** @var PedidoCartao|null */
+    private $cartao;
+    /** @var PedidoEndereco|null */
+    private $endereco;
+    /** @var Collection */
     private $itens;
     /** @var Collection */
     private $reservas;
@@ -79,6 +87,7 @@ class Pedido extends Entity
      */
     public function __construct()
     {
+        $this->itens = new ArrayCollection();
         $this->reservas = new ArrayCollection();
         $this->historico = new ArrayCollection();
     }
@@ -178,7 +187,7 @@ class Pedido extends Entity
      */
     public function getValorTotal(): float
     {
-        return $this->valor_total;
+        return $this->valor_total ?? 0;
     }
 
     /**
@@ -188,6 +197,28 @@ class Pedido extends Entity
     public function setValorTotal(float $valor_total): Pedido
     {
         $this->valor_total = $valor_total;
+        return $this;
+    }
+
+    /**
+     * Adicionar um valor ao valor total do pedido
+     * @param float $valor
+     * @return Pedido
+     */
+    public function addValor(float $valor): self
+    {
+        $this->valor_total += $valor;
+        return $this;
+    }
+
+    /**
+     * Excluir um determinado valor do total do pedido
+     * @param float $valor
+     * @return Pedido
+     */
+    public function subtrairValor(float $valor): self
+    {
+        $this->valor_total -= $valor;
         return $this;
     }
 
@@ -228,62 +259,96 @@ class Pedido extends Entity
     }
 
     /**
-     * @return PedidoPgtoCartao|null
+     * @return PedidoCartao|null
      */
-    public function getPgtoCartao(): ?PedidoPgtoCartao
+    public function getCartao(): ?PedidoCartao
     {
-        return $this->pgto_cartao;
+        return $this->cartao;
     }
 
     /**
-     * @param PedidoPgtoCartao|null $pgto_cartao
+     * @param PedidoCartao|null $cartao
      * @return Pedido
      */
-    public function setPgtoCartao(?PedidoPgtoCartao $pgto_cartao): Pedido
+    public function setCartao(?PedidoCartao $cartao): Pedido
     {
-        $this->pgto_cartao = $pgto_cartao;
+        $this->cartao = $cartao;
         return $this;
     }
 
     /**
-     * @return array
+     * @return PedidoEndereco|null
      */
-    public function getItens(): array
+    public function getEndereco(): ?PedidoEndereco
+    {
+        return $this->endereco;
+    }
+
+    /**
+     * @param PedidoEndereco|null $endereco
+     * @return Pedido
+     */
+    public function setEndereco(?PedidoEndereco $endereco): Pedido
+    {
+        $this->endereco = $endereco;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getItens(): Collection
     {
         return $this->itens;
     }
 
     /**
-     * @param array $itens
+     * @param Quarto $quarto
+     * @param DateTime $checkin
+     * @param DateTime $checkout
+     * @param int $quantidade
+     * @param int $adultos
+     * @param int $criancas
      * @return Pedido
      */
-    public function setItens(array $itens): Pedido
+    public function addItem(
+        Quarto $quarto,
+        DateTime $checkin,
+        DateTime $checkout,
+        int $quantidade,
+        int $adultos,
+        int $criancas
+    ): self
     {
-        $this->itens = $itens;
+        $pedido_item = new PedidoItem(
+            $this,
+            $quarto,
+            $checkin,
+            $checkout,
+            $quantidade,
+            $adultos,
+            $criancas
+        );
+
+        $this->addValor($pedido_item->getValorTotal());
+
+        $this->itens->add($pedido_item);
         return $this;
     }
 
     /**
-     * @param Quarto $quarto
-     * @param string $checkin
-     * @param string $checkout
-     * @param int $adultos
-     * @param int $criancas
-     * @param float $valor
+     * @param int $indice
      * @return Pedido
      */
-    public function addItem(Quarto $quarto, string $checkin, string $checkout, int $adultos, int $criancas, float $valor): self
+    public function retirarItem(int $indice): self
     {
-        $item = new stdClass();
-        $item->quartoID = $quarto->getId();
-        $item->quartoNome = $quarto->getNome();
-        $item->checkin = $checkin;
-        $item->checkout = $checkout;
-        $item->adultos = $adultos;
-        $item->criancas = $criancas;
-        $item->valor = $valor;
+        /** @var PedidoItem $item_retirar */
+        $item_retirar = $this->itens->get($indice);
+        $valor_item = $item_retirar->getValorTotal();
 
-        $this->itens[] = $item;
+        $this->itens->removeElement($item_retirar);
+        $this->subtrairValor($valor_item);
+
         return $this;
     }
 
@@ -329,6 +394,7 @@ class Pedido extends Entity
      * @param string $motivo
      * @param Usuario $usuario
      * @return Pedido
+     * @throws Exception
      */
     public function addHistorico(string $status, string $motivo, Usuario $usuario): self
     {
@@ -372,6 +438,7 @@ class Pedido extends Entity
      * @param string $motivo
      * @param Usuario $usuario
      * @return Pedido
+     * @throws Exception
      */
     public function pago(string $motivo, Usuario $usuario): self
     {
@@ -394,6 +461,7 @@ class Pedido extends Entity
      * @param string $motivo
      * @param Usuario $usuario
      * @return Pedido
+     * @throws Exception
      */
     public function cancelado(string $motivo, Usuario $usuario): self
     {

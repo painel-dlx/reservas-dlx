@@ -26,9 +26,10 @@
 namespace Reservas\Tests\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto;
 
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
-use Exception;
+use Doctrine\ORM\ORMException;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
@@ -36,8 +37,6 @@ use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto\SalvarDisponibilidadeQuartoCommand;
 use Reservas\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto\SalvarDisponibilidadeQuartoCommandHandler;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 
 /**
  * Class SalvarDisponibilidadeQuartoCommandHandlerTest
@@ -47,14 +46,9 @@ use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 class SalvarDisponibilidadeQuartoCommandHandlerTest extends ReservasTestCase
 {
     /**
-     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException
-     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \PainelDLX\Application\Services\Exceptions\AmbienteNaoInformadoException
-     * @throws \Reservas\Domain\Exceptions\LinkQuartoUtilizadoException
-     * @throws \Reservas\Domain\Exceptions\NomeQuartoUtilizadoException
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Doctrine\DBAL\DBALException
+     * @return Quarto
+     * @throws DBALException
+     * @throws ORMException
      */
     public function gerarQuarto(): Quarto
     {
@@ -88,7 +82,7 @@ class SalvarDisponibilidadeQuartoCommandHandlerTest extends ReservasTestCase
 
     /**
      * @return SalvarDisponibilidadeQuartoCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): SalvarDisponibilidadeQuartoCommandHandler
     {
@@ -104,14 +98,8 @@ class SalvarDisponibilidadeQuartoCommandHandlerTest extends ReservasTestCase
     /**
      * @covers ::handle
      * @param SalvarDisponibilidadeQuartoCommandHandler $handler
-     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException
-     * @throws \DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \PainelDLX\Application\Services\Exceptions\AmbienteNaoInformadoException
-     * @throws \Reservas\Domain\Exceptions\LinkQuartoUtilizadoException
-     * @throws \Reservas\Domain\Exceptions\NomeQuartoUtilizadoException
-     * @throws \Reservas\Domain\Exceptions\ValorMenorQueMinimoQuartoException
+     * @throws DBALException
+     * @throws ORMException
      * @depends test__construct
      */
     public function test_Handle_deve_retornar_Disponibilidade(SalvarDisponibilidadeQuartoCommandHandler $handler)

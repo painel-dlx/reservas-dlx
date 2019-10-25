@@ -25,14 +25,11 @@
 
 namespace Reservas\Tests\UseCases\Quartos\GetQuartoPorLink;
 
-use DLX\Infra\EntityManagerX;
-use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\ORMException;
 use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Quartos\Exceptions\QuartoNaoEncontradoException;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\UseCases\Quartos\GetQuartoPorLink\GetQuartoPorLinkCommand;
 use Reservas\UseCases\Quartos\GetQuartoPorLink\GetQuartoPorLinkCommandHandler;
-use Reservas\Tests\Helpers\QuartoTesteHelper;
 use Reservas\Tests\ReservasTestCase;
 
 /**
@@ -43,48 +40,48 @@ use Reservas\Tests\ReservasTestCase;
 class GetQuartoPorLinkCommandHandlerTest extends ReservasTestCase
 {
     /**
-     * @return GetQuartoPorLinkCommandHandler
-     * @throws ORMException
+     * @covers ::handle
+     * @throws QuartoNaoEncontradoException
      */
-    public function test__construct(): GetQuartoPorLinkCommandHandler
+    public function test_Handle_deve_lancar_excecao_quando_nao_encontrar_registro_no_bd()
     {
+        $link = 'nossos-quartos/teste-quarto-unitario';
+
+        $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
+        $quarto_repository->method('findOneBy')->willReturn(null);
+
         /** @var QuartoRepositoryInterface $quarto_repository */
-        $quarto_repository = EntityManagerX::getRepository(Quarto::class);
-        $handler = new GetQuartoPorLinkCommandHandler($quarto_repository);
 
-        $this->assertInstanceOf(GetQuartoPorLinkCommandHandler::class, $handler);
+        $this->expectException(QuartoNaoEncontradoException::class);
+        $this->expectExceptionCode(11);
 
-        return $handler;
+        $command = new GetQuartoPorLinkCommand($link);
+        (new GetQuartoPorLinkCommandHandler($quarto_repository))->handle($command);
     }
 
     /**
-     * @param GetQuartoPorLinkCommandHandler $handler
+     * @throws QuartoNaoEncontradoException
      * @covers ::handle
-     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_null_quando_nao_encontrar_registro_no_bd(GetQuartoPorLinkCommandHandler $handler)
+    public function test_Handle_deve_retornar_Quarto_quando_encontrar_registro_no_bd()
     {
-        $command = new GetQuartoPorLinkCommand('nossos-quartos/teste-quarto-unitario');
-        $quarto = $handler->handle($command);
+        $quarto_id = mt_rand();
+        $link = 'nossos-quartos/teste-quarto-unitario';
 
-        $this->assertNull($quarto);
-    }
+        $quarto = $this->createMock(Quarto::class);
+        $quarto->method('getId')->willReturn($quarto_id);
+        $quarto->method('getLink')->willReturn($link);
 
-    /**
-     * @param GetQuartoPorLinkCommandHandler $handler
-     * @throws ORMException
-     * @throws DBALException
-     * @covers ::handle
-     * @depends test__construct
-     */
-    public function test_Handle_deve_retornar_Quarto_quando_encontrar_registro_no_bd(GetQuartoPorLinkCommandHandler $handler)
-    {
-        $quarto_random = QuartoTesteHelper::getRandom();
+        $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
+        $quarto_repository->method('findOneBy')->willReturn($quarto);
 
-        $command = new GetQuartoPorLinkCommand($quarto_random->getLink());
-        $quarto = $handler->handle($command);
+        /** @var QuartoRepositoryInterface $quarto_repository */
 
-        $this->assertInstanceOf(Quarto::class, $quarto);
-        $this->assertEquals($quarto_random->getLink(), $quarto->getLink());
+        $command = new GetQuartoPorLinkCommand($link);
+        $quarto_retornado = (new GetQuartoPorLinkCommandHandler($quarto_repository))->handle($command);
+
+        $this->assertInstanceOf(Quarto::class, $quarto_retornado);
+        $this->assertEquals($link, $quarto_retornado->getLink());
+        $this->assertEquals($quarto_id, $quarto_retornado->getId());
     }
 }

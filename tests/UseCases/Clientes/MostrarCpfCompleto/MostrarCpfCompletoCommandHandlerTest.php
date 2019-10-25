@@ -30,6 +30,7 @@ use DateTime;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
+use PainelDLX\Domain\Usuarios\Exceptions\UsuarioJaPossuiGrupoException;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface;
@@ -47,7 +48,6 @@ class MostrarCpfCompletoCommandHandlerTest extends ReservasTestCase
 {
     /**
      * @return MostrarCpfCompletoCommandHandler
-     * @throws ORMException
      */
     public function test__construct(): MostrarCpfCompletoCommandHandler
     {
@@ -69,6 +69,7 @@ class MostrarCpfCompletoCommandHandlerTest extends ReservasTestCase
      * @throws DBALException
      * @throws ORMException
      * @throws VisualizarCpfException
+     * @throws UsuarioJaPossuiGrupoException
      * @covers ::handle
      * @depends test__construct
      */

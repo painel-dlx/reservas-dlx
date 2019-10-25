@@ -37,7 +37,7 @@ class SalvarDisponPeriodoCommandHandler
 
     /**
      * SalvarDisponPeriodoCommandHandler constructor.
-     * @param \Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface $disponibilidade_repository
+     * @param DisponibilidadeRepositoryInterface $disponibilidade_repository
      */
     public function __construct(DisponibilidadeRepositoryInterface $disponibilidade_repository)
     {

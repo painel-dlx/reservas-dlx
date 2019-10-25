@@ -27,10 +27,10 @@ namespace Reservas\Tests\Domain\Validators\Disponibilidade;
 
 
 use DateTime;
+use Exception;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Disponibilidade\Exceptions\ValidarDisponibilidadeException;
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Reservas\Domain\Exceptions\ValorMenorQueMinimoQuartoException;
 use Reservas\Domain\Disponibilidade\Validators\ValidarValoresDisponValidator;
 use Reservas\Tests\ReservasTestCase;
 
@@ -43,7 +43,7 @@ class ValidarValoresDisponValidatorTest extends ReservasTestCase
 {
 
     /**
-     * @throws \Exception
+     * @throws Exception
      * @covers ::validar
      */
     public function test_Validar_deve_lancar_excecao_quando_DisponValor_for_menor_que_minimo()
@@ -59,8 +59,7 @@ class ValidarValoresDisponValidatorTest extends ReservasTestCase
     }
 
     /**
-     * @throws ValorMenorQueMinimoQuartoException
-     * @throws \Exception
+     * @throws Exception
      * @covers ::validar
      */
     public function test_Validar_deve_retornar_true_quando_DisponValor_for_valido()

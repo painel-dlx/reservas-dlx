@@ -25,15 +25,14 @@
 
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
-use DLX\Core\Configure;
-use DLX\Infra\EntityManagerX;
-use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
+use DateTime;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
 use Exception;
-use PainelDLX\Application\Factories\CommandBusFactory;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController;
 use Reservas\Tests\ReservasTestCase;
@@ -43,29 +42,30 @@ use SechianeX\Factories\SessionFactory;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
-use Vilex\VileX;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class DetalheReservaControllerTest
  * @package Reservas\Tests\Presentation\Site\ApartHotel\Controllers
- * @coversDefaultClass \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController
+ * @coversDefaultClass DetalheReservaController
  */
 class DetalheReservaControllerTest extends ReservasTestCase
 {
     use TesteComTransaction;
 
     /**
+     * @param bool $is_checkin_valido
      * @return int
      * @throws DBALException
      * @throws ORMException
      */
-    public function getRandomReserva(): int
+    public function getRandomReserva(bool $is_checkin_valido = false): int
     {
-        $query = '
+        $query_select = '
             select
-                reserva_id
+                reserva_id,
+                reserva_quarto
             from 
                 dlx_reservas_cadastro
             order by 
@@ -73,21 +73,157 @@ class DetalheReservaControllerTest extends ReservasTestCase
             limit 1
         ';
 
-        $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query);
-        return $sql->fetchColumn();
+        $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query_select);
+        $rs = $sql->fetch();
+        $reserva_id = $rs['reserva_id'];
+        $quarto_id = $rs['reserva_quarto'];
+
+        if ($is_checkin_valido) {
+            $dt_checkin = (new DateTime())->modify('+1 day');
+            $dt_checkout = (clone $dt_checkin)->modify('+2 days');
+
+            $query_update = "
+                update
+                    dlx_reservas_cadastro
+                set
+                    reserva_checkin = :data_checkin,
+                    reserva_checkout = :data_checkout,
+                    reserva_status = 'Pendente'
+                where
+                    reserva_id = :reserva_id
+            ";
+
+            $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_update);
+            $sql->bindValue(':data_checkin', $dt_checkin->format('Y-m-d'));
+            $sql->bindValue(':data_checkout', $dt_checkout->format('Y-m-d'));
+            $sql->bindValue(':reserva_id', $reserva_id);
+            $sql->execute();
+
+            $query_delete_valores = '
+                delete
+                    v
+                from
+                    reservas_disponibilidade_valores v
+                inner join 
+                    dlx_reservas_disponibilidade as d on d.dispon_id = v.dispon_id
+                inner join
+                    dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                where
+                    r.reserva_id = :reserva_id
+                    and d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+            ';
+
+            $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_delete_valores);
+            $sql->bindValue(':reserva_id', $reserva_id, ParameterType::INTEGER);
+            $sql->execute();
+
+            $query_delete_dispon = '
+                delete
+                    d
+                from
+                    dlx_reservas_disponibilidade as d
+                inner join
+                    dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                where
+                    r.reserva_id = :reserva_id
+                    and d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+            ';
+
+            $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_delete_dispon);
+            $sql->bindValue(':reserva_id', $reserva_id, ParameterType::INTEGER);
+            $sql->execute();
+
+            $query_gerar_dispon = 'call gerar_calendario (:dt_inicial, :dt_final, :quarto)';
+
+            $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_gerar_dispon);
+            $sql->bindValue(':dt_inicial', $dt_checkin->format('Y-m-d'));
+            $sql->bindValue(':dt_final', $dt_checkout->format('Y-m-d'));
+            $sql->bindValue(':quarto', $quarto_id, ParameterType::INTEGER);
+            $sql->execute();
+
+            $query_update_dispon = '
+                update
+                    dlx_reservas_disponibilidade
+                set
+                    dispon_qtde = 10
+                where
+                    dispon_dia between :data_inicial and :data_final
+                    and dispon_quarto = :quarto_id
+            ';
+
+            $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_update_dispon);
+            $sql->bindValue(':data_inicial', $dt_checkin->format('Y-m-d'));
+            $sql->bindValue(':data_final', $dt_checkout->format('Y-m-d'));
+            $sql->bindValue(':quarto_id', $quarto_id, ParameterType::INTEGER);
+            $sql->execute();
+
+            $query_incluir_valores = "
+                insert into reservas_disponibilidade_valores (dispon_id, qtde_pessoas, valor)
+                    select
+                        d.dispon_id,
+                        1,
+                        q.quarto_valor_min
+                    from
+                        dlx_reservas_disponibilidade d
+                    inner join
+                        dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                    inner join
+                        dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
+                    where
+                        d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+                        and r.reserva_id = :reserva_id1
+                    
+                    union
+                    
+                    select
+                        d.dispon_id,
+                        2,
+                        q.quarto_valor_min
+                    from
+                        dlx_reservas_disponibilidade d
+                    inner join
+                        dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                    inner join
+                        dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
+                    where
+                        d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+                        and r.reserva_id = :reserva_id2
+
+                    union
+                    
+                    select
+                        d.dispon_id,
+                        3,
+                        q.quarto_valor_min
+                    from
+                        dlx_reservas_disponibilidade d
+                    inner join
+                        dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                    inner join
+                        dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
+                    where
+                        d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+                        and r.reserva_id = :reserva_id3
+            ";
+
+            $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_incluir_valores);
+            $sql->bindValue(':reserva_id1', $reserva_id, ParameterType::INTEGER);
+            $sql->bindValue(':reserva_id2', $reserva_id, ParameterType::INTEGER);
+            $sql->bindValue(':reserva_id3', $reserva_id, ParameterType::INTEGER);
+            $sql->execute();
+        }
+
+        return $reserva_id;
     }
 
     /**
      * @return DetalheReservaController
+     * @throws ORMException
      * @throws SessionAdapterInterfaceInvalidaException
      * @throws SessionAdapterNaoEncontradoException
-     * @throws DBALException
-     * @throws ORMException
      */
-    public function test__construct(): \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController
+    public function test__construct(): DetalheReservaController
     {
-        // $usuario = UsuarioTesteHelper::criarDB('Cliente Apart Hotel', 'cliente@gmail.com', '123456');
-
         /** @var Usuario|null $usuario */
         $usuario = EntityManagerX::getRepository(Usuario::class)->find(2);
 
@@ -95,22 +231,15 @@ class DetalheReservaControllerTest extends ReservasTestCase
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
         $session->set('usuario-logado', $usuario);
 
-        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
+        $controller = self::$painel_dlx->getContainer()->get(DetalheReservaController::class);
 
-        $controller = new \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController(
-            new VileX(),
-            $command_bus(),
-            $session,
-            new DoctrineTransaction(EntityManagerX::getInstance())
-        );
-
-        $this->assertInstanceOf(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController::class, $controller);
+        $this->assertInstanceOf(DetalheReservaController::class, $controller);
 
         return $controller;
     }
 
     /**
-     * @param \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController $controller
+     * @param DetalheReservaController $controller
      * @throws DBALException
      * @throws ORMException
      * @throws ContextoInvalidoException
@@ -147,12 +276,12 @@ class DetalheReservaControllerTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController $controller
+     * @param DetalheReservaController $controller
      * @throws Exception
      * @covers ::formConfirmarReserva
      * @depends test__construct
      */
-    public function test_FormConfirmarReserva_deve_retornar_um_HtmlResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController $controller)
+    public function test_FormConfirmarReserva_deve_retornar_um_HtmlResponse(DetalheReservaController $controller)
     {
         $id = $this->getRandomReserva();
 
@@ -185,7 +314,7 @@ class DetalheReservaControllerTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController $controller
+     * @param DetalheReservaController $controller
      * @throws DBALException
      * @throws ORMException
      * @covers ::confirmarReserva
@@ -193,7 +322,7 @@ class DetalheReservaControllerTest extends ReservasTestCase
      */
     public function test_ConfimarReserva_deve_retornar_JsonResponse(DetalheReservaController $controller)
     {
-        $id = $this->getRandomReserva();
+        $id = $this->getRandomReserva(true);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
@@ -214,9 +343,9 @@ class DetalheReservaControllerTest extends ReservasTestCase
      * @covers ::cancelarReserva
      * @depends test__construct
      */
-    public function test_CancelarReserva_deve_retornar_JsonResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController $controller)
+    public function test_CancelarReserva_deve_retornar_JsonResponse(DetalheReservaController $controller)
     {
-        $id = $this->getRandomReserva();
+        $id = $this->getRandomReserva(true);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
@@ -231,13 +360,13 @@ class DetalheReservaControllerTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController $controller
+     * @param DetalheReservaController $controller
      * @throws DBALException
      * @throws ORMException
      * @covers ::mostrarCpfCompleto
      * @depends test__construct
      */
-    public function test_MostrarCpfCompleto_deve_retornar_JsonResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController $controller)
+    public function test_MostrarCpfCompleto_deve_retornar_JsonResponse(DetalheReservaController $controller)
     {
         $id = $this->getRandomReserva();
 

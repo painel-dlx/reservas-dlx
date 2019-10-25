@@ -81,6 +81,7 @@ class AdicionarMidiasQuartoCommandHandler
 
     /**
      * Criar diretórios
+     * @param string $dir_midias
      */
     public function criarDiretorios(string $dir_midias): void
     {

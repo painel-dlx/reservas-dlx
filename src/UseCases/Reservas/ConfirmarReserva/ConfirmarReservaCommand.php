@@ -51,7 +51,7 @@ class ConfirmarReservaCommand
 
     /**
      * ConfirmarReservaCommand constructor.
-     * @param \Reservas\Domain\Reservas\Entities\Reserva $reserva
+     * @param Reserva $reserva
      * @param Usuario $usuario
      * @param string $motivo
      */
@@ -63,7 +63,7 @@ class ConfirmarReservaCommand
     }
 
     /**
-     * @return \Reservas\Domain\Reservas\Entities\Reserva
+     * @return Reserva
      */
     public function getReserva(): Reserva
     {

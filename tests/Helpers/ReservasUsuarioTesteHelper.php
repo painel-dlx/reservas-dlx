@@ -26,11 +26,11 @@
 namespace Reservas\Tests\Helpers;
 
 
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Testes\Helpers\UsuarioTesteHelper;
+use PainelDLX\Tests\Helpers\UsuarioTesteHelper;
 
 class ReservasUsuarioTesteHelper extends UsuarioTesteHelper
 {
@@ -39,7 +39,7 @@ class ReservasUsuarioTesteHelper extends UsuarioTesteHelper
      * @throws DBALException
      * @throws ORMException
      */
-    public static function getUsuarioIdRandom(): int
+    public static function getIdRandom(): int
     {
         $query = '
             select
@@ -64,7 +64,7 @@ class ReservasUsuarioTesteHelper extends UsuarioTesteHelper
      */
     public static function getUsuarioRandom(): ?Usuario
     {
-        $id = self::getUsuarioIdRandom();
+        $id = self::getIdRandom();
 
         /** @var Usuario $usuario */
         $usuario = EntityManagerX::getRepository(Usuario::class)->find($id);

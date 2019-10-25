@@ -45,7 +45,7 @@ class SalvarDisponPeriodoCommand
      */
     private $data_final;
     /**
-     * @var \Reservas\Domain\Quartos\Entities\Quarto
+     * @var Quarto
      */
     private $quarto;
     /**
@@ -96,7 +96,7 @@ class SalvarDisponPeriodoCommand
     }
 
     /**
-     * @return \Reservas\Domain\Quartos\Entities\Quarto
+     * @return Quarto
      */
     public function getQuarto(): Quarto
     {

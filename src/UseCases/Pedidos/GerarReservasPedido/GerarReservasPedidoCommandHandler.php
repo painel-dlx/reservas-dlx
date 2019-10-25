@@ -62,6 +62,6 @@ class GerarReservasPedidoCommandHandler
     public function handle(GerarReservasPedidoCommand $command)
     {
         $pedido = $command->getPedido();
-        (new Itens2Reservas($this->quarto_repository))->executar($pedido);
+        (new Itens2Reservas())->executar($pedido);
     }
 }

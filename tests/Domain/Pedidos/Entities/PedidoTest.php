@@ -26,15 +26,15 @@
 namespace Reservas\Tests\Domain\Pedidos\Entities;
 
 use CPF\CPF;
-use DateInterval;
-use DatePeriod;
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\ORMException;
 use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Domain\Usuarios\Exceptions\UsuarioJaPossuiGrupoException;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;
@@ -89,9 +89,10 @@ class PedidoTest extends ReservasTestCase
         $pedido->setEmail('email.cliente@gmail.com');
         $pedido->setCpf(new CPF('177.965.730-73'));
         $pedido->setTelefone('(61) 9 8350-3517');
-        $pedido->addItem($quarto, $checkin->format('Y-m-d'), $checkout->format('Y-m-d'), 1, 0, 10);
+        $pedido->addItem($quarto, $checkin, $checkout, 1, 1, 0);
 
         $this->assertInstanceOf(Pedido::class, $pedido);
+        $this->assertInstanceOf(Collection::class, $pedido->getItens());
         $this->assertInstanceOf(ArrayCollection::class, $pedido->getReservas());
         $this->assertInstanceOf(ArrayCollection::class, $pedido->getHistorico());
         $this->assertTrue($pedido->isPendente());
@@ -144,6 +145,8 @@ class PedidoTest extends ReservasTestCase
 
     /**
      * @param Pedido $pedido
+     * @throws UsuarioJaPossuiGrupoException
+     * @throws Exception
      * @covers ::addHistorico
      * @depends test__construct
      */
@@ -223,6 +226,8 @@ class PedidoTest extends ReservasTestCase
 
     /**
      * @param Pedido $pedido
+     * @throws UsuarioJaPossuiGrupoException
+     * @throws Exception
      * @covers ::pago
      * @depends test__construct
      */

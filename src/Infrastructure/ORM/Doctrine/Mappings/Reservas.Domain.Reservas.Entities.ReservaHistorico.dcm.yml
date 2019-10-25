@@ -1,0 +1,36 @@
+Reservas\Domain\Reservas\Entities\ReservaHistorico:
+    type: entity
+    table: reserva_historico
+    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\ReservaHistoricoRepository
+    id:
+        id:
+            type: integer
+            id: true
+            nullable: false
+            generator:
+                strategy: auto
+            column: reserva_historico_id
+    fields:
+        data:
+            type: datetime
+            nullable: false
+        status:
+            type: string
+            length: 10
+            nullable: false
+        motivo:
+            type: string
+            length: 255
+            nullable: false
+    manyToOne:
+        reserva:
+            targetEntity: Reserva
+            inversedBy: historico
+            joinColumns:
+                reserva_id:
+                    referencedColumnName: reserva_id
+        usuario:
+            targetEntity: PainelDLX\Domain\Usuarios\Entities\Usuario
+            joinColumns:
+                usuario_id:
+                    referencedColumnName: usuario_id

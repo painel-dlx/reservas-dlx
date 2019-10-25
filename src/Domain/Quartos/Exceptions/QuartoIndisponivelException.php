@@ -41,6 +41,8 @@ class QuartoIndisponivelException extends Exception
     }
 
     /**
+     * @param DateTime $checkin
+     * @param DateTime $checkout
      * @return QuartoIndisponivelException
      */
     public static function nenhumaDisponibilidadeEncontrada(DateTime $checkin, DateTime $checkout)

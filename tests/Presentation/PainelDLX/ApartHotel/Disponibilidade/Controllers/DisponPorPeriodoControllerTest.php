@@ -25,15 +25,19 @@
 
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
-use DLX\Core\Configure;
-use DLX\Infra\EntityManagerX;
-use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
-use PainelDLX\Application\Factories\CommandBusFactory;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\ORMException;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\DisponPorPeriodoController;
 use Reservas\Tests\ReservasTestCase;
+use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
+use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
-use Vilex\VileX;
+use Vilex\Exceptions\ContextoInvalidoException;
+use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
+use Vilex\Exceptions\ViewNaoEncontradaException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -44,26 +48,18 @@ use Zend\Diactoros\Response\JsonResponse;
  */
 class DisponPorPeriodoControllerTest extends ReservasTestCase
 {
-
     /**
      * @return DisponPorPeriodoController
-     * @throws \SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException
-     * @throws \SechianeX\Exceptions\SessionAdapterNaoEncontradoException
-     * @throws \Doctrine\ORM\ORMException
+     * @throws SessionAdapterInterfaceInvalidaException
+     * @throws SessionAdapterNaoEncontradoException
      */
     public function test__construct(): DisponPorPeriodoController
     {
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
-
-        $controller = new DisponPorPeriodoController(
-            new VileX(),
-            $command_bus(),
-            $session,
-            new DoctrineTransaction(EntityManagerX::getInstance())
-        );
+        /** @var DisponPorPeriodoController $controller */
+        $controller = self::$painel_dlx->getContainer()->get(DisponPorPeriodoController::class);
 
         $this->assertInstanceOf(DisponPorPeriodoController::class, $controller);
 
@@ -72,9 +68,9 @@ class DisponPorPeriodoControllerTest extends ReservasTestCase
 
     /**
      * @param DisponPorPeriodoController $controller
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
      * @covers ::formDisponPorPeriodo
      * @depends test__construct
      */
@@ -90,11 +86,11 @@ class DisponPorPeriodoControllerTest extends ReservasTestCase
 
     /**
      * @param DisponPorPeriodoController $controller
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
+     * @throws DBALException
+     * @throws ORMException
      * @covers ::disponConfigQuarto
      * @depends test__construct
      */
@@ -125,8 +121,7 @@ class DisponPorPeriodoControllerTest extends ReservasTestCase
 
     /**
      * @param DisponPorPeriodoController $controller
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
+     * @throws Exception
      * @covers ::salvarDisponPorPeriodo
      * @depends test__construct
      */

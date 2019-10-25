@@ -26,6 +26,7 @@
 namespace Reservas\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 
+use Exception;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
@@ -53,6 +54,7 @@ class ConfirmarPgtoPedidoCommandHandler
     /**
      * @param ConfirmarPgtoPedidoCommand $command
      * @return Pedido
+     * @throws Exception
      */
     public function handle(ConfirmarPgtoPedidoCommand $command): Pedido
     {

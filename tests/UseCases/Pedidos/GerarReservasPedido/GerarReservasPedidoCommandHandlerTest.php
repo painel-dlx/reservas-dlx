@@ -27,7 +27,7 @@ namespace Reservas\Tests\UseCases\Pedidos\GerarReservasPedido;
 
 use CPF\CPF;
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\ORM\ORMException;
 use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
@@ -73,8 +73,6 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
         $checkin = new DateTime();
         $checkout = (clone $checkin)->modify('+2 days');
 
-        $usuario = new Usuario('Teste de Usuário', 'teste@gmail.com');
-
         $pedido = new Pedido();
         $pedido->setNome('Teste de Cliente');
         $pedido->setEmail('cliente@gmail.com');
@@ -83,10 +81,10 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
         $pedido->setValorTotal(1234.00);
         $pedido->addItem(
             $quarto,
-            $checkin->format('Y-m-d'),
-            $checkout->format('Y-m-d'),
+            $checkin,
+            $checkout,
             1,
-            0,
+            1,
             12.34
         );
 

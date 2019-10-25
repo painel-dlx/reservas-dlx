@@ -35,20 +35,17 @@ abstract class AbstractValidator
     /**
      * @var string
      */
-    private $validatorInterface = ValidatorInterface::class;
+    private $validator_interface = ValidatorInterface::class;
 
     /**
      * AbstractValidator constructor.
-     * @param string $validatorInterface Nome da inteface de validação que poderá ser executada
+     * @param string $validator_interface Nome da inteface de validação que poderá ser executada
      * @param array $validators
      */
-    public function __construct(string $validatorInterface, array $validators)
+    public function __construct(string $validator_interface, array $validators)
     {
-        $this->validatorInterface = $validatorInterface;
-
-        foreach ($validators as $nomeValidator) {
-            $this->addValidator($nomeValidator);
-        }
+        $this->validator_interface = $validator_interface;
+        $this->setValidators($validators);
     }
 
     /**
@@ -59,9 +56,22 @@ abstract class AbstractValidator
         return $this->validators;
     }
 
-    public function addValidator(string $nomeValidator, int $prioridade = 0): self
+    /**
+     * @param array $validators
+     * @return AbstractValidator
+     */
+    public function setValidators(array $validators): self
     {
-        $this->validators[$prioridade][] = $nomeValidator;
+        foreach ($validators as $nome_validator) {
+            $this->addValidator($nome_validator);
+        }
+
+        return $this;
+    }
+
+    public function addValidator(string $nome_validator, int $prioridade = 0): self
+    {
+        $this->validators[$prioridade][] = $nome_validator;
         return $this;
     }
 
@@ -74,11 +84,11 @@ abstract class AbstractValidator
     public function validar($params = null, ... $construct): bool
     {
         foreach ($this->validators as $lista_validators) {
-            foreach ($lista_validators as $nomeValidator) {
+            foreach ($lista_validators as $nome_validator) {
                 /** @var ValidatorInterface $validator */
-                $validator = !empty($construct) ? new $nomeValidator(...$construct) : new $nomeValidator;
+                $validator = !empty($construct) ? new $nome_validator(...$construct) : new $nome_validator;
 
-                if (!$validator instanceof $this->validatorInterface) {
+                if (!$validator instanceof $this->validator_interface) {
                     unset($validator);
                     continue;
                 }

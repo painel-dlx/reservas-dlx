@@ -26,55 +26,64 @@
 namespace Reservas\Application\Routes;
 
 
+use PainelDLX\Application\Middlewares\Autorizacao;
+use PainelDLX\Application\Middlewares\ConfigurarPaginacao;
 use PainelDLX\Application\Middlewares\DefinePaginaMestra;
 use PainelDLX\Application\Middlewares\VerificarLogon;
 use PainelDLX\Application\Routes\PainelDLXRouter;
+use PainelDLX\Application\Services\PainelDLX;
 use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\DetalhePedidoController;
 use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\ListaPedidosController;
+use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\WidgetPedidoController;
 
 class PedidosRouter extends PainelDLXRouter
 {
-
     /**
      * Registrar todas as rotas
      */
     public function registrar(): void
     {
         $router = $this->getRouter();
+        $container = PainelDLX::getInstance()->getContainer();
 
-        $verificar_logon = new VerificarLogon($this->session);
-        $define_pagina_mestra = new DefinePaginaMestra($this->painel_dlx->getServerRequest(), $this->session);
+        /** @var VerificarLogon $verificar_logon */
+        $verificar_logon = $container->get(VerificarLogon::class);
+        /** @var DefinePaginaMestra $define_pagina_mestra */
+        $define_pagina_mestra = $container->get(DefinePaginaMestra::class);
+        /** @var ConfigurarPaginacao $paginacao */
+        $paginacao = $container->get(ConfigurarPaginacao::class);
 
         $router->get(
-            '/painel-dlx/apart-hotel/pedidos',
+            '/painel-dlx/apart-hotel/pedidos-{status}',
             [ListaPedidosController::class, 'listaPedidos']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            $define_pagina_mestra
+            $paginacao
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/pedidos/detalhe',
             [DetalhePedidoController::class, 'detalhePedido']
         )->middlewares(
-            $verificar_logon,
-            $define_pagina_mestra
+            $define_pagina_mestra,
+            $verificar_logon
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/pedidos/mostrar-cpf-completo',
             [DetalhePedidoController::class, 'mostrarCpfCompleto']
         )->middlewares(
-            $verificar_logon,
-            $define_pagina_mestra
+            $define_pagina_mestra,
+            $verificar_logon
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/pedidos/confirmar-pedido',
             [DetalhePedidoController::class, 'formConfirmarPgtoPedido']
         )->middlewares(
-            $verificar_logon,
-            $define_pagina_mestra
+            $define_pagina_mestra,
+            $verificar_logon
         );
 
         $router->post(
@@ -88,14 +97,22 @@ class PedidosRouter extends PainelDLXRouter
             '/painel-dlx/apart-hotel/pedidos/cancelar-pedido',
             [DetalhePedidoController::class, 'formCancelarPedido']
         )->middlewares(
-            $verificar_logon,
-            $define_pagina_mestra
+            $define_pagina_mestra,
+            $verificar_logon
         );
 
         $router->post(
             '/painel-dlx/apart-hotel/pedidos/cancelar-pedido',
             [DetalhePedidoController::class, 'cancelarPedido']
         )->middlewares(
+            $verificar_logon
+        );
+
+        $router->get(
+            '/painel-dlx/apart-hotel/pedidos/quantidade-pedidos-{status}',
+            [WidgetPedidoController::class, 'quantidadePedidosPorStatus']
+        )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon
         );
     }

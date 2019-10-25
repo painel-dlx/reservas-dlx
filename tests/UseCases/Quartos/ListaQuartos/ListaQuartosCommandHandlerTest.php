@@ -25,7 +25,8 @@
 
 namespace Reservas\Tests\UseCases\Quartos\ListaQuartos;
 
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\ORM\ORMException;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
@@ -41,7 +42,7 @@ class ListaQuartosCommandHandlerTest extends ReservasTestCase
 {
     /**
      * @return ListaQuartosCommandHandler
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function test__construct(): ListaQuartosCommandHandler
     {

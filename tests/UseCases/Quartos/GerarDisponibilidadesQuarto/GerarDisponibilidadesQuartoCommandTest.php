@@ -25,7 +25,6 @@
 
 namespace Reservas\Tests\UseCases\Quartos\GerarDisponibilidadesQuarto;
 
-use PainelDLX\Testes\TestCase\TesteComTransaction;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommand;
 use PHPUnit\Framework\TestCase;
@@ -37,8 +36,6 @@ use PHPUnit\Framework\TestCase;
  */
 class GerarDisponibilidadesQuartoCommandTest extends TestCase
 {
-    use TesteComTransaction;
-
     /**
      * @return GerarDisponibilidadesQuartoCommand
      */

@@ -25,63 +25,56 @@
 
 namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
 
-use DLX\Core\Configure;
-use DLX\Infra\EntityManagerX;
-use DLX\Infra\ORM\Doctrine\Services\DoctrineTransaction;
 use Exception;
-use PainelDLX\Application\Factories\CommandBusFactory;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController;
 use Reservas\Tests\ReservasTestCase;
+use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
+use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
-use Vilex\VileX;
+use Vilex\Exceptions\ContextoInvalidoException;
+use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
+use Vilex\Exceptions\ViewNaoEncontradaException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class MapaDisponControllerTest
  * @package Reservas\Tests\Presentation\Site\ApartHotel\Controllers
- * @coversDefaultClass \Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController
+ * @coversDefaultClass MapaDisponController
  */
 class MapaDisponControllerTest extends ReservasTestCase
 {
     use TesteComTransaction;
 
     /**
-     * @return \Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController
-     * @throws \SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException
-     * @throws \SechianeX\Exceptions\SessionAdapterNaoEncontradoException
-     * @throws \Doctrine\ORM\ORMException
+     * @return MapaDisponController
+     * @throws SessionAdapterInterfaceInvalidaException
+     * @throws SessionAdapterNaoEncontradoException
      * @covers ::__construct
      */
-    public function test__construct(): \Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController
+    public function test__construct(): MapaDisponController
     {
         $session = SessionFactory::createPHPSession();
         $session->set('vilex:pagina-mestra', 'painel-dlx-master');
 
-        $command_bus = CommandBusFactory::create(self::$container, Configure::get('app', 'mapping'));
+        $controller = self::$painel_dlx->getContainer()->get(MapaDisponController::class);
 
-        $controller = new \Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController(
-            new VileX(),
-            $command_bus(),
-            $session,
-            new DoctrineTransaction(EntityManagerX::getInstance())
-        );
-
-        $this->assertInstanceOf(\Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController::class, $controller);
+        $this->assertInstanceOf(MapaDisponController::class, $controller);
 
         return $controller;
     }
 
     /**
-     * @throws \Vilex\Exceptions\ContextoInvalidoException
-     * @throws \Vilex\Exceptions\PaginaMestraNaoEncontradaException
-     * @throws \Vilex\Exceptions\ViewNaoEncontradaException
+     * @param MapaDisponController $controller
+     * @throws ContextoInvalidoException
+     * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
      * @covers ::calendario
      * @depends test__construct
      */
-    public function test_Calendario_deve_retornar_HtmlResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController $controller)
+    public function test_Calendario_deve_retornar_HtmlResponse(MapaDisponController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getQueryParams')->willReturn([
@@ -96,12 +89,12 @@ class MapaDisponControllerTest extends ReservasTestCase
     }
 
     /**
-     * @param \Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController $controller
+     * @param MapaDisponController $controller
      * @throws Exception
      * @covers ::salvar
      * @depends test__construct
      */
-    public function test_Salvar_deve_retornar_JsonResponse(\Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController $controller)
+    public function test_Salvar_deve_retornar_JsonResponse(MapaDisponController $controller)
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([

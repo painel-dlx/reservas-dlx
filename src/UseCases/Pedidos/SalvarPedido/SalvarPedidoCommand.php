@@ -25,7 +25,11 @@
 
 namespace Reservas\UseCases\Pedidos\SalvarPedido;
 
-
+/**
+ * Class SalvarPedidoCommand
+ * @package Reservas\UseCases\Pedidos\SalvarPedido
+ * @deprecated Está sendo usado?
+ */
 class SalvarPedidoCommand
 {
     /**

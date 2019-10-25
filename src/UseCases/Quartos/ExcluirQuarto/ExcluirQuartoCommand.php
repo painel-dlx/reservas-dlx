@@ -31,13 +31,13 @@ use Reservas\Domain\Quartos\Entities\Quarto;
 class ExcluirQuartoCommand
 {
     /**
-     * @var \Reservas\Domain\Quartos\Entities\Quarto
+     * @var Quarto
      */
     private $quarto;
 
     /**
      * ExcluirQuartoCommand constructor.
-     * @param \Reservas\Domain\Quartos\Entities\Quarto $quarto
+     * @param Quarto $quarto
      */
     public function __construct(Quarto $quarto)
     {
@@ -45,7 +45,7 @@ class ExcluirQuartoCommand
     }
 
     /**
-     * @return \Reservas\Domain\Quartos\Entities\Quarto
+     * @return Quarto
      */
     public function getQuarto(): Quarto
     {

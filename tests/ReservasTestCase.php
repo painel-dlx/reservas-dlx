@@ -28,13 +28,13 @@ namespace Reservas\Tests;
 
 use DLX\Core\Exceptions\ArquivoConfiguracaoNaoEncontradoException;
 use DLX\Core\Exceptions\ArquivoConfiguracaoNaoInformadoException;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Application\Services\Exceptions\AmbienteNaoInformadoException;
 use PainelDLX\Application\Services\PainelDLX;
-use PainelDLX\Testes\TestCase\IniciarPainelDLX;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use PainelDLX\Tests\TestCase\IniciarPainelDLX;
+use PainelDLX\Tests\TestCase\TesteComTransaction;
 use PHPUnit\Framework\TestCase;
 
 class ReservasTestCase extends TestCase
@@ -45,20 +45,16 @@ class ReservasTestCase extends TestCase
      * @throws AmbienteNaoInformadoException
      * @throws ArquivoConfiguracaoNaoEncontradoException
      * @throws ArquivoConfiguracaoNaoInformadoException
-     * @throws ORMException
      */
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-        PainelDLX::$dir = 'vendor/dlepera88-php/painel-dlx';
+        PainelDLX::$dir = 'vendor/painel-dlx/painel-dlx';
         self::start();
         self::$painel_dlx->adicionarDiretorioInclusao(getcwd() .'/' . PainelDLX::$dir);
     }
 
     /**
-     * @throws ArquivoConfiguracaoNaoEncontradoException
-     * @throws ArquivoConfiguracaoNaoInformadoException
-     * @throws AmbienteNaoInformadoException
      * @throws ORMException
      */
     protected function setUp()

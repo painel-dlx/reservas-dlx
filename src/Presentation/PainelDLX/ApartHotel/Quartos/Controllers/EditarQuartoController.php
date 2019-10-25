@@ -33,11 +33,12 @@ use PainelDLX\Presentation\Site\Common\Controllers\PainelDLXController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Quartos\Exceptions\QuartoNaoEncontradoException;
 use Reservas\Domain\Quartos\Exceptions\ValidarQuartoException;
+use Reservas\UseCases\Quartos\EditarQuarto\EditarQuartoCommand;
+use Reservas\UseCases\Quartos\EditarQuarto\EditarQuartoCommandHandler;
 use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
@@ -53,10 +54,6 @@ use Zend\Diactoros\Response\JsonResponse;
 class EditarQuartoController extends PainelDLXController
 {
     /**
-     * @var SessionInterface
-     */
-    private $session;
-    /**
      * @var TransactionInterface
      */
     private $transaction;
@@ -67,6 +64,7 @@ class EditarQuartoController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -74,14 +72,8 @@ class EditarQuartoController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
-
+        parent::__construct($view, $commandBus, $session);
         $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
-
-        $this->session = $session;
         $this->transaction = $transaction;
     }
 
@@ -104,10 +96,6 @@ class EditarQuartoController extends PainelDLXController
             /* @see GetQuartoPorIdCommandHandler */
             $quarto = $this->command_bus->handle(new GetQuartoPorIdCommand($get['id']));
 
-            if (!$quarto instanceof Quarto) {
-                throw new UserException('Quarto não localizado!');
-            }
-
             $this->session->set('editando:quarto', $quarto);
 
             // Views
@@ -122,11 +110,13 @@ class EditarQuartoController extends PainelDLXController
             $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
             $this->view->addArquivoJS('/vendor/ckeditor/ckeditor/ckeditor.js');
             $this->view->addArquivoJS('public/js/apart-hotel-min.js');
-        } catch (UserException $e) {
+        } catch (QuartoNaoEncontradoException | UserException $e) {
+            $tipo = $e instanceof QuartoNaoEncontradoException ? 'atencao' : 'erro';
+
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
-                'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'tipo' => $tipo,
+                'texto' => $e->getMessage()
             ]);
         }
 
@@ -140,35 +130,25 @@ class EditarQuartoController extends PainelDLXController
      */
     public function editarInformacoesQuarto(ServerRequestInterface $request): ResponseInterface
     {
-        $post = filter_var_array($request->getParsedBody(), [
-            'nome' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_EMPTY_STRING_NULL],
-            'descricao' => ['filter' => FILTER_DEFAULT, 'flags' => FILTER_FLAG_EMPTY_STRING_NULL],
-            'max_hospedes' => FILTER_VALIDATE_INT,
-            'qtde' => FILTER_VALIDATE_INT,
-            'tamanho_m2' => FILTER_VALIDATE_INT,
-            'valor_min' => FILTER_VALIDATE_FLOAT,
-            'link' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_FLAG_EMPTY_STRING_NULL]
-        ]);
-
-        /** @var Quarto|null $quarto */
-        $quarto = $this->session->get('editando:quarto');
+        $post = $request->getParsedBody();
 
         try {
-            if (!$quarto instanceof Quarto) {
-                throw new UserException('Quarto não localizado!');
-            }
+            /** @var Quarto $quarto */
+            $quarto = $this->session->get('editando:quarto');
 
-            $quarto
-                ->setNome($post['nome'])
-                ->setDescricao($post['descricao'])
-                ->setMaxHospedes($post['max_hospedes'])
-                ->setQtde($post['qtde'])
-                ->setTamanhoM2($post['tamanho_m2'])
-                ->setValorMin($post['valor_min'])
-                ->setLink($post['link']);
+            /* @see EditarQuartoCommandHandler */
+            $quarto = $this->command_bus->handle(new EditarQuartoCommand(
+                $post['nome'],
+                $post['descricao'],
+                $post['max_hospedes'],
+                $post['qtde'],
+                $post['tamanho_m2'],
+                $post['valor_min'],
+                $post['link'],
+                $quarto->getId()
+            ));
 
-            /* @see SalvarQuartoCommandHandler */
-            $this->command_bus->handle(new SalvarQuartoCommand($quarto));
+            $this->session->set('editando:quarto', $quarto);
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Quarto atualizado com sucesso!';

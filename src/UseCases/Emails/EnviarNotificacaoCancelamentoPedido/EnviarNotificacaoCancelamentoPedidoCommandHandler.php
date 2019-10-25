@@ -26,9 +26,9 @@
 namespace Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido;
 
 
-use PainelDLX\Application\Services\EnviarEmail;
 use PainelDLX\Application\Services\Exceptions\ErroAoEnviarEmailException;
 use PainelDLX\Domain\Emails\Repositories\ConfigSmtpRepositoryInterface;
+use PainelDLX\Infrastructure\Services\Email\EnviarEmail;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Reservas\Domain\Pedidos\Entities\Pedido;
@@ -39,6 +39,14 @@ use Vilex\VileX;
 
 class EnviarNotificacaoCancelamentoPedidoCommandHandler
 {
+    /**
+     * @var PHPMailer
+     */
+    private $PHP_mailer;
+    /**
+     * @var ConfigSmtpRepositoryInterface
+     */
+    private $config_smtp_repository;
     /**
      * @var VileX
      */
@@ -81,6 +89,7 @@ class EnviarNotificacaoCancelamentoPedidoCommandHandler
 
     /**
      * @param Pedido $pedido
+     * @param string $motivo
      * @return string
      * @throws ContextoInvalidoException
      * @throws PaginaMestraNaoEncontradaException

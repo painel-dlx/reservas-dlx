@@ -27,60 +27,75 @@ namespace Reservas\Application\Routes;
 
 
 use PainelDLX\Application\Middlewares\Autorizacao;
+use PainelDLX\Application\Middlewares\ConfigurarPaginacao;
 use PainelDLX\Application\Middlewares\DefinePaginaMestra;
 use PainelDLX\Application\Middlewares\VerificarLogon;
 use PainelDLX\Application\Routes\PainelDLXRouter;
+use PainelDLX\Application\Services\PainelDLX;
 use Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\DetalheReservaController;
 use Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\ListaReservasController;
 use Reservas\Presentation\PainelDLX\ApartHotel\Reservas\Controllers\SalvarReservaController;
 
 class ReservasRouter extends PainelDLXRouter
 {
-
     /**
      * Registrar todas as rotas
      */
     public function registrar(): void
     {
         $router = $this->getRouter();
-        $verificar_logon = new VerificarLogon($this->session);
-        $define_pagina_mestra = new DefinePaginaMestra($this->painel_dlx->getServerRequest(), $this->session);
-        $perm_ver_detalhes_reservas = new Autorizacao('VER_DETALHES_RESERVAS');
+        $container = PainelDLX::getInstance()->getContainer();
+
+        /** @var VerificarLogon $verificar_logon */
+        $verificar_logon = $container->get(VerificarLogon::class);
+        /** @var DefinePaginaMestra $define_pagina_mestra */
+        $define_pagina_mestra = $container->get(DefinePaginaMestra::class);
+        /** @var ConfigurarPaginacao $paginacao */
+        $paginacao = $container->get(ConfigurarPaginacao::class);
+        /** @var Autorizacao $autorizacao */
+        $autorizacao = $container->get(Autorizacao::class);
+
+        $autorizacao_reservar_quarto = $autorizacao->necessitaPermissoes('RESERVAR_QUARTOS');
+        $autorizacao_listar_reservas = $autorizacao->necessitaPermissoes('VER_LISTA_RESERVAS');
+        $autorizacao_detalhe_reservas = $autorizacao->necessitaPermissoes('VER_DETALHE_RESERVAS');
+        $autorizacao_confirmar_reserva = $autorizacao->necessitaPermissoes('CONFIRMAR_RESERVAS');
+        $autorizacao_cancelar_reserva = $autorizacao->necessitaPermissoes('CANCELAR_RESERVAS');
 
         $router->get(
             '/painel-dlx/apart-hotel/reservas',
             [ListaReservasController::class, 'listaReservas']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            new Autorizacao('VER_LISTA_RESERVAS'),
-            $define_pagina_mestra
+            $autorizacao_listar_reservas,
+            $paginacao
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/reservas/reservar-quarto',
             [SalvarReservaController::class, 'formReservarQuarto']
         )->middlewares(
-            $verificar_logon,
             $define_pagina_mestra,
-            new Autorizacao('RESERVAR_QUARTOS')
+            $verificar_logon,
+            $autorizacao_reservar_quarto
         );
 
         $router->post(
             '/painel-dlx/apart-hotel/reservas/salvar-reserva',
             [SalvarReservaController::class, 'criarReserva']
         )->middlewares(
-            $verificar_logon,
             $define_pagina_mestra,
-            new Autorizacao('RESERVAR_QUARTOS')
+            $verificar_logon,
+            $autorizacao_reservar_quarto
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/reservas/detalhe',
             [DetalheReservaController::class, 'detalhesReserva']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            $perm_ver_detalhes_reservas,
-            $define_pagina_mestra
+            $autorizacao_detalhe_reservas
         );
 
         $router->get(
@@ -88,16 +103,16 @@ class ReservasRouter extends PainelDLXRouter
             [DetalheReservaController::class, 'mostrarCpfCompleto']
         )->middlewares(
             $verificar_logon,
-            $perm_ver_detalhes_reservas
+            $autorizacao_detalhe_reservas
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/reservas/confirmar-reserva',
             [DetalheReservaController::class, 'formConfirmarReserva']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            new Autorizacao('CONFIRMAR_RESERVAS'),
-            $define_pagina_mestra
+            $autorizacao_confirmar_reserva
         );
 
         $router->post(
@@ -105,16 +120,16 @@ class ReservasRouter extends PainelDLXRouter
             [DetalheReservaController::class, 'confirmarReserva']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('CONFIRMAR_RESERVAS')
+            $autorizacao_confirmar_reserva
         );
 
         $router->get(
             '/painel-dlx/apart-hotel/reservas/cancelar-reserva',
             [DetalheReservaController::class, 'formCancelarReserva']
         )->middlewares(
+            $define_pagina_mestra,
             $verificar_logon,
-            new Autorizacao('CANCELAR_RESERVAS'),
-            $define_pagina_mestra
+            $autorizacao_cancelar_reserva
         );
 
         $router->post(
@@ -122,7 +137,7 @@ class ReservasRouter extends PainelDLXRouter
             [DetalheReservaController::class, 'cancelarReserva']
         )->middlewares(
             $verificar_logon,
-            new Autorizacao('CANCELAR_RESERVAS')
+            $autorizacao_cancelar_reserva
         );
     }
 }

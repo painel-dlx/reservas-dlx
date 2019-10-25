@@ -65,6 +65,7 @@ class DisponPorPeriodoController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -72,14 +73,10 @@ class DisponPorPeriodoController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
+        parent::__construct($view, $commandBus, $session);
 
         $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css', false, Configure::get('app', 'versao'));
 
-        $this->view = $view;
         $this->transaction = $transaction;
     }
 
@@ -156,8 +153,6 @@ class DisponPorPeriodoController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws ViewNaoEncontradaException
      * @throws Exception
      */
     public function salvarDisponPorPeriodo(ServerRequestInterface $request): ResponseInterface

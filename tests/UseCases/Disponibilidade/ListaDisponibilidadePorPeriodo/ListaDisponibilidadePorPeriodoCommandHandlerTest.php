@@ -26,10 +26,10 @@
 namespace Reservas\Tests\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo;
 
 use DateTime;
-use DLX\Infra\EntityManagerX;
+use DLX\Infrastructure\EntityManagerX;
+use Doctrine\ORM\ORMException;
 use Exception;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
-use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo\ListaDisponibilidadePorPeriodoCommand;
@@ -43,13 +43,12 @@ use Reservas\UseCases\Disponibilidade\ListaDisponibilidadePorPeriodo\ListaDispon
 class ListaDisponibilidadePorPeriodoCommandHandlerTest extends ReservasTestCase
 {
     /**
-     * @return array
-     * @throws \Doctrine\ORM\ORMException
-     * @throws Exception
+     * @return ListaDisponibilidadePorPeriodoCommandHandler
+     * @throws ORMException
      */
     public function test__construct(): ListaDisponibilidadePorPeriodoCommandHandler
     {
-        /** @var \Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface $disponibilidade_repository */
+        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
         $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
         $handler = new ListaDisponibilidadePorPeriodoCommandHandler($disponibilidade_repository);
 

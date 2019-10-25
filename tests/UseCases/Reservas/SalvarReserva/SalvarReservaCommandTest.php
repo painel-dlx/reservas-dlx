@@ -26,6 +26,7 @@
 namespace Reservas\Tests\UseCases\Reservas\SalvarReserva;
 
 use DateTime;
+use Exception;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\UseCases\Reservas\SalvarReserva\SalvarReservaCommand;
@@ -40,6 +41,7 @@ class SalvarReservaCommandTest extends ReservasTestCase
 {
     /**
      * @return SalvarReservaCommand
+     * @throws Exception
      */
     public function test__construct(): SalvarReservaCommand
     {

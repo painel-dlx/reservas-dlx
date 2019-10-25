@@ -26,10 +26,12 @@
 namespace Reservas\Tests\UseCases\Pedidos\SalvarPedido;
 
 use DateTime;
-use PainelDLX\Testes\TestCase\TesteComTransaction;
+use Exception;
+use PHPUnit\Framework\TestCase;
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
-use Reservas\Tests\ReservasTestCase;
+use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
+use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\UseCases\Pedidos\SalvarPedido\SalvarPedidoCommand;
 use Reservas\UseCases\Pedidos\SalvarPedido\SalvarPedidoCommandHandler;
 
@@ -38,55 +40,61 @@ use Reservas\UseCases\Pedidos\SalvarPedido\SalvarPedidoCommandHandler;
  * @package Reservas\UseCases\Pedidos\SalvarPedido
  * @coversDefaultClass \Reservas\UseCases\Pedidos\SalvarPedido\SalvarPedidoCommandHandler
  */
-class SalvarPedidoCommandHandlerTest extends ReservasTestCase
+class SalvarPedidoCommandHandlerTest extends TestCase
 {
-    use TesteComTransaction;
-
     /**
-     * @return SalvarPedidoCommandHandler
-     */
-    public function test__construct(): SalvarPedidoCommandHandler
-    {
-        $container = self::$painel_dlx->getContainer();
-        $handler = $container->get(SalvarPedidoCommandHandler::class);
-
-        $this->assertInstanceOf(SalvarPedidoCommandHandler::class, $handler);
-
-        return $handler;
-    }
-
-    /**
-     * @param SalvarPedidoCommandHandler $handler
+     * @throws Exception
      * @covers ::handle
-     * @depends test__construct
-     * @throws PedidoInvalidoException
      */
-    public function test_Handle_deve_salvar_novo_Pedido(SalvarPedidoCommandHandler $handler)
+    public function test_Handle_deve_criar_novo_Pedido()
     {
+        $quarto = $this->createMock(Quarto::class);
+        $quarto->method('isDisponivelPeriodo')->willReturn(true);
+
+        $pedido_repository = $this->createMock(PedidoRepositoryInterface::class);
+
+        $quarto_repository = $this->createMock(QuartoRepositoryInterface::class);
+        $quarto_repository->method('find')->willReturn($quarto);
+
+        /** @var PedidoRepositoryInterface $pedido_repository */
+        /** @var QuartoRepositoryInterface $quarto_repository */
+
         $checkin = (new DateTime())->modify('+1 day');
         $checkout = (clone $checkin)->modify('+1 day');
 
-        $command = new SalvarPedidoCommand(
-            'Teste Unitário',
-            '652.602.110-73',
-            'teste@unitario.com',
-            '(61) 9 8350-3517',
+        $nome = 'Teste Unitário';
+        $cpf = '652.602.110-73';
+        $email = 'teste@unitario.com';
+        $telefone = '(61) 9 8350-3517';
+        $itens = [
             [
-                (object)[
-                    'quartoID' => 1,
-                    'quartoNome' => 'Quarto de Teste',
-                    'checkin' => $checkin->format('Y-m-d'),
-                    'checkout' => $checkout->format('Y-m-d'),
-                    'adultos' => 1,
-                    'criancas' => 0,
-                    'valor' => 12.34
-                ]
+                'quartoID' => 1,
+                'quartoNome' => 'Quarto de Teste',
+                'checkin' => $checkin->format('Y-m-d'),
+                'checkout' => $checkout->format('Y-m-d'),
+                'adultos' => 1,
+                'criancas' => 0,
+                'valor' => 12.34
             ]
+        ];
+
+        $command = new SalvarPedidoCommand(
+            $nome,
+            $cpf,
+            $email,
+            $telefone,
+            $itens
         );
 
-        $pedido = $handler->handle($command);
+        $pedido = (new SalvarPedidoCommandHandler($pedido_repository, $quarto_repository))->handle($command);
 
         $this->assertInstanceOf(Pedido::class, $pedido);
-        $this->assertNotNull($pedido->getId());
+        $this->assertEquals($nome, $pedido->getNome());
+        $this->assertEquals($cpf, $pedido->getCpf());
+        $this->assertEquals($email, $pedido->getEmail());
+        $this->assertEquals($telefone, $pedido->getTelefone());
+        $this->assertEquals($itens, $pedido->getItens());
+
+        $this->assertTrue($pedido->isPendente());
     }
 }

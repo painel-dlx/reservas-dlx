@@ -25,42 +25,38 @@
 
 include __DIR__ . '/vendor/autoload.php';
 
-use PainelDLX\Application\Middlewares\Exceptions\UsuarioNaoLogadoException;
-use PainelDLX\Application\Middlewares\Exceptions\UsuarioNaoPossuiPermissaoException;
+use League\Route\Router;
+use League\Route\Strategy\ApplicationStrategy;
+use PainelDLX\Application\Adapters\Router\League\LeagueContainerAdapter;
+use PainelDLX\Application\Adapters\Router\League\LeagueRouterAdapter;
 use PainelDLX\Application\Services\PainelDLX;
-use RautereX\Exceptions\RotaNaoEncontradaException;
 use Zend\Diactoros\ServerRequestFactory;
 use League\Container\Container;
 use League\Container\ReflectionContainer;
 
-$server_request = ServerRequestFactory::fromGlobals();
-
-$container = new Container;
-$container->delegate(new ReflectionContainer);
-
 try {
-    $painel_dlx = new PainelDLX($server_request, $container);
-    $painel_dlx
-        ->adicionarDiretorioInclusao(dirname(__FILE__))
-        ->init()
-        ->executar();
-} catch (UsuarioNaoLogadoException $e) {
-    $query_param = $server_request->getQueryParams();
-    $query_param['task'] = '/painel-dlx/login';
-    $server_request_login = $server_request->withQueryParams($query_param);
-    $painel_dlx->redirect($server_request_login);
-} catch (RotaNaoEncontradaException $e) {
-    $query_param = $server_request->getQueryParams();
-    $query_param['task'] = '/painel-dlx/erro-http';
-    $query_param['erro'] = 404;
-    $server_request_404 = $server_request->withQueryParams($query_param);
-    $painel_dlx->redirect($server_request_404);
-} catch (UsuarioNaoPossuiPermissaoException $e) {
-    $query_param = $server_request->getQueryParams();
-    $query_param['task'] = '/painel-dlx/erro-http';
-    $query_param['erro'] = 403;
-    $server_request_403 = $server_request->withQueryParams($query_param);
-    $painel_dlx->redirect($server_request_403);
+    $server_request = ServerRequestFactory::fromGlobals();
+
+    $league_container = new Container;
+    $league_container->delegate(new ReflectionContainer);
+
+    $container = new LeagueContainerAdapter($league_container);
+
+    $strategy = new ApplicationStrategy;
+    $strategy->setContainer($container);
+
+    $league_router = new Router();
+    $league_router->setStrategy($strategy);
+
+    $router = new LeagueRouterAdapter($league_router);
+
+    $painel_dlx = new PainelDLX(
+        $server_request,
+        $router,
+        $container
+    );
+
+    $painel_dlx->init()->executar();
 } catch (Exception $e) {
     var_dump($e);
 }

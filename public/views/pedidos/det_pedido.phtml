@@ -26,6 +26,7 @@
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoHistorico;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Vilex\VileX;
 
@@ -39,6 +40,10 @@ $pedido = $this->getAtributo('pedido');
 /** @var Usuario $usuario_logado */
 $usuario_logado = $this->getAtributo('usuario-logado');
 ?>
+[HTML-HEAD]
+<title><?php echo $this->getAtributo('html:title') ?></title>
+[/HTML-HEAD]
+
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
 
@@ -59,40 +64,49 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                 </p>
 
                 <p class="info-reserva-dado">
-                    <span class="info-reserva-rotulo">Forma de Pgto:</span>
+                    <span class="info-reserva-rotulo">Gateway de Pgto:</span>
                     <?php echo $pedido->getFormaPgto() ?>
                 </p>
             </div>
 
-            <?php if ($pedido->isPendente() && !is_null($pedido->getPgtoCartao())) : ?>
+            <?php if ($pedido->isPendente() && !is_null($pedido->getCartao())) : ?>
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado">
-                        <span class="info-reserva-rotulo">Nº cartão:</span>
-                        <?php echo $pedido->getPgtoCartao()->getNumeroCartao() ?>
+                        <span class="info-reserva-rotulo">
+                            Cartão de <?php echo $pedido->getCartao()->getTipo(true) ?>:
+                        </span>
+                        <?php echo $pedido->getCartao()->getNumeroCartao() ?>
                     </p>
                 </div>
 
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Dono Cartão:</span>
-                        <?php echo $pedido->getPgtoCartao()->getDonoCartao() ?>
+                        <?php echo $pedido->getCartao()->getDono() ?>
                     </p>
 
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Data de Expiração:</span>
-                        <?php echo $pedido->getPgtoCartao()->getExpiracao() ?>
+                        <?php echo $pedido->getCartao()->getValidade() ?>
                     </p>
                 </div>
 
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Código Segurança:</span>
-                        <?php echo $pedido->getPgtoCartao()->getCodigoSeguranca() ?>
+                        <?php echo $pedido->getCartao()->getCodigoSeguranca() ?>
                     </p>
 
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Parcelas:</span>
-                        <?php echo "{$pedido->getPgtoCartao()->getQtdeParcelas()}x" ?>
+                        <?php echo "{$pedido->getCartao()->getParcelas()}x" ?>
+                    </p>
+                </div>
+
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <span class="info-reserva-rotulo">Tipo:</span>
+                        <?php echo $pedido->getCartao()->getTipo(true) ?>
                     </p>
                 </div>
             <?php endif; ?>
@@ -188,24 +202,24 @@ $usuario_logado = $this->getAtributo('usuario-logado');
 
                     <tbody>
                     <?php
-                    if (count($pedido->getItens()) < 1) : ?>
-                    <tr>
-                        <td colspan="5">Nenhum item adicionado ao pedido.</td>
-                    </tr>
+                    if ($pedido->getItens()->isEmpty()) : ?>
+                        <tr>
+                            <td colspan="5">Nenhum item adicionado ao pedido.</td>
+                        </tr>
                     <?php endif;
 
-                    /** @var stdClass $item */
-                    foreach ($pedido->getItens() as $item) :
-                        $checkin = new DateTime($item->checkin);
-                        $checkout = new DateTime($item->checkout); ?>
+                    /** @var PedidoItem $pedido_item */
+                    foreach ($pedido->getItens() as $pedido_item) :  ?>
                         <tr>
-                            <td headers="quarto>"><?php echo "{$item->quartoNome} ({$item->quartoID})" ?></td>
-                            <td headers="checkin"><?php echo $checkin->format('d/m/Y') ?></td>
-                            <td headers="checkout"><?php echo $checkout->format('d/m/Y') ?></td>
-                            <td headers="hospedes" style="text-align: center">
-                                <?php printf('%d adultos, %d crianças', $item->adultos, $item->criancas) ?>
+                            <td headers="quarto>">
+                                <?php echo $pedido_item->getQuarto() ?>
                             </td>
-                            <td headers="valor"><?php echo 'R$ ' . number_format($item->valor, 2, ',', '') ?></td>
+                            <td headers="checkin"><?php echo $pedido_item->getCheckin()->format('d/m/Y') ?></td>
+                            <td headers="checkout"><?php echo $pedido_item->getCheckout()->format('d/m/Y') ?></td>
+                            <td headers="hospedes" style="text-align: center">
+                                <?php printf('%d adultos, %d crianças', $pedido_item->getAdultos(), $pedido_item->getCriancas()) ?>
+                            </td>
+                            <td headers="valor"><?php echo 'R$ ' . number_format($pedido_item->getValorTotal(), 2, ',', '') ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

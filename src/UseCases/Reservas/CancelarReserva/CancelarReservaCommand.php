@@ -63,7 +63,7 @@ class CancelarReservaCommand
     }
 
     /**
-     * @return \Reservas\Domain\Reservas\Entities\Reserva
+     * @return Reserva
      */
     public function getReserva(): Reserva
     {

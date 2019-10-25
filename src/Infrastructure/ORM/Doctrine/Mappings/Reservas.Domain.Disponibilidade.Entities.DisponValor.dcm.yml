@@ -1,0 +1,23 @@
+Reservas\Domain\Disponibilidade\Entities\DisponValor:
+    type: entity
+    table: reservas_disponibilidade_valores
+    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\DisponValorRepository
+    id:
+        dispon:
+            associationKey: true
+            id: true
+        qtde_pessoas:
+            type: integer
+            nullable: false
+            id: true
+    fields:
+        valor:
+            type: float
+            nullable: false
+    manyToOne:
+        dispon:
+            targetEntity: Disponibilidade
+            inversedBy: valores
+            joinColumns:
+                dispon_id:
+                    referencedColumnName: dispon_id

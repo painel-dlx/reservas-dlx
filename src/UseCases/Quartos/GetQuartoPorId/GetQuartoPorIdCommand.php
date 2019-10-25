@@ -26,28 +26,8 @@
 namespace Reservas\UseCases\Quartos\GetQuartoPorId;
 
 
-class GetQuartoPorIdCommand
+use PainelDLX\Application\Contracts\FindByIdCommand;
+
+class GetQuartoPorIdCommand extends FindByIdCommand
 {
-    /**
-     * @var int
-     */
-    private $quarto_id;
-
-    /**
-     * GetQuartoPorIdCommand constructor.
-     * @param int $quarto_id
-     */
-    public function __construct(int $quarto_id)
-    {
-        $this->quarto_id = $quarto_id;
-    }
-
-    /**
-     * @return int
-     */
-    public function getQuartoId(): int
-    {
-        return $this->quarto_id;
-    }
-
 }

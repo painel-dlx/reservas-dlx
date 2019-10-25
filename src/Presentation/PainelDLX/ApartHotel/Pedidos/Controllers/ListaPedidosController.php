@@ -43,14 +43,10 @@ use Vilex\VileX;
 /**
  * Class ListaPedidoController
  * @package Reservas\Presentation\Site\ApartHotel\Controllers
- * @covers ListaPedidoControllerTest
+ * @covers ListaPedidosControllerTest
  */
 class ListaPedidosController extends PainelDLXController
 {
-    /**
-     * @var SessionInterface
-     */
-    private $session;
     /**
      * @var TransactionInterface
      */
@@ -62,6 +58,7 @@ class ListaPedidosController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
+     * @throws ViewNaoEncontradaException
      */
     public function __construct(
         VileX $view,
@@ -69,48 +66,60 @@ class ListaPedidosController extends PainelDLXController
         SessionInterface $session,
         TransactionInterface $transaction
     ) {
-        parent::__construct($view, $commandBus);
-
-        $this->view->setPaginaMestra("public/views/paginas-mestras/{$session->get('vilex:pagina-mestra')}.phtml");
-        $this->view->setViewRoot('public/views/');
+        parent::__construct($view, $commandBus, $session);
         $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
-
-        $this->session = $session;
         $this->transaction = $transaction;
     }
 
     /**
      * @param ServerRequestInterface $request
+     * @param array $args
      * @return ResponseInterface
      * @throws ContextoInvalidoException
-     * @throws ViewNaoEncontradaException
      * @throws PaginaMestraNaoEncontradaException
+     * @throws ViewNaoEncontradaException
      */
-    public function listaPedidos(ServerRequestInterface $request): ResponseInterface
+    public function listaPedidos(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
         $get = filter_var_array($request->getQueryParams(), [
             'campos' => ['filter' => FILTER_SANITIZE_STRING, 'flags' => FILTER_REQUIRE_ARRAY],
-            'busca' => FILTER_DEFAULT
+            'busca' => FILTER_DEFAULT,
+            'pg' => FILTER_VALIDATE_INT,
+            'qtde' => FILTER_VALIDATE_INT,
+            'offset' => FILTER_VALIDATE_INT
         ]);
+
+        $status = preg_replace('~s$~', '', $args['status']);
+        $status = $status === 'confirmado' ? 'pago' : $status;
 
         try {
             /** @var array $criteria */
             /* @see ConverterFiltro2CriteriaCommandHandler */
             $criteria = $this->command_bus->handle(new ConverterFiltro2CriteriaCommand($get['campos'], $get['busca']));
+            $criteria['and'] = ['status' => $status];
 
             /* @see ListaPedidosCommandHandler */
             $lista_pedidos = $this->command_bus->handle(new ListaPedidosCommand(
                 $criteria,
-                ['e.status' => 'desc']
+                ['e.id' => $status === 'pendente' ? 'asc' : 'desc'],
+                $get['qtde'],
+                $get['offset']
             ));
 
             // Atributos
             $this->view->setAtributo('titulo-pagina', 'Pedidos');
             $this->view->setAtributo('lista-pedidos', $lista_pedidos);
             $this->view->setAtributo('filtro', $get);
+            $this->view->setAtributo('status-pedidos', $status);
+
+            // Paginação
+            $this->view->setAtributo('pagina-atual', $get['pg']);
+            $this->view->setAtributo('qtde-registros-pagina', $get['qtde']);
+            $this->view->setAtributo('qtde-registros-lista', count($lista_pedidos));
 
             // Views
             $this->view->addTemplate('pedidos/lista_pedidos');
+            $this->view->addTemplate('common/paginacao');
 
             // JS
             $this->view->addArquivoJS('public/js/apart-hotel-min.js');
