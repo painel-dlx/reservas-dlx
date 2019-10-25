@@ -26,20 +26,20 @@
 namespace Reservas\Tests\Domain\Pedidos\Entities;
 
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Reservas\Domain\Pedidos\Entities\PedidoCartaoCredito;
+use Reservas\Domain\Pedidos\Entities\PedidoCartao;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class PedidoCartaoCreditoTest
  * @package Reservas\Tests\Domain\Pedidos\Entities
- * @coversDefaultClass \Reservas\Domain\Pedidos\Entities\PedidoCartaoCredito
+ * @coversDefaultClass \Reservas\Domain\Pedidos\Entities\PedidoCartao
  */
-class PedidoCartaoCreditoTest extends TestCase
+class PedidoCartaoTest extends TestCase
 {
     /**
-     * @return PedidoCartaoCredito
+     * @return PedidoCartao
      */
-    public function test__construct(): PedidoCartaoCredito
+    public function test__construct(): PedidoCartao
     {
         $dono = 'Dono do Cartão';
         $numero_cartao = '5400-0000-0000-0000';
@@ -52,7 +52,7 @@ class PedidoCartaoCreditoTest extends TestCase
 
         /** @var Pedido $pedido */
 
-        $cartao_credito = new PedidoCartaoCredito(
+        $cartao_credito = new PedidoCartao(
             $pedido,
             $dono,
             $numero_cartao,
@@ -60,7 +60,7 @@ class PedidoCartaoCreditoTest extends TestCase
             $codigo_seguranca
         );
 
-        $this->assertInstanceOf(PedidoCartaoCredito::class, $cartao_credito);
+        $this->assertInstanceOf(PedidoCartao::class, $cartao_credito);
 
         $this->assertSame($pedido, $cartao_credito->getPedido());
         $this->assertSame($numero_cartao, $cartao_credito->getNumeroCartao());
@@ -68,6 +68,7 @@ class PedidoCartaoCreditoTest extends TestCase
         $this->assertSame($codigo_seguranca, $cartao_credito->getCodigoSeguranca());
         $this->assertSame($valor, $cartao_credito->getValor());
         $this->assertEquals(1, $cartao_credito->getParcelas());
+        $this->assertEquals('credit', $cartao_credito->getTipo());
 
         // O construct identifica a bandeira do cartão
         $this->assertEquals('MasterCard', $cartao_credito->getBandeira());

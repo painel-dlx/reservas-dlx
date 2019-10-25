@@ -40,6 +40,10 @@ $pedido = $this->getAtributo('pedido');
 /** @var Usuario $usuario_logado */
 $usuario_logado = $this->getAtributo('usuario-logado');
 ?>
+[HTML-HEAD]
+<title><?php echo $this->getAtributo('html:title') ?></title>
+[/HTML-HEAD]
+
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
 
@@ -60,40 +64,49 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                 </p>
 
                 <p class="info-reserva-dado">
-                    <span class="info-reserva-rotulo">Forma de Pgto:</span>
+                    <span class="info-reserva-rotulo">Gateway de Pgto:</span>
                     <?php echo $pedido->getFormaPgto() ?>
                 </p>
             </div>
 
-            <?php if ($pedido->isPendente() && !is_null($pedido->getCartaoCredito())) : ?>
+            <?php if ($pedido->isPendente() && !is_null($pedido->getCartao())) : ?>
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado">
-                        <span class="info-reserva-rotulo">Nº cartão:</span>
-                        <?php echo $pedido->getCartaoCredito()->getNumeroCartao() ?>
+                        <span class="info-reserva-rotulo">
+                            Cartão de <?php echo $pedido->getCartao()->getTipo(true) ?>:
+                        </span>
+                        <?php echo $pedido->getCartao()->getNumeroCartao() ?>
                     </p>
                 </div>
 
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Dono Cartão:</span>
-                        <?php echo $pedido->getCartaoCredito()->getDono() ?>
+                        <?php echo $pedido->getCartao()->getDono() ?>
                     </p>
 
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Data de Expiração:</span>
-                        <?php echo $pedido->getCartaoCredito()->getValidade() ?>
+                        <?php echo $pedido->getCartao()->getValidade() ?>
                     </p>
                 </div>
 
                 <div class="info-reserva-linha">
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Código Segurança:</span>
-                        <?php echo $pedido->getCartaoCredito()->getCodigoSeguranca() ?>
+                        <?php echo $pedido->getCartao()->getCodigoSeguranca() ?>
                     </p>
 
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Parcelas:</span>
-                        <?php echo "{$pedido->getCartaoCredito()->getParcelas()}x" ?>
+                        <?php echo "{$pedido->getCartao()->getParcelas()}x" ?>
+                    </p>
+                </div>
+
+                <div class="info-reserva-linha">
+                    <p class="info-reserva-dado">
+                        <span class="info-reserva-rotulo">Tipo:</span>
+                        <?php echo $pedido->getCartao()->getTipo(true) ?>
                     </p>
                 </div>
             <?php endif; ?>

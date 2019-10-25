@@ -76,9 +76,11 @@ class ListaPedidosControllerTest extends ReservasTestCase
             'busca' => null
         ]);
 
+        $args = ['status' => 'pendentes'];
+
         /** @var ServerRequestInterface $request */
 
-        $response = $controller->listaPedidos($request);
+        $response = $controller->listaPedidos($request, $args);
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 }

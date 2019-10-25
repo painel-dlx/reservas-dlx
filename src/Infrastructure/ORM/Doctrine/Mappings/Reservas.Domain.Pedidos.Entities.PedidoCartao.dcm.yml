@@ -1,7 +1,7 @@
-Reservas\Domain\Pedidos\Entities\PedidoCartaoCredito:
+Reservas\Domain\Pedidos\Entities\PedidoCartao:
     type: entity
-    table: reservas_pedido_cartao_credito
-    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoCartaoCreditoRepository
+    table: reservas_pedido_cartao
+    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoCartaoRepository
     id:
         pedido:
             associationKey: true
@@ -31,10 +31,16 @@ Reservas\Domain\Pedidos\Entities\PedidoCartaoCredito:
             nullable: false
             options:
                 default: 1
+        tipo:
+            type: string
+            nullable: false
+            length: 10
+            options:
+                default: 'credit'
     oneToOne:
         pedido:
             targetEntity: Pedido
-            inversedBy: cartao_credito
+            inversedBy: cartao
             joinColumns:
                 pedido_id:
                     referencedColumnName: pedido_id

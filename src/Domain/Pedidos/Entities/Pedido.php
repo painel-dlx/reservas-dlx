@@ -71,8 +71,8 @@ class Pedido extends Entity
     private $forma_pgto = 'digitada';
     /** @var string */
     private $status = 'Pendente';
-    /** @var PedidoCartaoCredito|null */
-    private $cartao_credito;
+    /** @var PedidoCartao|null */
+    private $cartao;
     /** @var PedidoEndereco|null */
     private $endereco;
     /** @var Collection */
@@ -259,20 +259,20 @@ class Pedido extends Entity
     }
 
     /**
-     * @return PedidoCartaoCredito|null
+     * @return PedidoCartao|null
      */
-    public function getCartaoCredito(): ?PedidoCartaoCredito
+    public function getCartao(): ?PedidoCartao
     {
-        return $this->cartao_credito;
+        return $this->cartao;
     }
 
     /**
-     * @param PedidoCartaoCredito|null $cartao_credito
+     * @param PedidoCartao|null $cartao
      * @return Pedido
      */
-    public function setCartaoCredito(?PedidoCartaoCredito $cartao_credito): Pedido
+    public function setCartao(?PedidoCartao $cartao): Pedido
     {
-        $this->cartao_credito = $cartao_credito;
+        $this->cartao = $cartao;
         return $this;
     }
 

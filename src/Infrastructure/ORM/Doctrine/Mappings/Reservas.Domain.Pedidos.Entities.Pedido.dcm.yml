@@ -48,8 +48,8 @@ Reservas\Domain\Pedidos\Entities\Pedido:
                 default: Pendente
             column: pedido_status
     oneToOne:
-        cartao_credito:
-            targetEntity: PedidoCartaoCredito
+        cartao:
+            targetEntity: PedidoCartao
             mappedBy: pedido
             cascade:
                 - persist

@@ -43,7 +43,7 @@ use Vilex\VileX;
 /**
  * Class ListaPedidoController
  * @package Reservas\Presentation\Site\ApartHotel\Controllers
- * @covers ListaPedidoControllerTest
+ * @covers ListaPedidosControllerTest
  */
 class ListaPedidosController extends PainelDLXController
 {

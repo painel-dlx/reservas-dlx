@@ -34,10 +34,12 @@ use Reservas\Domain\Pedidos\Services\IdentificarBandeiraCartao;
  * @package Reservas\Domain\Pedidos\Entities
  * @covers PedidoCartaoCreditoTest
  */
-class PedidoCartaoCredito extends Entity
+class PedidoCartao extends Entity
 {
     /** @var Pedido */
     private $pedido;
+    /** @var string */
+    private $tipo = 'credit';
     /** @var string */
     private $dono;
     /** @var string|null */
@@ -61,6 +63,7 @@ class PedidoCartaoCredito extends Entity
      * @param string $validade
      * @param string $codigo_seguranca
      * @param int $parcelas
+     * @param string $tipo
      */
     public function __construct(
         Pedido $pedido,
@@ -68,7 +71,8 @@ class PedidoCartaoCredito extends Entity
         string $numero_cartao,
         string $validade,
         string $codigo_seguranca,
-        int $parcelas = 1
+        int $parcelas = 1,
+        string $tipo = 'credit'
     ) {
         $this->pedido = $pedido;
         $this->dono = strtoupper($dono);
@@ -76,6 +80,7 @@ class PedidoCartaoCredito extends Entity
         $this->validade = $validade;
         $this->codigo_seguranca = $codigo_seguranca;
         $this->parcelas = $parcelas;
+        $this->tipo = $tipo;
         $this->valor = $pedido->getValorTotal();
 
         $this->identificarBandeira();
@@ -87,6 +92,24 @@ class PedidoCartaoCredito extends Entity
     public function getPedido(): Pedido
     {
         return $this->pedido;
+    }
+
+    /**
+     * @param bool $amigavel
+     * @return string
+     */
+    public function getTipo(bool $amigavel = false): string
+    {
+        if (!$amigavel) {
+            return $this->tipo;
+        }
+
+        switch ($this->tipo) {
+            case 'debit': return 'Débito';
+            case 'credit':
+            default:
+                return 'Crédito';
+        }
     }
 
     /**
@@ -152,7 +175,7 @@ class PedidoCartaoCredito extends Entity
 
     /**
      * Identificar a bandeira do número de cartão de crédito
-     * @return PedidoCartaoCredito
+     * @return PedidoCartao
      */
     private function identificarBandeira(): self
     {
