@@ -22,8 +22,5 @@
             "Reservas\\Tests\\": "tests",
             "PainelDLX\\Tests\\": "vendor/painel-dlx/painel-dlx/tests"
         }
-    },
-    "replace": {
-        "dlepera88-php/reservas-dlx": "^1.0.2"
     }
 }
