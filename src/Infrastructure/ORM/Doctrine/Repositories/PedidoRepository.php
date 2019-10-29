@@ -51,7 +51,9 @@ class PedidoRepository extends AbstractPainelDLXRepository implements PedidoRepo
         $qb = $this->createQueryBuilder('p');
         $qb->select('COUNT(p.id)')
             ->innerJoin(LogRegistro::class, 'lr', Join::WITH, 'lr.tabela = :tabela and lr.registro_id = p.id')
-            ->setParameter(':tabela', 'dlx_reservas_pedidos');
+            ->where('p.status = :status')
+            ->setParameter(':tabela', 'dlx_reservas_pedidos')
+            ->setParameter(':status', $status);
 
         if (!is_null($data_inicial)) {
             $data_inicial->setTime(0, 0,  0);

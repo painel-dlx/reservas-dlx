@@ -55,8 +55,10 @@ class QuantidadePedidosPorStatusCommandHandler
      */
     public function handle(QuantidadePedidosPorStatusCommand $command): int
     {
+        $status = preg_replace('~s$~', '', $command->getStatus());
+
         return $this->pedido_repository->getQuantidadePedidosPorStatus(
-            $command->getStatus(),
+            $status,
             $command->getDataInicial(),
             $command->getDataFinal()
         );
