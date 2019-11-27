@@ -37,7 +37,7 @@ class QuartoMidiaCollection extends ArrayCollection implements QuartoMidiaCollec
      */
     public function addMidia(QuartoMidia $midia): void
     {
-        if ($this->hasArquivo($midia->getArquivo())) {
+        if ($this->hasArquivo($midia->getArquivoOriginal())) {
             // todo: criar exception para travar a inclusão de mídias duplicadas
         }
 
@@ -52,7 +52,7 @@ class QuartoMidiaCollection extends ArrayCollection implements QuartoMidiaCollec
     public function hasArquivo(string $arquivo): bool
     {
         return $this->exists(function ($key, QuartoMidia $midia) use ($arquivo) {
-             return $midia->getArquivo() === $arquivo;
+             return $midia->getArquivoOriginal() === $arquivo;
         });
     }
 
@@ -63,7 +63,7 @@ class QuartoMidiaCollection extends ArrayCollection implements QuartoMidiaCollec
     public function findByArquivo(string $arquivo): ?QuartoMidia
     {
         $midia = $this->filter(function (QuartoMidia $quarto_midia) use ($arquivo) {
-            return $quarto_midia->getArquivo() === $arquivo;
+            return $quarto_midia->getArquivoOriginal() === $arquivo;
         })->first();
 
         return $midia ?: null;

@@ -37,7 +37,7 @@ return [
 
     'app' => [
         'nome' => 'reservas-dlx',
-        'nome-amigavel' => 'Painel DLX',
+        'nome-amigavel' => 'Reservas DLX',
         'base-html' => '/',
         'base-url' => 'http://reservas-dlx.localhost/',
         'diretorios' => include 'painel-dlx/diretorios.php',
@@ -45,7 +45,7 @@ return [
         'service-providers' => include 'painel-dlx/service_providers.php',
         'mapping' => include 'painel-dlx/mapping.php',
         'favicon' => PainelDLX::$dir . '/public/imgs/favicon.png',
-        'versao' => '1.0.3'
+        'versao' => '1.1.0'
     ],
 
     'bd' => [
@@ -64,7 +64,7 @@ return [
             'cpf' => CPFType::class
         ],
         'conexao' => [
-            'dbname' => 'bsbaparthoteis_dev',
+            'dbname' => 'reservas',
             'user' => 'root',
             'password' => '$d5Ro0t',
             'host' => 'localhost',

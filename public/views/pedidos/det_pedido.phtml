@@ -65,7 +65,7 @@ $usuario_logado = $this->getAtributo('usuario-logado');
 
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Gateway de Pgto:</span>
-                    <?php echo $pedido->getFormaPgto() ?>
+                    <?php echo $pedido->getFormaPagamento() ?>
                 </p>
             </div>
 
@@ -217,7 +217,7 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                             <td headers="checkin"><?php echo $pedido_item->getCheckin()->format('d/m/Y') ?></td>
                             <td headers="checkout"><?php echo $pedido_item->getCheckout()->format('d/m/Y') ?></td>
                             <td headers="hospedes" style="text-align: center">
-                                <?php printf('%d adultos, %d crianças', $pedido_item->getAdultos(), $pedido_item->getCriancas()) ?>
+                                <?php printf('%d adultos, %d crianças', $pedido_item->getQuantidadeAdultos(), $pedido_item->getQuantidadeCriancas()) ?>
                             </td>
                             <td headers="valor"><?php echo 'R$ ' . number_format($pedido_item->getValorTotal(), 2, ',', '') ?></td>
                         </tr>

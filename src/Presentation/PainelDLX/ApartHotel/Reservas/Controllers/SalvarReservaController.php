@@ -88,7 +88,8 @@ class SalvarReservaController extends PainelDLXController
             /** @var Quarto[] $lista_quartos */
             /* @see ListaQuartosCommandHandler */
             $lista_quartos = $this->command_bus->handle(new ListaQuartosCommand(
-                ['publicar' => true]
+                [],
+                ['e.maximo_hospedes' => 'asc']
             ));
 
             // Views
@@ -140,7 +141,7 @@ class SalvarReservaController extends PainelDLXController
             $dt_checkout = new DateTime($post['checkout']);
 
             $reserva = new Reserva($quarto, $dt_checkin, $dt_checkout, $post['adultos']);
-            $reserva->setCriancas($post['criancas']);
+            $reserva->setQuantidadeCriancas($post['criancas']);
             $reserva->setHospede($post['hospede']);
             $reserva->setCpf(new CPF($post['cpf']));
             $reserva->setTelefone($post['telefone']);

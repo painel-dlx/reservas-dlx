@@ -45,7 +45,7 @@ class QuartoMidiaTest extends TestCase
         $midia = new QuartoMidia($arquivo);
 
         $this->assertInstanceOf(QuartoMidia::class, $midia);
-        $this->assertEquals($arquivo, $midia->getArquivo());
+        $this->assertEquals($arquivo, $midia->getArquivoOriginal());
 
         return $midia;
     }

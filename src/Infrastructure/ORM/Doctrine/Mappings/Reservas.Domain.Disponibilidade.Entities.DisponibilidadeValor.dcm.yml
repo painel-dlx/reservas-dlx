@@ -1,12 +1,12 @@
-Reservas\Domain\Disponibilidade\Entities\DisponValor:
+Reservas\Domain\Disponibilidade\Entities\DisponibilidadeValor:
     type: entity
-    table: reservas_disponibilidade_valores
+    table: reservas.DisponibilidadeValor
     # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\DisponValorRepository
     id:
-        dispon:
+        disponibilidade:
             associationKey: true
             id: true
-        qtde_pessoas:
+        quantidade_pessoas:
             type: integer
             nullable: false
             id: true
@@ -15,9 +15,9 @@ Reservas\Domain\Disponibilidade\Entities\DisponValor:
             type: float
             nullable: false
     manyToOne:
-        dispon:
+        disponibilidade:
             targetEntity: Disponibilidade
             inversedBy: valores
             joinColumns:
-                dispon_id:
-                    referencedColumnName: dispon_id
+                disponibilidade_id:
+                    referencedColumnName: disponibilidade_id

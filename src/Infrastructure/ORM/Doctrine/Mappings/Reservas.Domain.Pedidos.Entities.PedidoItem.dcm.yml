@@ -1,6 +1,6 @@
 Reservas\Domain\Pedidos\Entities\PedidoItem:
     type: entity
-    table: reservas_pedido_itens
+    table: reservas.PedidoItem
     # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoItemRepository
     id:
         id:
@@ -20,10 +20,10 @@ Reservas\Domain\Pedidos\Entities\PedidoItem:
         quantidade:
             type: integer
             nullable: false
-        adultos:
+        quantidade_adultos:
             type: integer
             nullable: false
-        criancas:
+        quantidade_criancas:
             type: integer
             nullable: false
         valor_total:

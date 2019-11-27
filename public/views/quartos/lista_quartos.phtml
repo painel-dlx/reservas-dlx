@@ -99,10 +99,10 @@ $filtro = $this->getAtributo('filtro');
                 <?php echo $quarto->getNome() ?><br>
                 <span class="lista-registros-comentario"><?php echo $quarto->getLink() ?></span>
             </td>
-            <td headers="qtde" style="text-align: center;"><?php echo $quarto->getQtde() ?></td>
-            <td headers="max-hospedes" style="text-align: center;"><?php echo $quarto->getMaxHospedes() ?></td>
+            <td headers="qtde" style="text-align: center;"><?php echo $quarto->getQuantidade() ?></td>
+            <td headers="max-hospedes" style="text-align: center;"><?php echo $quarto->getMaximoHospedes() ?></td>
             <td headers="valor-min">
-                R$ <?php echo number_format($quarto->getValorMin(), 2, ',', '') ?>
+                R$ <?php echo number_format($quarto->getValorMinimo(), 2, ',', '') ?>
             </td>
             <td headers="qtde-midias"><?php echo $quarto->getMidias()->count() ?></td>
             <td headers="opcoes">

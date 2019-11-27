@@ -23,63 +23,56 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Reservas\FiltrarReservasPorPeriodo;
+namespace Reservas\UseCases\Reservas\ListaReservasPorPeriodo;
 
-use Reservas\Tests\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommandTest;
 
-/**
- * Class FiltrarReservasPorPeriodoCommand
- * @package Reservas\UseCases\Reservas\FiltrarReservasPorPeriodo
- * @covers FiltrarReservasPorPeriodoCommandTest
- */
-class FiltrarReservasPorPeriodoCommand
+use PainelDLX\Application\Contracts\ListaRegistrosCommand;
+
+class ListaReservasPorPeriodoCommand extends ListaRegistrosCommand
 {
     /**
-     * @var array
-     */
-    private $lista_reservas;
-    /**
-     * @var string
+     * @var string|null
      */
     private $data_inicial;
     /**
-     * @var string
+     * @var string|null
      */
     private $data_final;
 
     /**
-     * FiltroPorPeriodoCommand constructor.
-     * @param array $lista_reservas
-     * @param string $data_inicial
-     * @param string $data_final
+     * ListaReservasPorPeriodoCommand constructor.
+     * @param string|null $data_inicial
+     * @param string|null $data_final
+     * @param array $criteria
+     * @param array $order_by
+     * @param int|null $limit
+     * @param int|null $offset
      */
-    public function __construct(array $lista_reservas, string $data_inicial, string $data_final)
-    {
-        $this->lista_reservas = $lista_reservas;
+    public function __construct(
+        ?string $data_inicial,
+        ?string $data_final,
+        array $criteria = [],
+        array $order_by = [],
+        ?int $limit = null,
+        ?int $offset = null
+    ) {
+        parent::__construct($criteria, $order_by, $limit, $offset);
         $this->data_inicial = $data_inicial;
         $this->data_final = $data_final;
     }
 
     /**
-     * @return array
+     * @return string|null
      */
-    public function getListaReservas(): array
-    {
-        return $this->lista_reservas;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDataInicial(): string
+    public function getDataInicial(): ?string
     {
         return $this->data_inicial;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDataFinal(): string
+    public function getDataFinal(): ?string
     {
         return $this->data_final;
     }

@@ -23,27 +23,19 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Domain\Reservas\Repositories;
+namespace Reservas\UseCases\Quartos\AdicionarMidiasQuarto\Exceptions;
 
-use DLX\Domain\Repositories\EntityRepositoryInterface;
 
-interface ReservaRepositoryInterface extends EntityRepositoryInterface
+use Exception;
+
+class AdicionarMidiasQuartoException extends Exception
 {
     /**
-     * @param string|null $s_data_inicial
-     * @param string|null $s_data_final
-     * @param array $criteria
-     * @param array $order_by
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array
+     * @param string $dir_midia
+     * @return static
      */
-    public function findReservasPorPeriodo(
-        ?string $s_data_inicial,
-        ?string $s_data_final,
-        array $criteria = [],
-        array $order_by = [],
-        ?int $limit = null,
-        ?int $offset = null
-    ): array;
+    public static function semPermissao(string $dir_midia): self
+    {
+        return new self("Você não possui permissão para salvar mídias no diretório {$dir_midia}.", 10);
+    }
 }

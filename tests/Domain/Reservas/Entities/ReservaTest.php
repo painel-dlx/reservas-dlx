@@ -63,7 +63,7 @@ class ReservaTest extends ReservasTestCase
         $this->assertEquals($quarto, $reserva->getQuarto());
         $this->assertEquals($checkin, $reserva->getCheckin());
         $this->assertEquals($checkout, $reserva->getCheckout());
-        $this->assertEquals($adultos, $reserva->getAdultos());
+        $this->assertEquals($adultos, $reserva->getQuantidadeAdultos());
         $this->assertInstanceOf(Collection::class, $reserva->getHistorico());
         $this->assertInstanceOf(Collection::class, $reserva->getVisualizacoesCpf());
 
@@ -131,8 +131,8 @@ class ReservaTest extends ReservasTestCase
             return $reserva_historico->getStatus() === Reserva::STATUS_CONFIRMADA;
         });
 
-        $has_dispon_invalida = $quarto->getDispon($reserva->getCheckin(), $reserva->getCheckout())->exists(function ($key, Disponibilidade $dispon) use ($qtde_quartos_esperada) {
-            return $dispon->getQtde() !== $qtde_quartos_esperada;
+        $has_dispon_invalida = $quarto->getDisponibilidade($reserva->getCheckin(), $reserva->getCheckout())->exists(function ($key, Disponibilidade $dispon) use ($qtde_quartos_esperada) {
+            return $dispon->getQuantidade() !== $qtde_quartos_esperada;
         });
 
         $this->assertTrue($reserva->isConfirmada());
@@ -173,7 +173,7 @@ class ReservaTest extends ReservasTestCase
     public function test_GetTotalHospedes_deve_retornar_a_soma_dos_hospedes_adultos_e_criancas(Reserva $reserva)
     {
         $total_hospedes = $reserva->getTotalHospedes();
-        $soma_hospedes = $reserva->getAdultos() + $reserva->getCriancas();
+        $soma_hospedes = $reserva->getQuantidadeAdultos() + $reserva->getQuantidadeCriancas();
 
         $this->assertIsInt($total_hospedes);
         $this->assertEquals($soma_hospedes, $reserva->getTotalHospedes());
@@ -197,7 +197,7 @@ class ReservaTest extends ReservasTestCase
         $valor_total = $valor_diaria * (iterator_count($dt_periodo) - 1);
 
         $valores_diarias = [];
-        for ($i = 1; $i <= $quarto->getMaxHospedes(); $i++) {
+        for ($i = 1; $i <= $quarto->getMaximoHospedes(); $i++) {
             $valores_diarias[$i] = $valor_diaria;
         }
 
@@ -206,8 +206,8 @@ class ReservaTest extends ReservasTestCase
             $quarto->addDispon($data, $qtde_quartos_dispon, $valores_diarias);
         }
 
-        $reserva->setAdultos($qtde_quartos_dispon);
-        $reserva->setCriancas(0);
+        $reserva->setQuantidadeAdultos($qtde_quartos_dispon);
+        $reserva->setQuantidadeCriancas(0);
         $reserva->calcularValor();
 
         $this->assertEquals($valor_total, $reserva->getValor());

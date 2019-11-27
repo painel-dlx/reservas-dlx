@@ -89,7 +89,7 @@ class SalvarPedidoCommandHandler
         $pedido->setTelefone($command->getTelefone());
         $pedido->setValorTotal($valor_total);
         $pedido->setItens($command->getItens());
-        $pedido->setFormaPgto($command->getFormaPgto());
+        $pedido->setFormaPagamento($command->getFormaPgto());
 
         $this->pedido_repository->create($pedido);
 
@@ -114,7 +114,7 @@ class SalvarPedidoCommandHandler
             $qtde_hospedes = $item['adultos'] + $item['criancas'];
 
             $quarto->isDisponivelPeriodo($checkin, $checkout);
-            $quarto->getDispon($checkin, $checkout)->map(function (Disponibilidade $dispon) use ($qtde_hospedes, &$valor_total) {
+            $quarto->getDisponibilidade($checkin, $checkout)->map(function (Disponibilidade $dispon) use ($qtde_hospedes, &$valor_total) {
                 $valor_total += $dispon->getValorPorQtdePessoas($qtde_hospedes);
             });
         }

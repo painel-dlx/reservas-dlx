@@ -63,7 +63,7 @@ $filtro = $this->getAtributo('filtro');
                 <option value="">Todos os quartos</option>
 
                 <?php
-                /** @var \Reservas\Domain\Quartos\Entities\Quarto $quarto */
+                /** @var Quarto $quarto */
                 foreach ($lista_quartos as $quarto) : ?>
                     <option value="<?php echo $quarto->getId() ?>"<?php echo (int)$filtro['quarto'] === $quarto->getId() ? ' selected' : '' ?>>
                         <?php echo $quarto->getNome() ?>
@@ -95,7 +95,7 @@ foreach ($quartos as $lista_dispon) :
                     <div class="calendario-dispon-label -data">Data</div>
                     <div class="calendario-dispon-label -qtde">Qtde</div>
 
-                    <?php for ($i = 1; $i <= $dispon1->getQuarto()->getMaxHospedes(); $i++) : ?>
+                    <?php for ($i = 1; $i <= $dispon1->getQuarto()->getMaximoHospedes(); $i++) : ?>
                         <div class="calendario-dispon-label -valor">
                             Valor R$<br>
                             (<?php echo $i === 1 ? '1 pessoa' : "{$i} pessoas" ?>)
@@ -108,29 +108,29 @@ foreach ($quartos as $lista_dispon) :
                     <?php
                     /** @var Disponibilidade $dispon */
                     foreach ($lista_dispon_semana as $dispon) : ?>
-                        <form id="form-dispon-<?php echo $dispon->getId() ?>" method="post" action="/painel-dlx/apart-hotel/disponibilidade/salvar" class="calendario-dispon-dia -<?php echo $dispon->getDia()->format('D') ?>">
+                        <form id="form-dispon-<?php echo $dispon->getId() ?>" method="post" action="/painel-dlx/apart-hotel/disponibilidade/salvar" class="calendario-dispon-dia -<?php echo $dispon->getData()->format('D') ?>">
                             <input type="hidden" name="id" value="<?php echo $dispon->getId() ?>">
                             <input type="hidden" name="quarto" value="<?php echo $dispon->getQuarto()->getId() ?>">
-                            <input type="hidden" name="dia" value="<?php echo $dispon->getDia()->format('Y-m-d') ?>">
+                            <input type="hidden" name="data" value="<?php echo $dispon->getData()->format('Y-m-d') ?>">
 
                             <div class="calendario-dispon-semana -semana">
-                                <?php echo $dispon->getDia()->format('D') ?>
+                                <?php echo $dispon->getData()->format('D') ?>
                             </div>
 
                             <div class="calendario-dispon-data -data">
-                                <?php echo $dispon->getDia()->format('d/m') ?>
+                                <?php echo $dispon->getData()->format('d/m') ?>
                             </div>
 
                             <div class="calendario-dispon-campo -qtde">
                                 <label>
-                                    <input type="number" name="qtde" value="<?php echo $dispon->getQtde() ?>" min="0" max="999" required>
+                                    <input type="number" name="qtde" value="<?php echo $dispon->getQuantidade() ?>" min="0" max="999" required>
                                 </label>
                             </div>
 
-                            <?php for ($i = 1; $i <= $dispon->getQuarto()->getMaxHospedes(); $i++) : ?>
+                            <?php for ($i = 1; $i <= $dispon->getQuarto()->getMaximoHospedes(); $i++) : ?>
                                 <div class="calendario-dispon-campo -valor">
                                     <label>
-                                        <input type="number" name="valor[<?php echo $i ?>]" value="<?php echo $dispon->getValorPorQtdePessoas($i) ?>" min="<?php echo $dispon->getQuarto()->getValorMin() ?>" max="9999" step="0.01" required>
+                                        <input type="number" name="valor[<?php echo $i ?>]" value="<?php echo $dispon->getValorPorQtdePessoas($i) ?>" min="<?php echo $dispon->getQuarto()->getValorMinimo() ?>" max="9999" step="0.01" required>
                                     </label>
                                 </div>
                             <?php endfor; ?>

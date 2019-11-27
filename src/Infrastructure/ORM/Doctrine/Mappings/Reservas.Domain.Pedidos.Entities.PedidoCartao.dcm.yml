@@ -1,6 +1,6 @@
 Reservas\Domain\Pedidos\Entities\PedidoCartao:
     type: entity
-    table: reservas_pedido_cartao
+    table: reservas.PedidoCartao
     # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoCartaoRepository
     id:
         pedido:

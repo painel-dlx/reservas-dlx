@@ -1,6 +1,6 @@
 Reservas\Domain\Reservas\Entities\Reserva:
     type: entity
-    table: dlx_reservas_cadastro
+    table: reservas.Reserva
     repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\ReservaRepository
     id:
         id:
@@ -15,63 +15,52 @@ Reservas\Domain\Reservas\Entities\Reserva:
             type: string
             nullable: false
             length: 200
-            column: reserva_hospede
         cpf:
             type: cpf
             nullable: false
             length: 14
-            column: reserva_cpf
         telefone:
             type: string
             nullable: true
             length: 18
-            column: reserva_telefone
         email:
             type: string
             nullable: false
             length: 200
-            column: reserva_email
         checkin:
             type: datetime
             nullable: false
-            column: reserva_checkin
         checkout:
             type: datetime
             nullable: false
-            column: reserva_checkout
-        adultos:
+        quantidade_adultos:
             type: integer
             nullable: false
-            column: reserva_adultos
-        criancas:
+        quantidade_criancas:
             type: integer
             nullable: false
-            column: reserva_criancas
         valor:
             type: float
             nullable: false
-            column: reserva_valor
         status:
             type: string
             nullable: false
             length: 10
-            column: reserva_status
         origem:
             type: string
             nullable: false
             length: 20
-            column: reserva_origem
     manyToOne:
         quarto:
             targetEntity: Reservas\Domain\Quartos\Entities\Quarto
             joinColumns:
-                reserva_quarto:
+                quarto_id:
                     referencedColumnName: quarto_id
         pedido:
             targetEntity: Reservas\Domain\Pedidos\Entities\Pedido
             inversedBy: reservas
             joinColumns:
-                reserva_pedido:
+                pedido_id:
                     referencedColumnName: pedido_id
     oneToMany:
         historico:
@@ -91,4 +80,4 @@ Reservas\Domain\Reservas\Entities\Reserva:
                 - persist
             joinColumns:
                 reserva_id:
-                    referencedColumnName: viscpf_reserva
+                    referencedColumnName: reserva_id

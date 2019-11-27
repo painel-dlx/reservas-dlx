@@ -1,6 +1,6 @@
 Reservas\Domain\Pedidos\Entities\PedidoEndereco:
     type: entity
-    table: reservas_pedidos_enderecos
+    table: reservas.PedidoEndereco
     # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoEnderecoRepository
     id:
         pedido:

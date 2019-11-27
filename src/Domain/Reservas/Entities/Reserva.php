@@ -36,8 +36,6 @@ use PainelDLX\Domain\Common\Entities\LogRegistroTrait;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Reservas\Domain\Reservas\Entities\ReservaHistorico;
-use Reservas\Domain\Reservas\Entities\VisualizacaoCpf;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Validators\ReservaValidator;
 use Reservas\Domain\Reservas\Validators\ReservaValidatorsEnum;
@@ -49,7 +47,7 @@ use Reservas\Domain\Reservas\Validators\ReservaValidatorsEnum;
  */
 class Reserva extends Entity
 {
-    const TABELA_BD = 'dlx_reservas_cadastro';
+    const TABELA_BD = 'Reserva';
     use LogRegistroTrait;
 
     const STATUS_PENDENTE = 'Pendente';
@@ -75,9 +73,9 @@ class Reserva extends Entity
     /** @var DateTime */
     private $checkout;
     /** @var int */
-    private $adultos;
+    private $quantidade_adultos;
     /** @var int */
-    private $criancas = 0;
+    private $quantidade_criancas = 0;
     /** @var float */
     private $valor;
     /** @var string */
@@ -101,7 +99,7 @@ class Reserva extends Entity
         $this->quarto = $quarto;
         $this->checkin = $checkin;
         $this->checkout = $checkout;
-        $this->adultos = $adultos;
+        $this->quantidade_adultos = $adultos;
         $this->historico = new ArrayCollection();
         $this->visualizacoes_cpf = new ArrayCollection();
     }
@@ -271,36 +269,36 @@ class Reserva extends Entity
     /**
      * @return int
      */
-    public function getAdultos(): int
+    public function getQuantidadeAdultos(): int
     {
-        return $this->adultos;
+        return $this->quantidade_adultos;
     }
 
     /**
-     * @param int $adultos
+     * @param int $quantidade_adultos
      * @return Reserva
      */
-    public function setAdultos(int $adultos): Reserva
+    public function setQuantidadeAdultos(int $quantidade_adultos): Reserva
     {
-        $this->adultos = $adultos;
+        $this->quantidade_adultos = $quantidade_adultos;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getCriancas(): int
+    public function getQuantidadeCriancas(): int
     {
-        return $this->criancas;
+        return $this->quantidade_criancas;
     }
 
     /**
-     * @param int $criancas
+     * @param int $quantidade_criancas
      * @return Reserva
      */
-    public function setCriancas(int $criancas): Reserva
+    public function setQuantidadeCriancas(int $quantidade_criancas): Reserva
     {
-        $this->criancas = $criancas;
+        $this->quantidade_criancas = $quantidade_criancas;
         return $this;
     }
 
@@ -440,7 +438,7 @@ class Reserva extends Entity
         $valor_reserva = 0;
         $total_hospedes = $this->getTotalHospedes();
 
-        $dispon_quarto = $this->getQuarto()->getDispon($this->getCheckin(), $this->getCheckout());
+        $dispon_quarto = $this->getQuarto()->getDisponibilidade($this->getCheckin(), $this->getCheckout());
         $dispon_quarto->map(function (Disponibilidade $dispon) use (&$valor_reserva, $total_hospedes) {
             $valor_reserva += (float)$dispon->getValorPorQtdePessoas($total_hospedes);
         });
@@ -455,7 +453,7 @@ class Reserva extends Entity
      */
     public function getTotalHospedes(): int
     {
-        return $this->getAdultos() + $this->getCriancas();
+        return $this->getQuantidadeAdultos() + $this->getQuantidadeCriancas();
     }
 
     /**
@@ -473,9 +471,9 @@ class Reserva extends Entity
         $this->addHistorico(self::STATUS_CONFIRMADA, $motivo, $usuario);
 
         // Retirar a disponibilidade do quarto
-        $dispon_quarto = $this->getQuarto()->getDispon($this->getCheckin(), $this->getCheckout());
+        $dispon_quarto = $this->getQuarto()->getDisponibilidade($this->getCheckin(), $this->getCheckout());
         $dispon_quarto->map(function (Disponibilidade $dispon) {
-            $dispon->setQtde($dispon->getQtde() - 1);
+            $dispon->setQuantidade($dispon->getQuantidade() - 1);
         });
 
         return $this;

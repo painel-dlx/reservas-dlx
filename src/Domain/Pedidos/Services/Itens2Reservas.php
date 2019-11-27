@@ -47,11 +47,11 @@ class Itens2Reservas
                 $item->getQuarto(),
                 $item->getCheckin(),
                 $item->getCheckout(),
-                $item->getAdultos()
+                $item->getQuantidadeAdultos()
             );
 
             $reserva->setValor($item->getValorTotal());
-            $reserva->setCriancas($item->getCriancas());
+            $reserva->setQuantidadeCriancas($item->getQuantidadeCriancas());
 
             $reserva->setHospede($pedido->getNome());
             $reserva->setCpf($pedido->getCpf());

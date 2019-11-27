@@ -1,6 +1,6 @@
 Reservas\Domain\Reservas\Entities\VisualizacaoCpf:
     type: entity
-    table: dlx_reserva_visualizacoes_cpf
+    table: reservas.ReservaVisualizacaoCpf
     # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\VisualizacaoCpfRepository
     id:
         reserva:

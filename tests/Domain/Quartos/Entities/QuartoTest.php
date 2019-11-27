@@ -49,8 +49,8 @@ class QuartoTest extends TestCase
 
         $this->assertInstanceOf(Quarto::class, $quarto);
         $this->assertEquals($nome, $quarto->getNome());
-        $this->assertEquals($qtde, $quarto->getQtde());
-        $this->assertEquals($valor_min, $quarto->getValorMin());
+        $this->assertEquals($qtde, $quarto->getQuantidade());
+        $this->assertEquals($valor_min, $quarto->getValorMinimo());
 
         // Collections
         // $this->assertInstanceOf(ArrayCollection::class, $quarto->getDispon());

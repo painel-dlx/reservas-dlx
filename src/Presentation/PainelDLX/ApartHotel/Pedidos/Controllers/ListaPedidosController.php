@@ -67,7 +67,7 @@ class ListaPedidosController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
+        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css', VERSAO_RESERVAS_DLX);
         $this->transaction = $transaction;
     }
 
@@ -127,7 +127,7 @@ class ListaPedidosController extends PainelDLXController
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 

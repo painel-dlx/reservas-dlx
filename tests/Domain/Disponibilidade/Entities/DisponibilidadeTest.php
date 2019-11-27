@@ -52,8 +52,8 @@ class DisponibilidadeTest extends ReservasTestCase
 
         $this->assertInstanceOf(Disponibilidade::class, $dispon);
         $this->assertEquals($quarto, $dispon->getQuarto());
-        $this->assertEquals($hoje, $dispon->getDia());
-        $this->assertEquals($qtde_dispon, $dispon->getQtde());
+        $this->assertEquals($hoje, $dispon->getData());
+        $this->assertEquals($qtde_dispon, $dispon->getQuantidade());
         $this->assertInstanceOf(Collection::class, $dispon->getValores());
 
         return $dispon;
@@ -129,9 +129,9 @@ class DisponibilidadeTest extends ReservasTestCase
      */
     public function test_IsPublicado_deve_retornar_true_quando_todas_as_regras_forem_cumpridas(Disponibilidade $dispon)
     {
-        $dispon->setQtde(1);
+        $dispon->setQuantidade(1);
 
-        for ($i = 1; $i < $dispon->getQuarto()->getQtde(); $i++) {
+        for ($i = 1; $i < $dispon->getQuarto()->getQuantidade(); $i++) {
             $dispon->setValorPorQtdePessoas($i, 12.34);
         }
 
@@ -145,7 +145,7 @@ class DisponibilidadeTest extends ReservasTestCase
      */
     public function test_IsPublicado_deve_retornar_false_quando_quantidade_for_0(Disponibilidade $dispon)
     {
-        $dispon->setQtde(0);
+        $dispon->setQuantidade(0);
         $this->assertFalse($dispon->isPublicado());
     }
 
@@ -156,7 +156,7 @@ class DisponibilidadeTest extends ReservasTestCase
      */
     public function test_IsPublicado_deve_retornar_false_quando_tiver_algum_valor_menor_que_minimo(Disponibilidade $dispon)
     {
-        $dispon->setQtde(1);
+        $dispon->setQuantidade(1);
         $dispon->addValor(1, 1);
 
         $this->assertFalse($dispon->isPublicado());

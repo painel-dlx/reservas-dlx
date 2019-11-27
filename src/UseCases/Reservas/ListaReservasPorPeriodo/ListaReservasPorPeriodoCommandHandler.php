@@ -23,27 +23,40 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Domain\Reservas\Repositories;
+namespace Reservas\UseCases\Reservas\ListaReservasPorPeriodo;
 
-use DLX\Domain\Repositories\EntityRepositoryInterface;
 
-interface ReservaRepositoryInterface extends EntityRepositoryInterface
+use Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface;
+
+class ListaReservasPorPeriodoCommandHandler
 {
     /**
-     * @param string|null $s_data_inicial
-     * @param string|null $s_data_final
-     * @param array $criteria
-     * @param array $order_by
-     * @param int|null $limit
-     * @param int|null $offset
+     * @var ReservaRepositoryInterface
+     */
+    private $reserva_repository;
+
+    /**
+     * ListaReservaPorPeriodoCommandHandler constructor.
+     * @param ReservaRepositoryInterface $reserva_repository
+     */
+    public function __construct(ReservaRepositoryInterface $reserva_repository)
+    {
+        $this->reserva_repository = $reserva_repository;
+    }
+
+    /**
+     * @param ListaReservasPorPeriodoCommand $command
      * @return array
      */
-    public function findReservasPorPeriodo(
-        ?string $s_data_inicial,
-        ?string $s_data_final,
-        array $criteria = [],
-        array $order_by = [],
-        ?int $limit = null,
-        ?int $offset = null
-    ): array;
+    public function handle(ListaReservasPorPeriodoCommand $command): array
+    {
+        return $this->reserva_repository->findReservasPorPeriodo(
+            $command->getDataInicial(),
+            $command->getDataFinal(),
+            $command->getCriteria(),
+            $command->getOrderBy(),
+            $command->getLimit(),
+            $command->getOffset()
+        );
+    }
 }

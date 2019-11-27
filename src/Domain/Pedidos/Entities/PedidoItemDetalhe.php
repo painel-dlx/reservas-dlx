@@ -23,87 +23,80 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Domain\Disponibilidade\Entities;
+namespace Reservas\Domain\Pedidos\Entities;
 
 
+use DateTime;
 use DLX\Domain\Entities\Entity;
 
 /**
- * Class DisponValor
- * @package Reservas\Domain\Entities
- * @covers DisponValorTest
+ * Class PedidoItemDetalhe
+ * @package Reservas\Domain\Pedidos\Entities
+ * @covers PedidoItemDetalheTest
  */
-class DisponValor extends Entity
+class PedidoItemDetalhe extends Entity
 {
-    /** @var Disponibilidade */
-    private $dispon;
-    /** @var int */
-    private $qtde_pessoas;
+    /** @var PedidoItem */
+    private $item;
+    /** @var DateTime */
+    private $data;
     /** @var float */
-    private $valor;
+    private $diaria;
+    /** @var float */
+    private $desconto;
 
     /**
-     * DisponValor constructor.
-     * @param int $qtde_pessoas
-     * @param float $valor
+     * PedidoItemDetalhe constructor.
+     * @param PedidoItem $item
+     * @param DateTime $data
+     * @param float $diaria
+     * @param float $desconto
      */
-    public function __construct(int $qtde_pessoas, float $valor)
+    public function __construct(PedidoItem $item, DateTime $data, float $diaria, float $desconto)
     {
-        $this->qtde_pessoas = $qtde_pessoas;
-        $this->valor = $valor;
+        $this->item = $item;
+        $this->data = $data;
+        $this->diaria = $diaria;
+        $this->desconto = $desconto;
     }
 
     /**
-     * @return Disponibilidade
+     * @return PedidoItem
      */
-    public function getDispon(): Disponibilidade
+    public function getItem(): PedidoItem
     {
-        return $this->dispon;
+        return $this->item;
     }
 
     /**
-     * @param Disponibilidade $dispon
-     * @return DisponValor
+     * @return DateTime
      */
-    public function setDispon(Disponibilidade $dispon): DisponValor
+    public function getData(): DateTime
     {
-        $this->dispon = $dispon;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getQtdePessoas(): int
-    {
-        return $this->qtde_pessoas;
-    }
-
-    /**
-     * @param int $qtde_pessoas
-     * @return DisponValor
-     */
-    public function setQtdePessoas(int $qtde_pessoas): DisponValor
-    {
-        $this->qtde_pessoas = $qtde_pessoas;
-        return $this;
+        return $this->data;
     }
 
     /**
      * @return float
      */
-    public function getValor(): float
+    public function getDiaria(): float
     {
-        return $this->valor;
+        return $this->diaria;
     }
 
     /**
-     * @param float $valor
-     * @return DisponValor
+     * @return float
      */
-    public function setValor(float $valor): DisponValor
+    public function getDesconto(): float
     {
-        $this->valor = $valor;
-        return $this;
+        return $this->desconto;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPercentDesconto(): string
+    {
+        return ($this->desconto * 100) . '%';
     }
 }

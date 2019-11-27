@@ -105,12 +105,12 @@ class DetalheReservaControllerTest extends ReservasTestCase
                 from
                     reservas_disponibilidade_valores v
                 inner join 
-                    dlx_reservas_disponibilidade as d on d.dispon_id = v.dispon_id
+                    disponibilidade as d on d.dispon_id = v.dispon_id
                 inner join
-                    dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                    dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
                 where
                     r.reserva_id = :reserva_id
-                    and d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+                    and d.data between r.reserva_checkin and r.reserva_checkout
             ';
 
             $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_delete_valores);
@@ -121,12 +121,12 @@ class DetalheReservaControllerTest extends ReservasTestCase
                 delete
                     d
                 from
-                    dlx_reservas_disponibilidade as d
+                    disponibilidade as d
                 inner join
-                    dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                    dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
                 where
                     r.reserva_id = :reserva_id
-                    and d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+                    and d.data between r.reserva_checkin and r.reserva_checkout
             ';
 
             $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_delete_dispon);
@@ -143,12 +143,12 @@ class DetalheReservaControllerTest extends ReservasTestCase
 
             $query_update_dispon = '
                 update
-                    dlx_reservas_disponibilidade
+                    disponibilidade
                 set
-                    dispon_qtde = 10
+                    quantidade = 10
                 where
-                    dispon_dia between :data_inicial and :data_final
-                    and dispon_quarto = :quarto_id
+                    data between :data_inicial and :data_final
+                    and quarto_id = :quarto_id
             ';
 
             $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_update_dispon);
@@ -164,13 +164,13 @@ class DetalheReservaControllerTest extends ReservasTestCase
                         1,
                         q.quarto_valor_min
                     from
-                        dlx_reservas_disponibilidade d
+                        disponibilidade d
                     inner join
-                        dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                        dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
                     inner join
                         dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
                     where
-                        d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+                        d.data between r.reserva_checkin and r.reserva_checkout
                         and r.reserva_id = :reserva_id1
                     
                     union
@@ -180,13 +180,13 @@ class DetalheReservaControllerTest extends ReservasTestCase
                         2,
                         q.quarto_valor_min
                     from
-                        dlx_reservas_disponibilidade d
+                        disponibilidade d
                     inner join
-                        dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                        dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
                     inner join
                         dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
                     where
-                        d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+                        d.data between r.reserva_checkin and r.reserva_checkout
                         and r.reserva_id = :reserva_id2
 
                     union
@@ -196,13 +196,13 @@ class DetalheReservaControllerTest extends ReservasTestCase
                         3,
                         q.quarto_valor_min
                     from
-                        dlx_reservas_disponibilidade d
+                        disponibilidade d
                     inner join
-                        dlx_reservas_cadastro r on r.reserva_quarto = d.dispon_quarto
+                        dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
                     inner join
                         dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
                     where
-                        d.dispon_dia between r.reserva_checkin and r.reserva_checkout
+                        d.data between r.reserva_checkin and r.reserva_checkout
                         and r.reserva_id = :reserva_id3
             ";
 

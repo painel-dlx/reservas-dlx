@@ -80,12 +80,12 @@ $usuario_logado = $this->getAtributo('usuario-logado');
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Adultos:</span>
-                    <?php echo $reserva->getAdultos() ?>
+                    <?php echo $reserva->getQuantidadeAdultos() ?>
                 </p>
 
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Crianças:</span>
-                    <?php echo $reserva->getCriancas() ?>
+                    <?php echo $reserva->getQuantidadeCriancas() ?>
                 </p>
             </div>
 
@@ -168,7 +168,7 @@ $usuario_logado = $this->getAtributo('usuario-logado');
             <summary class="detalhe-registro-titulo">Histórico</summary>
 
             <?php
-            /** @var \Reservas\Domain\Reservas\Entities\ReservaHistorico $historico */
+            /** @var ReservaHistorico $historico */
             foreach ($reserva->getHistorico() as $historico) : ?>
                 <p class="detalhe-registro-paragr">
                     <?php echo $historico ?>

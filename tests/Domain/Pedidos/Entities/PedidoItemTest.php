@@ -64,8 +64,8 @@ class PedidoItemTest extends TestCase
 
         // Valores setados como padrão
         $this->assertEquals(1, $pedido_item->getQuantidade());
-        $this->assertEquals(2, $pedido_item->getAdultos());
-        $this->assertEquals(0, $pedido_item->getCriancas());
+        $this->assertEquals(2, $pedido_item->getQuantidadeAdultos());
+        $this->assertEquals(0, $pedido_item->getQuantidadeCriancas());
 
         // O horário do checkin é 14h e do checkout é 12h
         $this->assertEquals('14:00', $pedido_item->getCheckin()->format('H:i'));

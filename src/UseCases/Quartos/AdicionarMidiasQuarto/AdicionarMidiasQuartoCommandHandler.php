@@ -29,6 +29,7 @@ namespace Reservas\UseCases\Quartos\AdicionarMidiasQuarto;
 use Psr\Http\Message\UploadedFileInterface;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
+use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\Exceptions\AdicionarMidiasQuartoException;
 
 class AdicionarMidiasQuartoCommandHandler
 {
@@ -51,6 +52,7 @@ class AdicionarMidiasQuartoCommandHandler
     /**
      * @param AdicionarMidiasQuartoCommand $command
      * @return Quarto
+     * @throws AdicionarMidiasQuartoException
      */
     public function handle(AdicionarMidiasQuartoCommand $command): Quarto
     {
@@ -82,9 +84,14 @@ class AdicionarMidiasQuartoCommandHandler
     /**
      * Criar diretórios
      * @param string $dir_midias
+     * @throws AdicionarMidiasQuartoException
      */
     public function criarDiretorios(string $dir_midias): void
     {
+        if (!is_writable($dir_midias)) {
+            throw AdicionarMidiasQuartoException::semPermissao($dir_midias);
+        }
+
         mkdir($dir_midias, 0755, true);
         mkdir($dir_midias . 'original/', 0755, true);
         mkdir($dir_midias . 'mini/', 0755, true);

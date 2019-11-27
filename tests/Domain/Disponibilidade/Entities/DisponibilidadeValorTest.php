@@ -23,27 +23,32 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Domain\Reservas\Repositories;
+namespace Reservas\Tests\Domain\Disponibilidade\Entities;
 
-use DLX\Domain\Repositories\EntityRepositoryInterface;
+use Reservas\Domain\Disponibilidade\Entities\DisponibilidadeValor;
+use Reservas\Tests\ReservasTestCase;
 
-interface ReservaRepositoryInterface extends EntityRepositoryInterface
+/**
+ * Class DisponValorTest
+ * @package Reservas\Tests\Domain\Entities
+ * @coversDefaultClass \Reservas\Domain\Disponibilidade\Entities\DisponibilidadeValor
+ */
+class DisponibilidadeValorTest extends ReservasTestCase
 {
     /**
-     * @param string|null $s_data_inicial
-     * @param string|null $s_data_final
-     * @param array $criteria
-     * @param array $order_by
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return array
+     * @return DisponibilidadeValor
      */
-    public function findReservasPorPeriodo(
-        ?string $s_data_inicial,
-        ?string $s_data_final,
-        array $criteria = [],
-        array $order_by = [],
-        ?int $limit = null,
-        ?int $offset = null
-    ): array;
+    public function test__construct(): DisponibilidadeValor
+    {
+        $qtde_pessoas = mt_rand(1, 10);
+        $valor = 12.34;
+
+        $dispon_valor = new DisponibilidadeValor($qtde_pessoas, $valor);
+
+        $this->assertInstanceOf(DisponibilidadeValor::class, $dispon_valor);
+        $this->assertEquals($qtde_pessoas, $dispon_valor->getQuantidadePessoas());
+        $this->assertEquals($valor, $dispon_valor->getValor());
+
+        return $dispon_valor;
+    }
 }

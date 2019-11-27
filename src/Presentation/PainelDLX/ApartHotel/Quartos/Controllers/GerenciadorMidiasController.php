@@ -36,11 +36,11 @@ use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Exceptions\ValidarQuartoException;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommand;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommandHandler;
+use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\Exceptions\AdicionarMidiasQuartoException;
+use Reservas\UseCases\Quartos\EditarQuarto\EditarQuartoCommandHandler;
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\Exceptions\ExcluirMidiaQuartoException;
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommand;
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommandHandler;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
@@ -96,7 +96,7 @@ class GerenciadorMidiasController extends PainelDLXController
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 
@@ -120,14 +120,14 @@ class GerenciadorMidiasController extends PainelDLXController
                 $this->command_bus->handle(new AdicionarMidiasQuartoCommand($quarto, $arquivos));
 
                 if (!is_null($quarto->getId())) {
-                    /* @see SalvarQuartoCommandHandler */
-                    $this->command_bus->handle(new SalvarQuartoCommand($quarto));
+                    /* @see EditarQuartoCommandHandler */
+                    $this->command_bus->handle(new EditarQuartoCommandHandler($quarto));
                 }
             });
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Mídias salvas com sucesso!';
-        } catch (ValidarQuartoException | UserException $e) {
+        } catch (AdicionarMidiasQuartoException | ValidarQuartoException | UserException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

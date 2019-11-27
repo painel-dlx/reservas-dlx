@@ -37,6 +37,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Reservas\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommand;
 use Reservas\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommandHandler;
 use Reservas\UseCases\Reservas\ListaReservas\ListaReservasCommand;
+use Reservas\UseCases\Reservas\ListaReservasPorPeriodo\ListaReservasPorPeriodoCommand;
 use SechianeX\Contracts\SessionInterface;
 use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
@@ -70,7 +71,7 @@ class ListaReservasController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css');
+        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css', VERSAO_RESERVAS_DLX);
         $this->transaction = $transaction;
     }
 
@@ -99,19 +100,14 @@ class ListaReservasController extends PainelDLXController
             $criteria = $this->command_bus->handle(new ConverterFiltro2CriteriaCommand($get['campos'], $get['busca']));
 
             /* @see ListaReservasCommandHandler */
-            $lista_reservas = $this->command_bus->handle(new ListaReservasCommand(
+            $lista_reservas = $this->command_bus->handle(new ListaReservasPorPeriodoCommand(
+                $get['data_inicial'],
+                $get['data_final'],
                 $criteria,
-                ['e.status' => Criteria::DESC, 'e.checkin' => Criteria::ASC],
+                ['r.status' => Criteria::DESC, 'r.checkin' => Criteria::ASC],
                 $get['qtde'],
                 $get['offset']
             ));
-
-            /* @see FiltrarReservasPorPeriodoCommandHandler */
-            $lista_reservas = $this->command_bus->handle(new FiltrarReservasPorPeriodoCommand(
-                $lista_reservas,
-                (string)$get['data_inicial'],
-                (string)$get['data_final'])
-            );
 
             // Atributos
             $this->view->setAtributo('titulo-pagina', 'Reservas');
@@ -132,7 +128,7 @@ class ListaReservasController extends PainelDLXController
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 

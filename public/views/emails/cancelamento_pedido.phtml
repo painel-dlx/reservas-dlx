@@ -130,7 +130,7 @@ $base_url = Configure::get('app', 'base-url');
             <td headers="checkin"><?php echo $item->getCheckin()->format('d/m/Y') ?></td>
             <td headers="checkout"><?php echo $item->getCheckout()->format('d/m/Y') ?></td>
             <td headers="qtde">
-                <?php printf('%d adultos, %d crianças', $item->getAdultos(), $item->getCriancas()) ?>
+                <?php printf('%d adultos, %d crianças', $item->getQuantidadeAdultos(), $item->getQuantidadeCriancas()) ?>
             </td>
             <td headers="valor" style="text-align: right">
                 <?php echo 'R$ ' . number_format($item->getValorTotal(), 2, ',', '') ?>

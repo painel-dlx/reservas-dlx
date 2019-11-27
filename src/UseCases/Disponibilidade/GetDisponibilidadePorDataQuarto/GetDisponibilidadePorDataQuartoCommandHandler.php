@@ -58,7 +58,7 @@ class GetDisponibilidadePorDataQuartoCommandHandler
     {
         return $this->disponibilidade_repository->findOneBy([
             'quarto' => $command->getQuarto(),
-            'dia' => $command->getData()
+            'data' => $command->getData()
         ]);
     }
 }

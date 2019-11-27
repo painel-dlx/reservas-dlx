@@ -61,10 +61,10 @@ class ExcluirMidiaQuartoCommandHandler
         }
 
         $midia = $quarto->getMidias()->findByArquivo($arquivo);
-        @unlink($midia->getArquivo());
+        @unlink($midia->getArquivoOriginal());
 
-        if (!empty($midia->getMini())) {
-            @unlink($midia->getMini());
+        if (!empty($midia->getMiniatura())) {
+            @unlink($midia->getMiniatura());
         }
 
         $quarto->getMidias()->removeElement($midia);

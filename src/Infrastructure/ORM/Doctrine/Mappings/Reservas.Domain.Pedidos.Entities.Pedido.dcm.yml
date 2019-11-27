@@ -1,6 +1,6 @@
 Reservas\Domain\Pedidos\Entities\Pedido:
     type: entity
-    table: dlx_reservas_pedidos
+    table: reservas.Pedido
     repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoRepository
     id:
         id:
@@ -15,38 +15,32 @@ Reservas\Domain\Pedidos\Entities\Pedido:
             type: string
             nullable: false
             length: 50
-            column: pedido_nome
         cpf:
             type: cpf
             nullable: false
             length: 14
-            column: pedido_cpf
         email:
             type: string
             nullable: false
             length: 200
-            column: pedido_email
         telefone:
             type: string
             nullable: true
             length: 16
-            column: pedido_telefone
         valor_total:
             type: float
             nullable: false
-            column: pedido_valor_total
-        forma_pgto:
+        forma_pagamento:
             type: string
             nullable: false
             options:
                 default: digitada
-            column: pedido_pgto_via
         status:
             type: string
             nullable: false
             option:
                 default: Pendente
-            column: pedido_status
+            column: status
     oneToOne:
         cartao:
             targetEntity: PedidoCartao
@@ -80,7 +74,7 @@ Reservas\Domain\Pedidos\Entities\Pedido:
                 - merge
             joinColumns:
                 pedido_id:
-                    referencedColumnName: reserva_pedido
+                    referencedColumnName: pedido_id
         historico:
             targetEntity: PedidoHistorico
             mappedBy: pedido

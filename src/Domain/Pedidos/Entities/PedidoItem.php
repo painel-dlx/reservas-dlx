@@ -28,6 +28,8 @@ namespace Reservas\Domain\Pedidos\Entities;
 
 use DateTime;
 use DLX\Domain\Entities\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
 
@@ -51,11 +53,13 @@ class PedidoItem extends Entity
     /** @var int */
     private $quantidade = 1;
     /** @var int */
-    private $adultos = 2;
+    private $quantidade_adultos = 2;
     /** @var int */
-    private $criancas = 0;
+    private $quantidade_criancas = 0;
     /** @var float|null */
     private $valor_total;
+    /** @var Collection */
+    private $detalhamento;
 
     /**
      * PedidoItem constructor.
@@ -81,10 +85,12 @@ class PedidoItem extends Entity
         $this->checkin = $checkin->setTime(14, 0, 0);
         $this->checkout = $checkout->setTime(12, 0, 0);
         $this->quantidade = $quantidade;
-        $this->adultos = $adultos;
-        $this->criancas = $criancas;
+        $this->quantidade_adultos = $adultos;
+        $this->quantidade_criancas = $criancas;
+        $this->detalhamento = new ArrayCollection();
 
         $this->calcularValorTotal();
+        $this->defineDetalhamento();
     }
 
     /**
@@ -138,17 +144,17 @@ class PedidoItem extends Entity
     /**
      * @return int
      */
-    public function getAdultos(): int
+    public function getQuantidadeAdultos(): int
     {
-        return $this->adultos;
+        return $this->quantidade_adultos;
     }
 
     /**
      * @return int
      */
-    public function getCriancas(): int
+    public function getQuantidadeCriancas(): int
     {
-        return $this->criancas;
+        return $this->quantidade_criancas;
     }
 
     /**
@@ -170,12 +176,37 @@ class PedidoItem extends Entity
     private function calcularValorTotal(): void
     {
         $this->valor_total = 0;
-        $qtde_hospedes = $this->getAdultos() + $this->getCriancas();
+        $qtde_hospedes = $this->getQuantidadeAdultos() + $this->getQuantidadeCriancas();
 
-        $this->getQuarto()->getDispon($this->getCheckin(), $this->getCheckout())->map(function (Disponibilidade $disponibilidade) use ($qtde_hospedes) {
-            $this->valor_total += $disponibilidade->getValorPorQtdePessoas($qtde_hospedes);
+        $this->getQuarto()->getDisponibilidade($this->getCheckin(), $this->getCheckout())->map(function (Disponibilidade $disponibilidade) use ($qtde_hospedes) {
+            $this->valor_total += $disponibilidade->getValorPorQtdePessoasComDesconto($qtde_hospedes);
         });
 
         $this->valor_total *= $this->getQuantidade();
+    }
+
+    /**
+     * @return PedidoItem
+     */
+    private function defineDetalhamento(): self
+    {
+        $lista_dispon = $this->getQuarto()->getDisponibilidade($this->getCheckin(), $this->getCheckout());
+        $qtde_pessoas = $this->getQuantidadeAdultos() + $this->getQuantidadeCriancas();
+
+        /** @var Disponibilidade $dispon */
+        foreach ($lista_dispon as $dispon) {
+            $detalhe = new PedidoItemDetalhe($this, $dispon->getData(), $dispon->getValorPorQtdePessoas($qtde_pessoas), $dispon->getDesconto());
+            $this->getDetalhamento()->add($detalhe);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getDetalhamento(): Collection
+    {
+        return $this->detalhamento;
     }
 }

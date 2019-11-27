@@ -1,6 +1,6 @@
 Reservas\Domain\Reservas\Entities\ReservaHistorico:
     type: entity
-    table: reserva_historico
+    table: reservas.ReservaHistorico
     # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\ReservaHistoricoRepository
     id:
         id:

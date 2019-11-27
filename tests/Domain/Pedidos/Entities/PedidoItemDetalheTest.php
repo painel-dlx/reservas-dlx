@@ -23,32 +23,42 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Tests\Domain\Disponibilidade\Entities;
+namespace Reservas\Tests\Domain\Pedidos\Entities;
 
-use Reservas\Domain\Disponibilidade\Entities\DisponValor;
-use Reservas\Tests\ReservasTestCase;
+use DateTime;
+use Exception;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
+use Reservas\Domain\Pedidos\Entities\PedidoItemDetalhe;
+use PHPUnit\Framework\TestCase;
 
 /**
- * Class DisponValorTest
- * @package Reservas\Tests\Domain\Entities
- * @coversDefaultClass \Reservas\Domain\Disponibilidade\Entities\DisponValor
+ * Class PedidoItemDetalheTest
+ * @package Reservas\Tests\Domain\Pedidos\Entities
+ * @coversDefaultClass \Reservas\Domain\Pedidos\Entities\PedidoItemDetalhe
  */
-class DisponValorTest extends ReservasTestCase
+class PedidoItemDetalheTest extends TestCase
 {
     /**
-     * @return DisponValor
+     * @return PedidoItemDetalhe
+     * @throws Exception
      */
-    public function test__construct(): DisponValor
+    public function test__construct(): PedidoItemDetalhe
     {
-        $qtde_pessoas = mt_rand(1, 10);
-        $valor = 12.34;
+        $item = $this->createMock(PedidoItem::class);
+        $data = new DateTime;
+        $diaria = 123.40;
+        $desconto = 0.1;
 
-        $dispon_valor = new DisponValor($qtde_pessoas, $valor);
+        /** @var PedidoItem $item */
 
-        $this->assertInstanceOf(DisponValor::class, $dispon_valor);
-        $this->assertEquals($qtde_pessoas, $dispon_valor->getQtdePessoas());
-        $this->assertEquals($valor, $dispon_valor->getValor());
+        $detalhe = new PedidoItemDetalhe($item, $data, $diaria, $desconto);
 
-        return $dispon_valor;
+        $this->assertEquals($item, $detalhe->getItem());
+        $this->assertEquals($data, $detalhe->getData());
+        $this->assertEquals($diaria, $detalhe->getDiaria());
+        $this->assertEquals($desconto, $detalhe->getDesconto());
+        $this->assertRegExp('~^\d+%~', $detalhe->getPercentDesconto());
+
+        return $detalhe;
     }
 }

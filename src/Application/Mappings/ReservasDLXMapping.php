@@ -70,18 +70,16 @@ use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler;
 use Reservas\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use Reservas\UseCases\Quartos\ListaQuartos\ListaQuartosCommandHandler;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommand;
-use Reservas\UseCases\Quartos\SalvarQuarto\SalvarQuartoCommandHandler;
 use Reservas\UseCases\Reservas\CancelarReserva\CancelarReservaCommand;
 use Reservas\UseCases\Reservas\CancelarReserva\CancelarReservaCommandHandler;
 use Reservas\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
 use Reservas\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommandHandler;
-use Reservas\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommand;
-use Reservas\UseCases\Reservas\FiltrarReservasPorPeriodo\FiltrarReservasPorPeriodoCommandHandler;
 use Reservas\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use Reservas\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
 use Reservas\UseCases\Reservas\ListaReservas\ListaReservasCommand;
 use Reservas\UseCases\Reservas\ListaReservas\ListaReservasCommandHandler;
+use Reservas\UseCases\Reservas\ListaReservasPorPeriodo\ListaReservasPorPeriodoCommandHandler;
+use Reservas\UseCases\Reservas\ListaReservasPorPeriodo\ListaReservasPorPeriodoCommand;
 use Reservas\UseCases\Reservas\SalvarReserva\SalvarReservaCommand;
 use Reservas\UseCases\Reservas\SalvarReserva\SalvarReservaCommandHandler;
 
@@ -112,10 +110,10 @@ class ReservasDLXMapping
         CancelarPedidoCommand::class => CancelarPedidoCommandHandler::class,
         EnviarNotificacaoCancelamentoPedidoCommand::class => EnviarNotificacaoCancelamentoPedidoCommandHandler::class,
         GerarDisponibilidadesQuartoCommand::class => GerarDisponibilidadesQuartoCommandHandler::class,
-        FiltrarReservasPorPeriodoCommand::class => FiltrarReservasPorPeriodoCommandHandler::class,
         AdicionarMidiasQuartoCommand::class => AdicionarMidiasQuartoCommandHandler::class,
         ExcluirMidiaQuartoCommand::class => ExcluirMidiaQuartoCommandHandler::class,
         QuantidadePedidosPorStatusCommand::class => QuantidadePedidosPorStatusCommandHandler::class,
+        ListaReservasPorPeriodoCommand::class => ListaReservasPorPeriodoCommandHandler::class,
     ];
 
     /**

@@ -85,10 +85,10 @@ class EditarQuartoCommandHandlerTest extends TestCase
         $this->assertInstanceOf(Quarto::class, $quarto);
         $this->assertEquals($nome, $quarto->getNome());
         $this->assertEquals($descricao, $quarto->getDescricao());
-        $this->assertEquals($max_hospedes, $quarto->getMaxHospedes());
-        $this->assertEquals($qtde, $quarto->getQtde());
+        $this->assertEquals($max_hospedes, $quarto->getMaximoHospedes());
+        $this->assertEquals($qtde, $quarto->getQuantidade());
         $this->assertEquals($tamanho_m2, $quarto->getTamanhoM2());
-        $this->assertEquals($valor_min, $quarto->getValorMin());
+        $this->assertEquals($valor_min, $quarto->getValorMinimo());
         $this->assertEquals($link, $quarto->getLink());
     }
 }

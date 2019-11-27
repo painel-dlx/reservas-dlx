@@ -113,7 +113,7 @@ $pedido = $this->getAtributo('pedido');
             <td headers="checkin"><?php echo $reserva->getCheckin()->format('d/m/Y') ?></td>
             <td headers="checkout"><?php echo $reserva->getCheckout()->format('d/m/Y') ?></td>
             <td headers="qtde">
-                <?php printf('%d adultos, %d crianças', $reserva->getAdultos(), $reserva->getCriancas()) ?>
+                <?php printf('%d adultos, %d crianças', $reserva->getQuantidadeAdultos(), $reserva->getQuantidadeCriancas()) ?>
             </td>
             <td headers="status"><?php echo $reserva->getStatus() ?></td>
             <td headers="valor" style="text-align: right">

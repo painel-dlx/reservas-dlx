@@ -1,0 +1,22 @@
+Reservas\Domain\Pedidos\Entities\PedidoItemDetalhe:
+    type: entity
+    table: pedido_item_detalhe
+    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoItemDetalheRepository
+    id:
+        pedido_item_id:
+            type: integer
+            id: true
+            nullable: false
+            generator:
+                strategy: auto
+    fields:
+        data:
+            type: date
+            nullable: false
+            id: true
+        diaria:
+            type: float
+            nullable: false
+        desconot:
+            type: float
+            nullable: false

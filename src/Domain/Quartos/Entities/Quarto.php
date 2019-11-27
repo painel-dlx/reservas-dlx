@@ -47,7 +47,7 @@ use Reservas\Tests\Domain\Quartos\Entities\QuartoTest;
  */
 class Quarto extends Entity
 {
-    const TABELA_BD = 'dlx_reservas_quartos';
+    const TABELA_BD = 'Quarto';
     use LogRegistroTrait;
 
     /** @var int|null */
@@ -57,21 +57,19 @@ class Quarto extends Entity
     /** @var string|null */
     private $descricao;
     /** @var int */
-    private $max_hospedes = 1;
+    private $maximo_hospedes = 1;
     /** @var int */
-    private $qtde;
+    private $quantidade;
     /** @var float */
-    private $valor_min;
+    private $valor_minimo;
     /** @var int|null */
     private $tamanho_m2;
     /** @var string|null */
     private $link;
     /** @var bool */
-    private $publicar = true;
-    /** @var bool */
     private $deletado = false;
     /** @var Collection */
-    private $dispon;
+    private $disponibilidade;
     /** @var QuartoMidiaCollectionInterface */
     private $midias;
 
@@ -84,9 +82,9 @@ class Quarto extends Entity
     public function __construct(string $nome, int $qtde, float $valor_min)
     {
         $this->nome = $nome;
-        $this->qtde = $qtde;
-        $this->valor_min = $valor_min;
-        $this->dispon = new ArrayCollection();
+        $this->quantidade = $qtde;
+        $this->valor_minimo = $valor_min;
+        $this->disponibilidade = new ArrayCollection();
         $this->midias = new QuartoMidiaCollection();
     }
 
@@ -152,54 +150,54 @@ class Quarto extends Entity
     /**
      * @return int
      */
-    public function getMaxHospedes(): int
+    public function getMaximoHospedes(): int
     {
-        return $this->max_hospedes;
+        return $this->maximo_hospedes;
     }
 
     /**
-     * @param int $max_hospedes
+     * @param int $maximo_hospedes
      * @return Quarto
      */
-    public function setMaxHospedes(int $max_hospedes): Quarto
+    public function setMaximoHospedes(int $maximo_hospedes): Quarto
     {
-        $this->max_hospedes = $max_hospedes;
+        $this->maximo_hospedes = $maximo_hospedes;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getQtde(): int
+    public function getQuantidade(): int
     {
-        return $this->qtde;
+        return $this->quantidade;
     }
 
     /**
-     * @param int $qtde
+     * @param int $quantidade
      * @return Quarto
      */
-    public function setQtde(int $qtde): Quarto
+    public function setQuantidade(int $quantidade): Quarto
     {
-        $this->qtde = $qtde;
+        $this->quantidade = $quantidade;
         return $this;
     }
 
     /**
      * @return float
      */
-    public function getValorMin(): float
+    public function getValorMinimo(): float
     {
-        return $this->valor_min;
+        return $this->valor_minimo;
     }
 
     /**
-     * @param float $valor_min
+     * @param float $valor_minimo
      * @return Quarto
      */
-    public function setValorMin(float $valor_min): Quarto
+    public function setValorMinimo(float $valor_minimo): Quarto
     {
-        $this->valor_min = $valor_min;
+        $this->valor_minimo = $valor_minimo;
         return $this;
     }
 
@@ -242,24 +240,6 @@ class Quarto extends Entity
     /**
      * @return bool
      */
-    public function isPublicar(): bool
-    {
-        return $this->publicar;
-    }
-
-    /**
-     * @param bool $publicar
-     * @return Quarto
-     */
-    public function setPublicar(bool $publicar): Quarto
-    {
-        $this->publicar = $publicar;
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
     public function isDeletado(): bool
     {
         return $this->deletado;
@@ -280,7 +260,7 @@ class Quarto extends Entity
      * @param DateTime $checkout
      * @return Collection
      */
-    public function getDispon(DateTime $checkin, DateTime $checkout): Collection
+    public function getDisponibilidade(DateTime $checkin, DateTime $checkout): Collection
     {
         $checkin->setTime(0, 0, 0);
         $checkout->setTime(23, 59, 59);
@@ -290,10 +270,10 @@ class Quarto extends Entity
 
         $criteria = Criteria::create();
 
-        $criteria->where(Criteria::expr()->gte('dia', $checkin));
-        $criteria->andWhere(Criteria::expr()->lte('dia', $checkout));
+        $criteria->where(Criteria::expr()->gte('data', $checkin));
+        $criteria->andWhere(Criteria::expr()->lte('data', $checkout));
 
-        return $this->dispon->matching($criteria);
+        return $this->disponibilidade->matching($criteria);
     }
 
     /**
@@ -304,14 +284,14 @@ class Quarto extends Entity
      */
     public function addDispon(DateTime $data, int $qtde, array $valores): self
     {
-        $dispon = $this->dispon->filter(function (Disponibilidade $dispon) use ($data) {
-            return $dispon->getDia()->format('Y-m-d') ===  $data->format('Y-m-d');
+        $dispon = $this->disponibilidade->filter(function (Disponibilidade $dispon) use ($data) {
+            return $dispon->getData()->format('Y-m-d') ===  $data->format('Y-m-d');
         })->first();
 
         // Criar uma nova disponibilidade
         if (!$dispon) {
             $dispon = new Disponibilidade($this, $data, $qtde);
-            $this->dispon->add($dispon);
+            $this->disponibilidade->add($dispon);
         } else { // Editar uma dispobibilidade existente
             $dispon->setQtde($qtde);
         }
@@ -344,7 +324,7 @@ class Quarto extends Entity
     {
         $midia = new QuartoMidia($arquivo);
         $midia->setQuarto($this);
-        $midia->setMini($mini);
+        $midia->setMiniatura($mini);
 
         if ($this->midias instanceof PersistentCollection) {
             $this->midias->add($midia);

@@ -101,7 +101,7 @@ class GerarDisponibilidadesQuartoCommandHandlerTest extends ReservasTestCase
         $command = new GerarDisponibilidadesQuartoCommand($quarto);
         $handler->handle($command);
 
-        $query = 'select * from dlx_reservas_disponibilidade where dispon_quarto = :quarto and dispon_dia between :dt_inicial and :dt_final';
+        $query = 'select * from disponibilidade where quarto_id = :quarto and data between :dt_inicial and :dt_final';
         $sql = $con->prepare($query);
         $sql->bindValue(':quarto', $id, ParameterType::INTEGER);
         $sql->bindValue(':dt_inicial', $dt_inicial->format('Y-m-d'), ParameterType::STRING);

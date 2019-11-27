@@ -39,15 +39,15 @@ $quarto = $this->getAtributo('quarto');
 <?php if ($quarto instanceof Quarto) : ?>
     <p class="form-paragr">
         <label for="num-qtde" class="form-rotulo">Qtde:</label>
-        <input type="number" name="qtde" id="num-qtde" value="<?php echo $quarto->getQtde() ?>" min="0" max="<?php echo $quarto->getQtde() ?>" class="form-controle form-controle-numero" required>
+        <input type="number" name="qtde" id="num-qtde" value="<?php echo $quarto->getQuantidade() ?>" min="0" max="<?php echo $quarto->getQuantidade() ?>" class="form-controle form-controle-numero" required>
     </p>
 
-    <?php for ($i = 1; $i <= $quarto->getMaxHospedes(); $i++) : ?>
+    <?php for ($i = 1; $i <= $quarto->getMaximoHospedes(); $i++) : ?>
         <p class="form-paragr">
             <label for="num-valor-<?php echo $i ?>" class="form-rotulo form-controle-moeda">
                 Valor (<?php echo $i ===  1 ? '1 pessoa' : "{$i} pessoas" ?>):
             </label>
-            <input type="number" name="valores[<?php echo $i ?>]" id="num-valor-<?php echo $i ?>" value="<?php echo $quarto->getValorMin() ?>" min="<?php echo $quarto->getValorMin() ?>" max="9999.99" step="0.01" class="form-controle form-controle-numero" required>
+            <input type="number" name="valores[<?php echo $i ?>]" id="num-valor-<?php echo $i ?>" value="<?php echo $quarto->getValorMinimo() ?>" min="<?php echo $quarto->getValorMinimo() ?>" max="9999.99" step="0.01" class="form-controle form-controle-numero" required>
         </p>
     <?php endfor; ?>
 <?php else : ?>

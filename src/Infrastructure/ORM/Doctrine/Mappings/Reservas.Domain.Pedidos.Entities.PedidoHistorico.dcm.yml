@@ -1,6 +1,6 @@
 Reservas\Domain\Pedidos\Entities\PedidoHistorico:
     type: entity
-    table: dlx_pedido_historico
+    table: reservas.PedidoHistorico
     # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoRepository
     id:
         id:

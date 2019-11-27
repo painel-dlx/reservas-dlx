@@ -48,7 +48,7 @@ use stdClass;
  */
 class Pedido extends Entity
 {
-    const TABELA_BD = 'dlx_reservas_pedidos';
+    const TABELA_BD = 'Pedido';
     use LogRegistroTrait;
 
     const STATUS_PENDENTE = 'Pendente';
@@ -68,7 +68,7 @@ class Pedido extends Entity
     /** @var float */
     private $valor_total;
     /** @var string */
-    private $forma_pgto = 'digitada';
+    private $forma_pagamento = 'digitada';
     /** @var string */
     private $status = 'Pendente';
     /** @var PedidoCartao|null */
@@ -225,18 +225,18 @@ class Pedido extends Entity
     /**
      * @return string
      */
-    public function getFormaPgto(): string
+    public function getFormaPagamento(): string
     {
-        return $this->forma_pgto;
+        return $this->forma_pagamento;
     }
 
     /**
-     * @param string $forma_pgto
+     * @param string $forma_pagamento
      * @return Pedido
      */
-    public function setFormaPgto(string $forma_pgto): Pedido
+    public function setFormaPagamento(string $forma_pagamento): Pedido
     {
-        $this->forma_pgto = $forma_pgto;
+        $this->forma_pagamento = $forma_pagamento;
         return $this;
     }
 

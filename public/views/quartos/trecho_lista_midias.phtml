@@ -53,7 +53,7 @@ $lista_midias = $quarto->getMidias();
         foreach ($lista_midias as $midia) : ?>
             <div class="midia-quarto">
                 <a href="javascript:"
-                   onclick="excluirMidiaQuarto('<?php echo $midia->getArquivo() ?>')"
+                   onclick="excluirMidiaQuarto('<?php echo $midia->getArquivoOriginal() ?>')"
                    class="link-excluir"
                    title="Excluir essa foto / vídeo"
                 >

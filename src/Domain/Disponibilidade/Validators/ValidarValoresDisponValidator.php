@@ -27,7 +27,7 @@ namespace Reservas\Domain\Disponibilidade\Validators;
 
 
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
-use Reservas\Domain\Disponibilidade\Entities\DisponValor;
+use Reservas\Domain\Disponibilidade\Entities\DisponibilidadeValor;
 use Reservas\Domain\Disponibilidade\Exceptions\ValidarDisponibilidadeException;
 
 /**
@@ -43,9 +43,9 @@ class ValidarValoresDisponValidator
      */
     public function validar(Disponibilidade $dispon): bool
     {
-        $valor_min = $dispon->getQuarto()->getValorMin();
+        $valor_min = $dispon->getQuarto()->getValorMinimo();
 
-        $dispon->getValores()->map(function (DisponValor $dispon_valor) use ($valor_min) {
+        $dispon->getValores()->map(function (DisponibilidadeValor $dispon_valor) use ($valor_min) {
             if ($valor_min > $dispon_valor->getValor()) {
                 throw ValidarDisponibilidadeException::valorMenorQueMinimoQuarto($valor_min);
             }

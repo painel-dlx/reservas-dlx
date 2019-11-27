@@ -120,7 +120,7 @@ class MapaDisponController extends PainelDLXController
 
             /** @var array $lista_quartos */
             /* @see ListaQuartosCommandHandler */
-            $lista_quartos = $this->command_bus->handle(new ListaQuartosCommand([]));
+            $lista_quartos = $this->command_bus->handle(new ListaQuartosCommand([], ['e.maximo_hospedes' => 'asc']));
 
             // Views
             $this->view->addTemplate('disponibilidade/mapa_dispon');
@@ -142,7 +142,7 @@ class MapaDisponController extends PainelDLXController
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 
@@ -158,12 +158,12 @@ class MapaDisponController extends PainelDLXController
     {
         $post = filter_var_array($request->getParsedBody(), [
             'quarto' => FILTER_VALIDATE_INT,
-            'dia' => FILTER_DEFAULT,
+            'data' => FILTER_DEFAULT,
             'qtde' => FILTER_VALIDATE_INT,
             'valor' => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => FILTER_REQUIRE_ARRAY]
         ]);
 
-        $dt_dia = new DateTime($post['dia']);
+        $data = new DateTime($post['data']);
 
         try {
             /** @var Quarto $quarto */
@@ -172,8 +172,8 @@ class MapaDisponController extends PainelDLXController
 
             /** @var Disponibilidade $dispon */
             /* @see GetDisponibilidadePorDataQuartoCommandHandler */
-            $dispon = $this->command_bus->handle(new GetDisponibilidadePorDataQuartoCommand($quarto, $dt_dia));
-            $dispon->setQtde($post['qtde']);
+            $dispon = $this->command_bus->handle(new GetDisponibilidadePorDataQuartoCommand($quarto, $data));
+            $dispon->setQuantidade($post['qtde']);
 
             foreach ($post['valor'] as $qtde => $valor) {
                 $dispon->setValorPorQtdePessoas($qtde, $valor);

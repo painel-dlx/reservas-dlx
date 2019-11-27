@@ -78,10 +78,10 @@ class CriarNovoQuartoCommandHandler
         $quarto = $this->session->get('editando:quarto');
 
         $quarto->setNome($command->getNome());
-        $quarto->setQtde($command->getQtde());
-        $quarto->setValorMin($command->getValorMin());
+        $quarto->setQuantidade($command->getQtde());
+        $quarto->setValorMinimo($command->getValorMin());
         $quarto->setDescricao($command->getDescricao());
-        $quarto->setMaxHospedes($command->getMaxHospedes());
+        $quarto->setMaximoHospedes($command->getMaxHospedes());
         $quarto->setTamanhoM2($command->getTamanhoM2());
         $quarto->setLink($command->getLink());
 

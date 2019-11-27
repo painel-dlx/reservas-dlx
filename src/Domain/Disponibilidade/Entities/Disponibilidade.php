@@ -43,25 +43,29 @@ class Disponibilidade extends Entity
     /** @var int|null */
     private $id;
     /** @var DateTime */
-    private $dia;
+    private $data;
     /** @var Quarto */
     private $quarto;
     /** @var int */
-    private $qtde;
+    private $quantidade;
+    /** @var float */
+    private $desconto;
     /** @var Collection */
     private $valores;
 
     /**
      * Disponibilidade constructor.
-     * @param DateTime $dia
      * @param Quarto $quarto
+     * @param DateTime $dia
      * @param float $qtde
+     * @param float $desconto
      */
-    public function __construct(Quarto $quarto, DateTime $dia, float $qtde)
+    public function __construct(Quarto $quarto, DateTime $dia, float $qtde, float $desconto = 0.)
     {
-        $this->dia = $dia;
+        $this->data = $dia;
         $this->quarto = $quarto;
-        $this->qtde = $qtde;
+        $this->quantidade = $qtde;
+        $this->desconto = $desconto;
         $this->valores = new ArrayCollection();
     }
 
@@ -86,18 +90,18 @@ class Disponibilidade extends Entity
     /**
      * @return DateTime
      */
-    public function getDia(): DateTime
+    public function getData(): DateTime
     {
-        return $this->dia;
+        return $this->data;
     }
 
     /**
-     * @param DateTime $dia
+     * @param DateTime $data
      * @return Disponibilidade
      */
-    public function setDia(DateTime $dia): Disponibilidade
+    public function setData(DateTime $data): Disponibilidade
     {
-        $this->dia = $dia;
+        $this->data = $data;
         return $this;
     }
 
@@ -122,19 +126,27 @@ class Disponibilidade extends Entity
     /**
      * @return int
      */
-    public function getQtde(): int
+    public function getQuantidade(): int
     {
-        return $this->qtde;
+        return $this->quantidade;
     }
 
     /**
-     * @param int $qtde
+     * @param int $quantidade
      * @return Disponibilidade
      */
-    public function setQtde(int $qtde): Disponibilidade
+    public function setQuantidade(int $quantidade): Disponibilidade
     {
-        $this->qtde = $qtde;
+        $this->quantidade = $quantidade;
         return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getDesconto(): float
+    {
+        return $this->desconto;
     }
 
     /**
@@ -153,8 +165,8 @@ class Disponibilidade extends Entity
      */
     public function addValor(int $qtde_pessoas, float $valor): self
     {
-        $dispon_valor = new DisponValor($qtde_pessoas, $valor);
-        $dispon_valor->setDispon($this);
+        $dispon_valor = new DisponibilidadeValor($qtde_pessoas, $valor);
+        $dispon_valor->setDisponibilidade($this);
 
         $this->valores->add($dispon_valor);
         return $this;
@@ -167,12 +179,27 @@ class Disponibilidade extends Entity
      */
     public function getValorPorQtdePessoas(int $qtde_pessoas): ?float
     {
-        /** @var DisponValor|null $dispon_valor */
-        $dispon_valor = $this->getValores()->filter(function (DisponValor $dispon_valor) use ($qtde_pessoas) {
-            return $dispon_valor->getQtdePessoas() === $qtde_pessoas;
+        /** @var DisponibilidadeValor|null $dispon_valor */
+        $dispon_valor = $this->getValores()->filter(function (DisponibilidadeValor $dispon_valor) use ($qtde_pessoas) {
+            return $dispon_valor->getQuantidadePessoas() === $qtde_pessoas;
         })->first();
 
         return $dispon_valor ? $dispon_valor->getValor() : null;
+    }
+
+    /**
+     * Valor com desconto de acordo com a quantidade de pessoas
+     * @param int $qtde_pessoas
+     * @return float|null
+     */
+    public function getValorPorQtdePessoasComDesconto(int $qtde_pessoas): ?float
+    {
+        /** @var DisponibilidadeValor|null $dispon_valor */
+        $dispon_valor = $this->getValores()->filter(function (DisponibilidadeValor $dispon_valor) use ($qtde_pessoas) {
+            return $dispon_valor->getQuantidadePessoas() === $qtde_pessoas;
+        })->first();
+
+        return $dispon_valor ? $dispon_valor->getValorComDesconto() : null;
     }
 
     /**
@@ -183,11 +210,11 @@ class Disponibilidade extends Entity
      */
     public function setValorPorQtdePessoas(int $qtde_pessoas, float $valor): self
     {
-        $dispon_valor = $this->getValores()->filter(function (DisponValor $dispon_valor) use ($qtde_pessoas) {
-            return $dispon_valor->getQtdePessoas() === $qtde_pessoas;
+        $dispon_valor = $this->getValores()->filter(function (DisponibilidadeValor $dispon_valor) use ($qtde_pessoas) {
+            return $dispon_valor->getQuantidadePessoas() === $qtde_pessoas;
         })->first();
 
-        if ($dispon_valor instanceof DisponValor) {
+        if ($dispon_valor instanceof DisponibilidadeValor) {
             $dispon_valor->setValor($valor);
         } else {
             $this->addValor($qtde_pessoas, $valor);
@@ -203,8 +230,8 @@ class Disponibilidade extends Entity
      */
     public function hasValorPorQtdePessoas(int $qtde_pessoas): bool
     {
-        return $this->getValores()->exists(function ($key, DisponValor $dispon_valor) use ($qtde_pessoas) {
-            return $dispon_valor->getQtdePessoas() === $qtde_pessoas && $dispon_valor->getValor() > 0;
+        return $this->getValores()->exists(function ($key, DisponibilidadeValor $dispon_valor) use ($qtde_pessoas) {
+            return $dispon_valor->getQuantidadePessoas() === $qtde_pessoas && $dispon_valor->getValor() > 0;
         });
     }
 
@@ -214,8 +241,8 @@ class Disponibilidade extends Entity
      */
     public function isPublicado(): bool
     {
-        $max_hospedes = $this->getQuarto()->getMaxHospedes();
-        $valor_min = $this->getQuarto()->getValorMin();
+        $max_hospedes = $this->getQuarto()->getMaximoHospedes();
+        $valor_min = $this->getQuarto()->getValorMinimo();
 
         if ($this->getValores()->count() > 0) {
             for ($i = 1; $i <= $max_hospedes; $i++) {
@@ -224,11 +251,11 @@ class Disponibilidade extends Entity
                 }
             }
 
-            $has_valor_invalido = $this->getValores()->exists(function ($key, DisponValor $dispon_valor) use ($valor_min) {
+            $has_valor_invalido = $this->getValores()->exists(function ($key, DisponibilidadeValor $dispon_valor) use ($valor_min) {
                 return $valor_min > $dispon_valor->getValor();
             });
 
-            return $this->getQtde() > 0 && !$has_valor_invalido;
+            return $this->getQuantidade() > 0 && !$has_valor_invalido;
         }
 
         return false;

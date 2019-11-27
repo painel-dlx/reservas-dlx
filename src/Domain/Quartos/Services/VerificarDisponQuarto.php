@@ -45,7 +45,7 @@ class VerificarDisponQuarto
      */
     public function executar(Quarto $quarto, DateTime $checkin, DateTime $checkout): bool
     {
-        $dispon_quarto = $quarto->getDispon($checkin, $checkout);
+        $dispon_quarto = $quarto->getDisponibilidade($checkin, $checkout);
 
         if ($dispon_quarto->count() < 1) {
             throw QuartoIndisponivelException::nenhumaDisponibilidadeEncontrada($checkin, $checkout);
@@ -53,7 +53,7 @@ class VerificarDisponQuarto
 
         $dispon_quarto->map(function (Disponibilidade $dispon) {
             if (!$dispon->isPublicado()) {
-                throw QuartoIndisponivelException::dataIndisponivel($dispon->getDia());
+                throw QuartoIndisponivelException::dataIndisponivel($dispon->getData());
             }
         });
 

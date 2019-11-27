@@ -51,11 +51,10 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
         $qb->select('d')
             ->from(Disponibilidade::class, 'd')
             ->innerJoin('d.quarto', 'q')
-            ->where('d.dia BETWEEN :data_inicial AND :data_final')
-            ->andWhere('q.publicar = 1')
+            ->where('d.data BETWEEN :data_inicial AND :data_final')
             ->andWhere('q.deletado = 0')
             ->orderBy('d.quarto')
-            ->addOrderBy('d.dia')
+            ->addOrderBy('d.data')
             ->setParameter(':data_inicial', $data_inicial->format('Y-m-d'), ParameterType::STRING)
             ->setParameter(':data_final', $data_final->format('Y-m-d'), ParameterType::STRING);
 
@@ -81,24 +80,24 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
     {
         $update_dispon = '
             update
-                dlx_reservas_disponibilidade
+                disponibilidade
             set
-                dispon_qtde = :qtde
+                quantidade = :qtde
             where
-                dispon_quarto = :quarto_id
-                and dispon_dia between :data_inicial and :data_final
+                quarto_id = :quarto_id
+                and data between :data_inicial and :data_final
         ';
 
         $delete_dispon_valor = '
             delete
                 v
             from
-                dlx_reservas_disponibilidade d 
+                disponibilidade d 
             inner join 
                 reservas_disponibilidade_valores v on v.dispon_id = d.dispon_id
             where 
-                d.dispon_quarto = :quarto_id
-                and d.dispon_dia between :data_inicial and :data_final
+                d.quarto_id = :quarto_id
+                and d.data between :data_inicial and :data_final
         ';
 
         $insert_dispon_valor = '
@@ -108,10 +107,10 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
                     :qtde_pessoas,
                     :valor
                 from
-                    dlx_reservas_disponibilidade
+                    disponibilidade
                 where
-                    dispon_quarto = :quarto_id
-                    and dispon_dia between :data_inicial and :data_final
+                    quarto_id = :quarto_id
+                    and data between :data_inicial and :data_final
         ';
 
         try {
@@ -163,7 +162,7 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
      */
     public function ultimaDataDisponibilidade(): DateTime
     {
-        $query = 'select max(dispon_dia) from dlx_reservas_disponibilidade';
+        $query = 'select max(data) from disponibilidade';
         $sql = $this->_em->getConnection()->executeQuery($query);
         $data = $sql->fetchColumn();
 

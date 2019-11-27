@@ -96,7 +96,7 @@ class PedidoTest extends ReservasTestCase
         $this->assertInstanceOf(ArrayCollection::class, $pedido->getReservas());
         $this->assertInstanceOf(ArrayCollection::class, $pedido->getHistorico());
         $this->assertTrue($pedido->isPendente());
-        $this->assertEquals('digitada', $pedido->getFormaPgto());
+        $this->assertEquals('digitada', $pedido->getFormaPagamento());
 
         return $pedido;
     }

@@ -41,9 +41,9 @@ class QuartoMidia extends Entity
     /** @var Quarto */
     private $quarto;
     /** @var string */
-    private $arquivo;
+    private $arquivo_original;
     /** @var string|null */
-    private $mini;
+    private $miniatura;
 
     /**
      * QuartoMidia constructor.
@@ -51,7 +51,7 @@ class QuartoMidia extends Entity
      */
     public function __construct(string $arquivo)
     {
-        $this->arquivo = $arquivo;
+        $this->arquivo_original = $arquivo;
     }
 
     /**
@@ -75,36 +75,36 @@ class QuartoMidia extends Entity
     /**
      * @return string
      */
-    public function getArquivo(): string
+    public function getArquivoOriginal(): string
     {
-        return $this->arquivo;
+        return $this->arquivo_original;
     }
 
     /**
-     * @param string $arquivo
+     * @param string $arquivo_original
      * @return QuartoMidia
      */
-    public function setArquivo(string $arquivo): QuartoMidia
+    public function setArquivoOriginal(string $arquivo_original): QuartoMidia
     {
-        $this->arquivo = $arquivo;
+        $this->arquivo_original = $arquivo_original;
         return $this;
     }
 
     /**
      * @return string|null
      */
-    public function getMini(): ?string
+    public function getMiniatura(): ?string
     {
-        return $this->mini;
+        return $this->miniatura;
     }
 
     /**
-     * @param string|null $mini
+     * @param string|null $miniatura
      * @return QuartoMidia
      */
-    public function setMini(?string $mini): QuartoMidia
+    public function setMiniatura(?string $miniatura): QuartoMidia
     {
-        $this->mini = $mini;
+        $this->miniatura = $miniatura;
         return $this;
     }
 
@@ -116,7 +116,7 @@ class QuartoMidia extends Entity
      */
     public function getTagHtml(?string $base_html = null, bool $mini = true): ?string
     {
-        $arquivo = $mini && !empty($this->getMini()) ? $this->getMini() : $this->getArquivo();
+        $arquivo = $mini && !empty($this->getMiniatura()) ? $this->getMiniatura() : $this->getArquivoOriginal();
 
         $mime_type = mime_content_type($arquivo);
         $src = "{$base_html}{$arquivo}";

@@ -1,6 +1,6 @@
 Reservas\Domain\Disponibilidade\Entities\Disponibilidade:
     type: entity
-    table: dlx_reservas_disponibilidade
+    table: reservas.Disponibilidade
     repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\DisponibilidadeRepository
     id:
         id:
@@ -9,30 +9,28 @@ Reservas\Domain\Disponibilidade\Entities\Disponibilidade:
             nullable: false
             generator:
                 strategy: auto
-            column: dispon_id
+            column: disponibilidade_id
     fields:
-        dia:
+        data:
             type: date
             nullable: false
-            column: dispon_dia
-        qtde:
+        quantidade:
             type: integer
             nullable: false
-            column: dispon_qtde
     manyToOne:
         quarto:
             targetEntity: Reservas\Domain\Quartos\Entities\Quarto
             inversedBy: dispon
             joinColumns:
-                dispon_quarto:
+                quarto_id:
                     referencedColumnName: quarto_id
     oneToMany:
         valores:
-            targetEntity: DisponValor
-            mappedBy: dispon
+            targetEntity: DisponibilidadeValor
+            mappedBy: disponibilidade
             cascade:
                 - persist
                 - merge
             joinColumns:
-                dispon_id:
-                    referencedColumnName: dispon_id
+                disponibilidade_id:
+                    referencedColumnName: disponibilidade_id
