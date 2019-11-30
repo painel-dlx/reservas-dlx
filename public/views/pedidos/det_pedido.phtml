@@ -40,8 +40,16 @@ $pedido = $this->getAtributo('pedido');
 /** @var Usuario $usuario_logado */
 $usuario_logado = $this->getAtributo('usuario-logado');
 
-$is_pedido_confirmado = $pedido->isPago();
+// @todo: retirar o style dessa página e passar para o arquivo CSS do ui-painel-dlx-reservas
 ?>
+
+[HTML-HEAD]
+<style>
+    #link-detalhamento-periodo::before {
+        color: orange;
+    }
+</style>
+[/HTML-HEAD]
 
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
@@ -228,7 +236,10 @@ $is_pedido_confirmado = $pedido->isPago();
 
                             <?php if ($pedido_item->hasDetalhamento()) : ?>
                                 <a href="javascript:" onclick="popupDetalhamentoPeriodo(<?php echo $pedido_item->getId() ?>)"
-                                   class="icone-pergunta --so-icone"
+                                   id="link-detalhamento-periodo"
+                                   title="Detalhamento do período"
+                                   class="com-icone icone-pergunta so-icone"
+                                   data-ajax-msg="Consultando detalhamento do item...<br>Por favor, aguarde."
                                 >
                                     Detalhamento
                                 </a>
