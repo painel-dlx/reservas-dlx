@@ -36,6 +36,7 @@ use PainelDLX\Presentation\Site\Common\Controllers\PainelDLXController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 use Reservas\Domain\Pedidos\Exceptions\PedidoNaoEncontradoException;
 use Reservas\Domain\Quartos\Exceptions\QuartoIndisponivelException;
@@ -49,6 +50,7 @@ use Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificaca
 use Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommand;
 use Reservas\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
+use Reservas\UseCases\Pedidos\FindPedidoItemPorId\FindPedidoItemPorIdCommand;
 use Reservas\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
@@ -357,5 +359,37 @@ class DetalhePedidoController extends PainelDLXController
         }
 
         return new JsonResponse($json);
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws ContextoInvalidoException
+     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraNaoEncontradaException
+     */
+    public function detalhamentoPeriodo(ServerRequestInterface $request): ResponseInterface
+    {
+        $get = $request->getQueryParams();
+
+        try {
+            /** @var PedidoItem $pedido_item */
+            $pedido_item = $this->command_bus->handle(new FindPedidoItemPorIdCommand($get['pedido_item_id']));
+
+            // Atributos
+            $this->view->setAtributo('titulo-pagina', 'Detalhamento do Período');
+            $this->view->setAtributo('pedido-item', $pedido_item);
+
+            // View
+            $this->view->addTemplate('pedidos/detalhe_periodo');
+        } catch (UserException $e) {
+            $this->view->addTemplate('common/mensagem_usuario');
+            $this->view->setAtributo('mensagem', [
+                'tipo' => 'erro',
+                'texto' => $e->getMessage()
+            ]);
+        }
+
+        return $this->view->render();
     }
 }

@@ -160,7 +160,11 @@ class MapaDisponController extends PainelDLXController
             'quarto' => FILTER_VALIDATE_INT,
             'data' => FILTER_DEFAULT,
             'qtde' => FILTER_VALIDATE_INT,
-            'valor' => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => FILTER_REQUIRE_ARRAY]
+            'valor' => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => FILTER_REQUIRE_ARRAY],
+            'desconto' => [
+                'filter' => FILTER_VALIDATE_FLOAT,
+                'options' => ['min_range' => 0, 'max_range' => 99.99, 'default' => 0]
+            ]
         ]);
 
         $data = new DateTime($post['data']);
@@ -170,22 +174,23 @@ class MapaDisponController extends PainelDLXController
             /* @see GetQuartoPorIdCommandHandler */
             $quarto = $this->command_bus->handle(new GetQuartoPorIdCommand($post['quarto']));
 
-            /** @var Disponibilidade $dispon */
+            /** @var Disponibilidade $disponibilidade */
             /* @see GetDisponibilidadePorDataQuartoCommandHandler */
-            $dispon = $this->command_bus->handle(new GetDisponibilidadePorDataQuartoCommand($quarto, $data));
-            $dispon->setQuantidade($post['qtde']);
+            $disponibilidade = $this->command_bus->handle(new GetDisponibilidadePorDataQuartoCommand($quarto, $data));
+            $disponibilidade->setQuantidade($post['qtde']);
+            $disponibilidade->setDesconto($post['desconto'] / 100);
 
             foreach ($post['valor'] as $qtde => $valor) {
-                $dispon->setValorPorQtdePessoas($qtde, $valor);
+                $disponibilidade->setValorPorQtdePessoas($qtde, $valor);
             }
 
-            $this->transaction->transactional(function () use ($dispon) {
+            $this->transaction->transactional(function () use ($disponibilidade) {
                 /* @see SalvarDisponibilidadeQuartoCommandHandler */
-                $this->command_bus->handle(new SalvarDisponibilidadeQuartoCommand($dispon));
+                $this->command_bus->handle(new SalvarDisponibilidadeQuartoCommand($disponibilidade));
             });
 
             $json['retorno'] = 'sucesso';
-            $json['publicado'] = $dispon->isPublicado();
+            $json['publicado'] = $disponibilidade->isPublicado();
         } catch (UserException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();

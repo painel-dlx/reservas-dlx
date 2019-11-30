@@ -47,13 +47,16 @@ $usuario_logado = $this->getAtributo('usuario-logado');
             <div class="info-reserva-linha">
                 <p class="info-reserva-dado">
                     <span class="info-reserva-rotulo">Reserva:</span>
-                    # <?php echo $reserva->getId() ?>
+                    #<?php echo $reserva->getId() ?>
                 </p>
 
-                <?php if (!is_null($reserva->getPedido())) : ?>
+                <?php if (!is_null($reserva->getPedidoItem())) : ?>
                     <p class="info-reserva-dado">
                         <span class="info-reserva-rotulo">Pedido:</span>
-                        # <?php echo $reserva->getPedido()->getId() ?>
+
+                        <a href="/painel-dlx/apart-hotel/pedidos/detalhe?id=<?php echo $reserva->getPedidoItem()->getPedido()->getId() ?>">
+                            #<?php echo $reserva->getPedidoItem()->getPedido()->getId() ?>
+                        </a>
                     </p>
                 <?php endif; ?>
             </div>

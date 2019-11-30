@@ -36,6 +36,7 @@ use PainelDLX\Domain\Common\Entities\LogRegistroTrait;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Validators\ReservaValidator;
 use Reservas\Domain\Reservas\Validators\ReservaValidatorsEnum;
@@ -56,8 +57,8 @@ class Reserva extends Entity
 
     /** @var int|null */
     private $id;
-    /** @var Pedido|null */
-    private $pedido;
+    /** @var PedidoItem|null */
+    private $pedido_item;
     /** @var Quarto */
     private $quarto;
     /** @var string */
@@ -123,21 +124,11 @@ class Reserva extends Entity
     }
 
     /**
-     * @return Pedido|null
+     * @return PedidoItem|null
      */
-    public function getPedido(): ?Pedido
+    public function getPedidoItem(): ?PedidoItem
     {
-        return $this->pedido;
-    }
-
-    /**
-     * @param Pedido|null $pedido
-     * @return Reserva
-     */
-    public function setPedido(?Pedido $pedido): Reserva
-    {
-        $this->pedido = $pedido;
-        return $this;
+        return $this->pedido_item;
     }
 
     /**

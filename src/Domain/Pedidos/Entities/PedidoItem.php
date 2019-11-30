@@ -32,6 +32,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
+use Reservas\Domain\Reservas\Entities\Reserva;
 
 /**
  * Class PedidoItem
@@ -58,6 +59,8 @@ class PedidoItem extends Entity
     private $quantidade_criancas = 0;
     /** @var float|null */
     private $valor_total;
+    /** @var Reserva|null */
+    private $reserva;
     /** @var Collection */
     private $detalhamento;
 
@@ -82,8 +85,8 @@ class PedidoItem extends Entity
     ) {
         $this->pedido = $pedido;
         $this->quarto = $quarto;
-        $this->checkin = $checkin->setTime(14, 0, 0);
-        $this->checkout = $checkout->setTime(12, 0, 0);
+        $this->checkin = (clone $checkin)->setTime(14, 0, 0);
+        $this->checkout = (clone $checkout)->setTime(12, 0, 0);
         $this->quantidade = $quantidade;
         $this->quantidade_adultos = $adultos;
         $this->quantidade_criancas = $criancas;
@@ -170,6 +173,23 @@ class PedidoItem extends Entity
     }
 
     /**
+     * @return Reserva|null
+     */
+    public function getReserva(): ?Reserva
+    {
+        return $this->reserva;
+    }
+
+    /**
+     * Verifica se a reserva referente a esse item foi gerada
+     * @return bool
+     */
+    public function hasReservaGerada(): bool
+    {
+        return !is_null($this->getReserva());
+    }
+
+    /**
      * Calcular o valor total do item
      * @return void
      */
@@ -193,9 +213,14 @@ class PedidoItem extends Entity
         $lista_dispon = $this->getQuarto()->getDisponibilidade($this->getCheckin(), $this->getCheckout());
         $qtde_pessoas = $this->getQuantidadeAdultos() + $this->getQuantidadeCriancas();
 
-        /** @var Disponibilidade $dispon */
-        foreach ($lista_dispon as $dispon) {
-            $detalhe = new PedidoItemDetalhe($this, $dispon->getData(), $dispon->getValorPorQtdePessoas($qtde_pessoas), $dispon->getDesconto());
+        /** @var Disponibilidade $disponibilidade */
+        foreach ($lista_dispon as $disponibilidade) {
+            $detalhe = new PedidoItemDetalhe(
+                $this,
+                $disponibilidade->getData(),
+                $disponibilidade->getValorPorQtdePessoas($qtde_pessoas),
+                $disponibilidade->getDesconto()
+            );
             $this->getDetalhamento()->add($detalhe);
         }
 
@@ -208,5 +233,14 @@ class PedidoItem extends Entity
     public function getDetalhamento(): Collection
     {
         return $this->detalhamento;
+    }
+
+    /**
+     * Verifica se esse item possui detalhamento
+     * @return bool
+     */
+    public function hasDetalhamento(): bool
+    {
+        return !$this->getDetalhamento()->isEmpty();
     }
 }

@@ -71,7 +71,7 @@ class VerificarDisponQuartoTest extends ReservasTestCase
 
         /** @var DateTime $data */
         foreach ($dt_periodo as $data) {
-            $quarto->addDispon($data, 0, [1 => 10]);
+            $quarto->addDisponibilidade($data, 0, [1 => 10]);
         }
 
         $this->expectException(QuartoIndisponivelException::class);
@@ -95,7 +95,7 @@ class VerificarDisponQuartoTest extends ReservasTestCase
 
         /** @var DateTime $data */
         foreach ($dt_periodo as $data) {
-            $quarto->addDispon($data, 1, [1 => 10]);
+            $quarto->addDisponibilidade($data, 1, [1 => 10]);
         }
 
         $is_disponivel = (new VerificarDisponQuarto())->executar($quarto, $checkin, $checkout);

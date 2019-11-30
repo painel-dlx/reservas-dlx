@@ -65,16 +65,6 @@ Reservas\Domain\Pedidos\Entities\Pedido:
             orderBy: { checkin: asc }
             cascade:
                 - persist
-        reservas:
-            targetEntity: Reservas\Domain\Reservas\Entities\Reserva
-            mappedBy: pedido
-            orderBy: { checkin: asc }
-            cascade:
-                - persist
-                - merge
-            joinColumns:
-                pedido_id:
-                    referencedColumnName: pedido_id
         historico:
             targetEntity: PedidoHistorico
             mappedBy: pedido

@@ -71,6 +71,14 @@ class PedidosRouter extends PainelDLXRouter
         );
 
         $router->get(
+            '/painel-dlx/apart-hotel/pedidos/detalhe/detalhamento-periodo',
+            [DetalhePedidoController::class, 'detalhamentoPeriodo']
+        )->middlewares(
+            $define_pagina_mestra,
+            $verificar_logon
+        );
+
+        $router->get(
             '/painel-dlx/apart-hotel/pedidos/mostrar-cpf-completo',
             [DetalhePedidoController::class, 'mostrarCpfCompleto']
         )->middlewares(

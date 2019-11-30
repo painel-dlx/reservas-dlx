@@ -1,7 +1,7 @@
 Reservas\Domain\Pedidos\Entities\PedidoItem:
     type: entity
     table: reservas.PedidoItem
-    # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoItemRepository
+    repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoItemRepository
     id:
         id:
             type: integer
@@ -41,3 +41,20 @@ Reservas\Domain\Pedidos\Entities\PedidoItem:
             joinColumns:
                 quarto_id:
                     referencedColumnName: quarto_id
+    oneToMany:
+        detalhamento:
+            targetEntity: PedidoItemDetalhe
+            mappedBy: item
+            orderBy: { data: asc }
+            cascade:
+                - persist
+            joinColumns:
+                pedido_item_id:
+                    referencedColumnName: pedido_item_id
+    oneToOne:
+        reserva:
+            targetEntity: Reservas\Domain\Reservas\Entities\Reserva
+            inversedBy: pedido_item
+            joinColumns:
+                reserva_id:
+                    referencedColumnName: reserva_id

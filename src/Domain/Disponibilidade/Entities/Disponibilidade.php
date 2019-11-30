@@ -56,15 +56,15 @@ class Disponibilidade extends Entity
     /**
      * Disponibilidade constructor.
      * @param Quarto $quarto
-     * @param DateTime $dia
-     * @param float $qtde
+     * @param DateTime $data
+     * @param float $quantidade
      * @param float $desconto
      */
-    public function __construct(Quarto $quarto, DateTime $dia, float $qtde, float $desconto = 0.)
+    public function __construct(Quarto $quarto, DateTime $data, float $quantidade, float $desconto = 0.)
     {
-        $this->data = $dia;
+        $this->data = $data;
         $this->quarto = $quarto;
-        $this->quantidade = $qtde;
+        $this->quantidade = $quantidade;
         $this->desconto = $desconto;
         $this->valores = new ArrayCollection();
     }
@@ -147,6 +147,25 @@ class Disponibilidade extends Entity
     public function getDesconto(): float
     {
         return $this->desconto;
+    }
+
+    /**
+     * Retornar o percentual do desconto
+     * @return float
+     */
+    public function getDescontoPercent(): float
+    {
+        return $this->desconto * 100;
+    }
+
+    /**
+     * @param float $desconto
+     * @return Disponibilidade
+     */
+    public function setDesconto(float $desconto): Disponibilidade
+    {
+        $this->desconto = $desconto;
+        return $this;
     }
 
     /**

@@ -1,4 +1,4 @@
-// global abrirPopupExterno
+/* global abrirPopupExterno, $, msgUsuario */
 
 /**
  * Mostrar popup de confirmacao do pedido
@@ -9,7 +9,7 @@ function popupConfirmarPedido(acao, pedido_id) {
     abrirPopupExterno(
         $('#popup-confirmar-pedido'),
         '/painel-dlx/apart-hotel/pedidos/' + acao + '-pedido',
-        {id: pedido_id, 'pg-mestra': 'conteudo-master'},
+        { id: pedido_id, 'pg-mestra': 'conteudo-master' },
         function () {
             $('#form-confirmar-pedido, #form-cancelar-pedido').formAjax({
                 func_depois: function (json, form, xhr) {

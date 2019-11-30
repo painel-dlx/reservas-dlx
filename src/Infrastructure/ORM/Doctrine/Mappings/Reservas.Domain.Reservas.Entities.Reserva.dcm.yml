@@ -56,12 +56,6 @@ Reservas\Domain\Reservas\Entities\Reserva:
             joinColumns:
                 quarto_id:
                     referencedColumnName: quarto_id
-        pedido:
-            targetEntity: Reservas\Domain\Pedidos\Entities\Pedido
-            inversedBy: reservas
-            joinColumns:
-                pedido_id:
-                    referencedColumnName: pedido_id
     oneToMany:
         historico:
             targetEntity: ReservaHistorico
@@ -78,6 +72,13 @@ Reservas\Domain\Reservas\Entities\Reserva:
             mappedBy: reserva
             cascade:
                 - persist
+            joinColumns:
+                reserva_id:
+                    referencedColumnName: reserva_id
+    oneToOne:
+        pedido_item:
+            targetEntity: Reservas\Domain\Pedidos\Entities\PedidoItem
+            mappedBy: reserva
             joinColumns:
                 reserva_id:
                     referencedColumnName: reserva_id

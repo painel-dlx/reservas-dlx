@@ -25,8 +25,12 @@
 
 namespace Reservas\Tests\Domain\Pedidos\Entities;
 
+use DateInterval;
+use DatePeriod;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
 use Exception;
+use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use PHPUnit\Framework\TestCase;
@@ -45,13 +49,25 @@ class PedidoItemTest extends TestCase
      */
     public function test__construct(): PedidoItem
     {
-        $pedido = $this->createMock(Pedido::class);
-        $quarto = $this->createMock(Quarto::class);
         $checkin = (new DateTime())->modify('+1 day');
         $checkout = (clone $checkin)->modify('+2 day');
 
+        $quarto = new Quarto('Teste', 10, 10);
+
+        $periodo_estadia = new DatePeriod(
+            $checkin,
+            new DateInterval('P1D'),
+            $checkout
+        );
+
+        /** @var DateTime $data */
+        foreach ($periodo_estadia as $data) {
+            $quarto->addDisponibilidade($data, 10, [1 => 99, 2 => 99], .1);
+        }
+
+        $pedido = $this->createMock(Pedido::class);
+
         /** @var Pedido $pedido */
-        /** @var Quarto $quarto */
 
         $pedido_item = new PedidoItem($pedido, $quarto, $checkin, $checkout);
 
@@ -59,8 +75,10 @@ class PedidoItemTest extends TestCase
         $this->assertInstanceOf(PedidoItem::class, $pedido_item);
         $this->assertSame($pedido, $pedido_item->getPedido());
         $this->assertSame($quarto, $pedido_item->getQuarto());
-        $this->assertSame($checkin, $pedido_item->getCheckin());
-        $this->assertSame($checkout, $pedido_item->getCheckout());
+
+        // As datas são clonadas para poder configurar os horários corretamente
+//        $this->assertSame($checkin, $pedido_item->getCheckin());
+//        $this->assertSame($checkout, $pedido_item->getCheckout());
 
         // Valores setados como padrão
         $this->assertEquals(1, $pedido_item->getQuantidade());

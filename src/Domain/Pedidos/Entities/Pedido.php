@@ -78,8 +78,6 @@ class Pedido extends Entity
     /** @var Collection */
     private $itens;
     /** @var Collection */
-    private $reservas;
-    /** @var Collection */
     private $historico;
 
     /**
@@ -88,7 +86,6 @@ class Pedido extends Entity
     public function __construct()
     {
         $this->itens = new ArrayCollection();
-        $this->reservas = new ArrayCollection();
         $this->historico = new ArrayCollection();
     }
 
@@ -303,6 +300,15 @@ class Pedido extends Entity
     }
 
     /**
+     * Verifica se esse pedido possui algum item
+     * @return bool
+     */
+    public function hasItens(): bool
+    {
+        return !$this->getItens()->isEmpty();
+    }
+
+    /**
      * @param Quarto $quarto
      * @param DateTime $checkin
      * @param DateTime $checkout
@@ -350,35 +356,6 @@ class Pedido extends Entity
         $this->subtrairValor($valor_item);
 
         return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getReservas(): Collection
-    {
-        return $this->reservas;
-    }
-
-    /**
-     * @param Reserva $reserva
-     * @return Pedido
-     */
-    public function addReserva(Reserva $reserva): self
-    {
-        $reserva->setPedido($this);
-
-        $this->reservas->add($reserva);
-        return $this;
-    }
-
-    /**
-     * Verifica se o pedido possui reservas vinculadass
-     * @return bool
-     */
-    public function hasReservas(): bool
-    {
-        return $this->getReservas()->count() > 0;
     }
 
     /**
@@ -446,9 +423,10 @@ class Pedido extends Entity
         $validator->validar($this);
 
         // Confirmar todas as reservas
-        $this->getReservas()->map(function (Reserva $reserva) use ($motivo, $usuario) {
-            $reserva->confirmada($motivo, $usuario);
-        });
+        /** @var PedidoItem $item */
+        foreach ($this->getItens() as $item) {
+            $item->getReserva()->confirmada($motivo, $usuario);
+        }
 
         $this->addHistorico(self::STATUS_PAGO, $motivo, $usuario);
         $this->setStatus(self::STATUS_PAGO);
@@ -472,9 +450,10 @@ class Pedido extends Entity
         $this->setStatus(self::STATUS_CANCELADO);
 
         // Cancelar todas as reservas
-        $this->getReservas()->map(function (Reserva $reserva) use ($motivo, $usuario) {
-            $reserva->cancelada($motivo, $usuario);
-        });
+        /** @var PedidoItem $item */
+        foreach ($this->getItens() as $item) {
+            $item->getReserva()->cancelada($motivo, $usuario);
+        }
 
         return $this;
     }

@@ -17,6 +17,11 @@ Reservas\Domain\Disponibilidade\Entities\Disponibilidade:
         quantidade:
             type: integer
             nullable: false
+        desconto:
+            type: float
+            nullable: true
+            options:
+                default: 0
     manyToOne:
         quarto:
             targetEntity: Reservas\Domain\Quartos\Entities\Quarto

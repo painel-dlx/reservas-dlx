@@ -122,7 +122,7 @@ class ReservaTest extends ReservasTestCase
 
         /** @var DateTime $data */
         foreach ($dt_periodo as $data) {
-            $quarto->addDispon($data, $qtde_quartos_dispon, [1 => 10]);
+            $quarto->addDisponibilidade($data, $qtde_quartos_dispon, [1 => 10]);
         }
 
         $reserva->confirmada('Reserva foi paga via digitação de cartão.', $usuario);
@@ -203,7 +203,7 @@ class ReservaTest extends ReservasTestCase
 
         /** @var DateTime $data */
         foreach ($dt_periodo as $data) {
-            $quarto->addDispon($data, $qtde_quartos_dispon, $valores_diarias);
+            $quarto->addDisponibilidade($data, $qtde_quartos_dispon, $valores_diarias);
         }
 
         $reserva->setQuantidadeAdultos($qtde_quartos_dispon);

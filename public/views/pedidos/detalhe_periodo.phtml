@@ -24,38 +24,45 @@
  */
 
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
+use Reservas\Domain\Pedidos\Entities\PedidoItemDetalhe;
 use Vilex\VileX;
 
 /**
  * @var VileX $this
  */
 
-/** @var Pedido|null $pedido */
-$pedido = $this->getAtributo('pedido');
+/** @var PedidoItem $pedido_item */
+$pedido_item = $this->getAtributo('pedido-item');
 ?>
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
 
-<form id="form-cancelar-pedido" action="/painel-dlx/apart-hotel/pedidos/cancelar-pedido" method="post">
-    <input type="hidden" name="id" value="<?php echo $pedido->getId() ?>">
+<table id="lista-pedido-item-detalhamento" class="lista-registros">
+    <thead>
+    <tr>
+        <th id="data">Data</th>
+        <th id="diaria" style="text-align: right;">Valor</th>
+        <th id="desconto" style="text-align: right;">Desconto</th>
+        <th id="diaria-com-desconto">Valor c/ Desconto</th>
+    </tr>
+    </thead>
 
-    <p class="mensagem-usuario -atencao">
-        ATENÇÃO! Essa ação não pode ser defeita.<br>
-        <?php if ($pedido->isPago()) : ?>
-            Ao cancelar um pedido, todas as reservas vinculadas a ele serão canceladas também.<br>
-        <?php endif; ?>
-        Deseja realmente cancelar esse pedido?
-    </p>
-
-    <p class="form-paragr">
-        <label for="txt-motivo" class="form-rotulo">Motivo:</label>
-        <textarea name="motivo" id="txt-motivo" class="form-controle form-controle-textarea" required></textarea>
-    </p>
-
-    <p class="form-botoes">
-        <button type="submit" class="botao-cancelar" data-ajax-msg="Cancelando esse pedido.<br>Por favor aguarde...">
-            Sim, desejo cancelar esse pedido
-        </button>
-    </p>
-</form>
+    <tbody>
+    <?php
+    /** @var PedidoItemDetalhe $pedido_item_detalhe */
+    foreach ($pedido_item->getDetalhamento() as $pedido_item_detalhe) : ?>
+        <tr>
+            <td headers="data"><?php echo $pedido_item_detalhe->getData()->format('d/m/Y') ?></td>
+            <td headers="diaria" style="text-align: right;">
+                <?php echo 'R$' . number_format($pedido_item_detalhe->getDiaria(), 2, ',', '') ?>
+            </td>
+            <td headers="desconto" style="text-align: right;"><?php echo $pedido_item_detalhe->getPercentDesconto() ?></td>
+            <td headers="diaria-com-desconto">
+                <?php echo 'R$ ' . number_format($pedido_item_detalhe->getDiariaComDesconto(), 2, ',', '') ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
 [/CORPO]

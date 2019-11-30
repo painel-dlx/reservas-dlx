@@ -1,22 +1,29 @@
 Reservas\Domain\Pedidos\Entities\PedidoItemDetalhe:
     type: entity
-    table: pedido_item_detalhe
+    table: reservas.PedidoItemDetalhe
     # repositoryClass: Reservas\Infrastructure\ORM\Doctrine\Repositories\PedidoItemDetalheRepository
     id:
-        pedido_item_id:
+        id:
             type: integer
             id: true
             nullable: false
             generator:
                 strategy: auto
+            column: pedido_item_detalhe_id
     fields:
         data:
             type: date
             nullable: false
-            id: true
         diaria:
             type: float
             nullable: false
-        desconot:
+        desconto:
             type: float
             nullable: false
+    manyToOne:
+        item:
+            targetEntity: PedidoItem
+            inversedBy: detalhamento
+            joinColumns:
+                pedido_item_id:
+                    referencedColumnName: pedido_item_id

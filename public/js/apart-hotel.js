@@ -1,3 +1,4 @@
+/* global $, jQuery */
 /**
  * Fechar um poup modal
  * @param $container
@@ -24,7 +25,7 @@ function abrirPopupExterno($container, url, dados, callback) {
             $container.html(html).show();
 
             $(window).on('keyup.__poupModal', function (evt) {
-                var kc = evt.keycode || evt.which;
+                const kc = evt.keycode || evt.which;
 
                 if (kc === 27) {
                     fecharPopupExterno($container);
@@ -48,6 +49,7 @@ function abrirPopupExterno($container, url, dados, callback) {
 // @codekit-append "componentes/popup/_popup-confirmar-reserva.js"
 // @codekit-append "componentes/popup/_popup-confirmar-pedido.js"
 // @codekit-append "componentes/popup/_popup-upload-midias.js"
+// @codekit-append "componentes/popup/_popup-detalhamento-periodo.js"
 
 // FORM
 // @codekit-append "componentes/form/_upload-preview.js"

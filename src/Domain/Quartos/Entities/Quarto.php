@@ -76,14 +76,14 @@ class Quarto extends Entity
     /**
      * Quarto constructor.
      * @param string $nome
-     * @param int $qtde
-     * @param float $valor_min
+     * @param int $quantidade
+     * @param float $valor_minimo
      */
-    public function __construct(string $nome, int $qtde, float $valor_min)
+    public function __construct(string $nome, int $quantidade, float $valor_minimo)
     {
         $this->nome = $nome;
-        $this->quantidade = $qtde;
-        $this->valor_minimo = $valor_min;
+        $this->quantidade = $quantidade;
+        $this->valor_minimo = $valor_minimo;
         $this->disponibilidade = new ArrayCollection();
         $this->midias = new QuartoMidiaCollection();
     }
@@ -262,11 +262,11 @@ class Quarto extends Entity
      */
     public function getDisponibilidade(DateTime $checkin, DateTime $checkout): Collection
     {
-        $checkin->setTime(0, 0, 0);
-        $checkout->setTime(23, 59, 59);
+        $checkin = (clone $checkin)->setTime(0, 0, 0);
+        $checkout = (clone $checkout)->setTime(23, 59, 59);
 
         // A disponibilidade não é necessária para a data de checkout
-        $checkout = (clone $checkout)->modify('-1 day');
+        $checkout->modify('-1 day');
 
         $criteria = Criteria::create();
 
@@ -278,26 +278,29 @@ class Quarto extends Entity
 
     /**
      * @param DateTime $data
-     * @param int $qtde
+     * @param int $quantidade
      * @param array $valores
+     * @param float $desconto
      * @return Quarto
      */
-    public function addDispon(DateTime $data, int $qtde, array $valores): self
+    public function addDisponibilidade(DateTime $data, int $quantidade, array $valores, float $desconto = 0): self
     {
-        $dispon = $this->disponibilidade->filter(function (Disponibilidade $dispon) use ($data) {
+        /** @var Disponibilidade $disponibilidade */
+        $disponibilidade = $this->disponibilidade->filter(function (Disponibilidade $dispon) use ($data) {
             return $dispon->getData()->format('Y-m-d') ===  $data->format('Y-m-d');
         })->first();
 
         // Criar uma nova disponibilidade
-        if (!$dispon) {
-            $dispon = new Disponibilidade($this, $data, $qtde);
-            $this->disponibilidade->add($dispon);
+        if (!$disponibilidade) {
+            $disponibilidade = new Disponibilidade($this, $data, $quantidade, $desconto);
+            $this->disponibilidade->add($disponibilidade);
         } else { // Editar uma dispobibilidade existente
-            $dispon->setQtde($qtde);
+            $disponibilidade->setQuantidade($quantidade);
+            $disponibilidade->setDesconto($quantidade);
         }
 
-        foreach ($valores as $qtde => $valor) {
-            $dispon->setValorPorQtdePessoas($qtde, $valor);
+        foreach ($valores as $quantidade => $valor) {
+            $disponibilidade->setValorPorQtdePessoas($quantidade, $valor);
         }
 
         return $this;

@@ -101,6 +101,8 @@ foreach ($quartos as $lista_dispon) :
                             (<?php echo $i === 1 ? '1 pessoa' : "{$i} pessoas" ?>)
                         </div>
                     <?php endfor; ?>
+
+                    <div class="calendario-dispon-label -qtde">Desconto %</div>
                     <div class="calendario-dispon-label -publicado">Publicado?</div>
                 </div>
 
@@ -134,6 +136,12 @@ foreach ($quartos as $lista_dispon) :
                                     </label>
                                 </div>
                             <?php endfor; ?>
+
+                            <div class="calendario-dispon-campo -qtde">
+                                <label>
+                                    <input type="number" name="desconto" value="<?php echo $dispon->getDescontoPercent() ?>" min="0.00" max="99.99" step="0.01">
+                                </label>
+                            </div>
 
                             <div class="calendario-dispon-status">
                                 <span id="dispon-status-<?php echo $dispon->getId() ?>" class="status-dispon -<?php echo $dispon->isPublicado() ? 'publicado' : 'nao-publicado' ?>">

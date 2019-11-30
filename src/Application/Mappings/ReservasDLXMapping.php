@@ -46,6 +46,8 @@ use Reservas\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommand;
 use Reservas\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommandHandler;
+use Reservas\UseCases\Pedidos\FindPedidoItemPorId\FindPedidoItemPorIdCommand;
+use Reservas\UseCases\Pedidos\FindPedidoItemPorId\FindPedidoItemPorIdCommandHandler;
 use Reservas\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
 use Reservas\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
@@ -114,6 +116,7 @@ class ReservasDLXMapping
         ExcluirMidiaQuartoCommand::class => ExcluirMidiaQuartoCommandHandler::class,
         QuantidadePedidosPorStatusCommand::class => QuantidadePedidosPorStatusCommandHandler::class,
         ListaReservasPorPeriodoCommand::class => ListaReservasPorPeriodoCommandHandler::class,
+        FindPedidoItemPorIdCommand::class => FindPedidoItemPorIdCommandHandler::class,
     ];
 
     /**

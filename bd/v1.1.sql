@@ -8,6 +8,9 @@ alter table reservas.Disponibilidade change dispon_dia data date not null;
 alter table reservas.Disponibilidade change dispon_quarto quarto_id int not null;
 alter table reservas.Disponibilidade change dispon_qtde quantidade int not null default 1;
 
+alter table reservas.Disponibilidade drop foreign key FK_dispon_quarto;
+alter table reservas.Disponibilidade add constraint FK_disponibilidade_quarto_id foreign key (quarto_id) references reservas.Quarto (quarto_id);
+
 alter table reservas.reservas_disponibilidade_valores rename to reservas.DisponibilidadeValor;
 alter table reservas.DisponibilidadeValor change dispon_id disponibilidade_id int not null;
 alter table reservas.DisponibilidadeValor change qtde_pessoas quantidade_pessoas int not null;
@@ -29,6 +32,9 @@ alter table reservas.QuartoMidia change midia_quarto quarto_id int not null;
 alter table reservas.QuartoMidia change midia_arquivo arquivo_original varchar(255) not null;
 alter table reservas.QuartoMidia change midia_mini miniatura varchar(255);
 
+alter table reservas.QuartoMidia drop foreign key FK_midia_quarto;
+alter table reservas.QuartoMidia add constraint FK_midia_quarto_id foreign key (quarto_id) references reservas.Quarto(quarto_id);
+
 -- Reservas ------------------------------------------------------------------------------------------------------------
 alter table reservas.dlx_reservas_cadastro rename to reservas.Reserva;
 alter table reservas.Reserva change reserva_pedido pedido_id int;
@@ -44,6 +50,9 @@ alter table reservas.Reserva change reserva_criancas quantidade_criancas int not
 alter table reservas.Reserva change reserva_valor valor decimal (10,2) not null;
 alter table reservas.Reserva change reserva_status status varchar(10) not null default 'Pendente';
 alter table reservas.Reserva change reserva_origem origem varchar(20) not null default 'Website';
+
+alter table reservas.Reserva drop foreign key FK_reserva_quarto;
+alter table reservas.Reserva add constraint FK_reserva_quarto_id foreign key (quarto_id) references reservas.Quarto(quarto_id);
 
 alter table reservas.dlx_reserva_visualizacoes_cpf rename to reservas.ReservaVisualizacaoCpf;
 
@@ -65,6 +74,18 @@ alter table reservas.Pedido drop pedido_pgto_retorno;
 alter table reservas.reservas_pedido_itens rename to reservas.PedidoItem;
 alter table reservas.PedidoItem change adultos quantidade_adultos int not null check ( quantidade_adultos > 0 );
 alter table reservas.PedidoItem change criancas quantidade_criancas int not null check ( quantidade_criancas >= 0 );
+alter table reservas.PedidoItem add reserva_id int references reservas.Reserva(reserva_id);
+
+update
+    reservas.PedidoItem i
+inner join
+    reservas.Reserva r on r.pedido_id = i.pedido_id
+set
+    i.reserva_id = r.reserva_id
+where
+    i.reserva_id is null;
+
+alter table reservas.Reserva drop pedido_id;
 
 alter table reservas.dlx_pedido_historico rename to reservas.PedidoHistorico;
 
@@ -72,18 +93,21 @@ alter table reservas.reservas_pedido_cartao rename to reservas.PedidoCartao;
 
 alter table reservas.reservas_pedidos_enderecos rename to reservas.PedidoEndereco;
 
-create table PedidoItemDetalhe (
+# drop table reservas.PedidoItemDetalhe;
+create table reservas.PedidoItemDetalhe (
+    pedido_item_detalhe_id int not null auto_increment primary key,
     pedido_item_id int not null references reservas.PedidoItem (pedido_item_id) on delete cascade,
     data date not null,
     diaria decimal(13,4) not null,
     desconto decimal(13,4) not null default 0
 ) engine = innodb;
 
+
 -- Alterar chaves estrangeiras do usuário
 alter table reservas.PedidoHistorico drop foreign key FK_pedido_historico_usuario_id;
-alter table reservas.PedidoHistorico add constraint foreign key (usuario_id) references dlx.Usuario (usuario_id);
+alter table reservas.PedidoHistorico add constraint FK_pedido_historico_usuario_id foreign key (usuario_id) references dlx.Usuario (usuario_id);
 
 alter table reservas.ReservaHistorico drop foreign key FK_reserva_historico_usuario_id;
-alter table reservas.ReservaHistorico add constraint foreign key (usuario_id) references dlx.Usuario (usuario_id);
+alter table reservas.ReservaHistorico add constraint FK_reserva_historico_usuario_id foreign key (usuario_id) references dlx.Usuario (usuario_id);
 
 commit;

@@ -55,7 +55,7 @@ class ValidarConfirmarReservaTest extends ReservasTestCase
 
         /** @var DateTime $data */
         foreach ($periodo as $data) {
-            $quarto->addDispon($data, 10, [1 => 12.34]);
+            $quarto->addDisponibilidade($data, 10, [1 => 12.34]);
         }
     }
 

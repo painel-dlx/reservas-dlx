@@ -39,10 +39,9 @@ $pedido = $this->getAtributo('pedido');
 
 /** @var Usuario $usuario_logado */
 $usuario_logado = $this->getAtributo('usuario-logado');
+
+$is_pedido_confirmado = $pedido->isPago();
 ?>
-[HTML-HEAD]
-<title><?php echo $this->getAtributo('html:title') ?></title>
-[/HTML-HEAD]
 
 [CORPO]
 <h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
@@ -151,8 +150,9 @@ $usuario_logado = $this->getAtributo('usuario-logado');
                 </span>
 
                 <?php if ($pedido->isPago()) :
-                    /** @var Reserva $reserva */
-                    $reserva = $pedido->getReservas()->first();
+                    /** @var PedidoItem $pedido_item */
+                    $pedido_item = $pedido->getItens()->first();
+                    $reserva = $pedido_item->getReserva();
                     if ($reserva->podeVisualizarCpfCompleto($usuario_logado)) : ?>
                         <br>
                         <button id="btn-cpf-completo" onclick="mostrarCpfCompletoPedido(<?php echo $pedido->getId() ?>)" class="botao-mostrar-oculto" data-ajax-msg="Identificando CPF do cliente.<br>Por favor aguarde...">
@@ -185,97 +185,79 @@ $usuario_logado = $this->getAtributo('usuario-logado');
             <?php endforeach; ?>
         </details>
 
-        <?php if (!$pedido->hasReservas()) : ?>
-            <details class="detalhe-registro" open>
-                <summary class="detalhe-registro-titulo">Reservas Solicitadas</summary>
+        <details class="detalhe-registro" open>
+            <summary class="detalhe-registro-titulo">Reservas</summary>
 
-                <table id="lista-itens" class="lista-registros">
-                    <thead>
-                    <tr>
-                        <th id="quarto">Quarto</th>
-                        <th id="checkin">Checkin</th>
-                        <th id="checkout">Checkout</th>
-                        <th id="hospedes" style="text-align: center">Qtde Hóspedes</th>
-                        <th id="valor">Valor Diária</th>
-                    </tr>
-                    </thead>
+            <table id="lista-reservas" class="lista-registros">
+                <thead>
+                <tr>
+                    <th id="reserva-id">ID</th>
+                    <th id="quarto">Quarto</th>
+                    <th id="hospede">Hóspede</th>
+                    <th id="periodo">Período</th>
+                    <th id="valor">Valor</th>
 
-                    <tbody>
-                    <?php
-                    if ($pedido->getItens()->isEmpty()) : ?>
-                        <tr>
-                            <td colspan="5">Nenhum item adicionado ao pedido.</td>
-                        </tr>
-                    <?php endif;
-
-                    /** @var PedidoItem $pedido_item */
-                    foreach ($pedido->getItens() as $pedido_item) :  ?>
-                        <tr>
-                            <td headers="quarto>">
-                                <?php echo $pedido_item->getQuarto() ?>
-                            </td>
-                            <td headers="checkin"><?php echo $pedido_item->getCheckin()->format('d/m/Y') ?></td>
-                            <td headers="checkout"><?php echo $pedido_item->getCheckout()->format('d/m/Y') ?></td>
-                            <td headers="hospedes" style="text-align: center">
-                                <?php printf('%d adultos, %d crianças', $pedido_item->getQuantidadeAdultos(), $pedido_item->getQuantidadeCriancas()) ?>
-                            </td>
-                            <td headers="valor"><?php echo 'R$ ' . number_format($pedido_item->getValorTotal(), 2, ',', '') ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </details>
-        <?php else : ?>
-            <details class="detalhe-registro" open>
-                <summary class="detalhe-registro-titulo">Reservas Geradas</summary>
-
-                <table id="lista-reservas" class="lista-registros">
-                    <thead>
-                    <tr>
-                        <th id="reserva-id">ID</th>
-                        <th id="quarto">Quarto</th>
-                        <th id="hospede">Hóspede</th>
-                        <th id="periodo">Período</th>
+                    <?php if ($pedido->isPago()) : ?>
                         <th id="status">Status</th>
                         <th id="opcoes">Opções</th>
+                    <?php endif; ?>
+                </tr>
+                </thead>
+
+                <tbody>
+                <?php if (!$pedido->hasItens()) : ?>
+                    <tr>
+                        <td colspan="<?php echo $pedido->isPago() ? 7 : 5 ?>" class="sem-registros">Nenhum item encontrado.</td>
                     </tr>
-                    </thead>
+                <?php endif;
 
-                    <tbody>
-                    <?php if ($pedido->getReservas()->count() < 1) : ?>
-                        <tr>
-                            <td colspan="6" class="sem-registros">Nenhuma reserva encontrada.</td>
-                        </tr>
-                    <?php endif;
+                /** @var PedidoItem $pedido_item */
+                foreach ($pedido->getItens() as $pedido_item) : ?>
+                    <tr>
+                        <td headers="item-id"><?php echo $pedido->getId() ?></td>
+                        <td headers="quarto"><?php echo $pedido_item->getQuarto()->getNome() ?></td>
+                        <td headers="hospede">
+                            <?php echo $pedido->getNome() ?><br>
+                            <span class="lista-registros-comentario">
+                                <?php printf('%d adultos, %d crianças', $pedido_item->getQuantidadeAdultos(), $pedido_item->getQuantidadeCriancas()) ?>
+                            </span>
+                        </td>
+                        <td headers="periodo">
+                            <?php echo 'De ', $pedido_item->getCheckin()->format('d/m/Y'),
+                            ' até ', $pedido_item->getCheckout()->format('d/m/Y') ?>
 
-                    /** @var Reserva $reserva */
-                    foreach ($pedido->getReservas() as $reserva) : ?>
-                        <tr>
-                            <td headers="reserva-id"><?php echo $pedido->getId() ?></td>
-                            <td headers="quarto"><?php echo $reserva->getQuarto()->getNome() ?></td>
-                            <td headers="hospede"><?php echo $reserva->getHospede() ?></td>
-                            <td headers="periodo">
-                                <?php echo 'De ', $reserva->getCheckin()->format('d/m/Y'),
-                                ' até ', $reserva->getCheckout()->format('d/m/Y') ?>
-                            </td>
+                            <?php if ($pedido_item->hasDetalhamento()) : ?>
+                                <a href="javascript:" onclick="popupDetalhamentoPeriodo(<?php echo $pedido_item->getId() ?>)"
+                                   class="icone-pergunta --so-icone"
+                                >
+                                    Detalhamento
+                                </a>
+                            <?php endif; ?>
+                        </td>
+                        <td headers="valor">
+                            R$ <?php echo number_format($pedido_item->getValorTotal(), 2, ',', '') ?>
+                        </td>
+
+                        <?php if ($pedido->isPago()) : ?>
                             <td headers="status">
-                                <span class="status-reserva -<?php echo strtolower($reserva->getStatus()) ?>">
-                                    <?php echo $reserva->getStatus() ?>
+                                <span class="status-reserva -<?php echo strtolower($pedido_item->getReserva()->getStatus()) ?>">
+                                    <?php echo $pedido_item->getReserva()->getStatus() ?>
                                 </span>
                             </td>
                             <td headers="opcoes">
-                                <a href="/painel-dlx/apart-hotel/reservas/detalhe?id=<?php echo $reserva->getId() ?>" class="link-detalhe" title="Detalhes da reserva">
+                                <a href="/painel-dlx/apart-hotel/reservas/detalhe?id=<?php echo $pedido_item->getReserva()->getId() ?>" class="link-detalhe" title="Detalhes da reserva">
                                     Detalhe
                                 </a>
                             </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </details>
-        <?php endif; ?>
+                        <?php endif; ?>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </details>
     </div>
 </div>
 
 <div id="popup-confirmar-pedido" class="popup-modal" style="display: none;"></div>
+<div id="popup-detalhamento-periodo" class="popup-modal" style="display: none;"></div>
 [/CORPO]

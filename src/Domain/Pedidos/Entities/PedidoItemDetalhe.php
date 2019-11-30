@@ -36,6 +36,8 @@ use DLX\Domain\Entities\Entity;
  */
 class PedidoItemDetalhe extends Entity
 {
+    /** @var int|null */
+    private $id;
     /** @var PedidoItem */
     private $item;
     /** @var DateTime */
@@ -58,6 +60,14 @@ class PedidoItemDetalhe extends Entity
         $this->data = $data;
         $this->diaria = $diaria;
         $this->desconto = $desconto;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->id;
     }
 
     /**
@@ -98,5 +108,15 @@ class PedidoItemDetalhe extends Entity
     public function getPercentDesconto(): string
     {
         return ($this->desconto * 100) . '%';
+    }
+
+    /**
+     * Valor da diária com desconto
+     * @return float
+     */
+    public function getDiariaComDesconto(): float
+    {
+        $valor_desconto = $this->getDiaria() * $this->getDesconto();
+        return $this->getDiaria() - $valor_desconto;
     }
 }
