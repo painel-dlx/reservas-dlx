@@ -71,7 +71,7 @@ class ListaReservasController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('public/temas/painel-dlx/css/aparthotel.tema.css', VERSAO_RESERVAS_DLX);
+        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_RESERVAS_DLX);
         $this->transaction = $transaction;
     }
 
