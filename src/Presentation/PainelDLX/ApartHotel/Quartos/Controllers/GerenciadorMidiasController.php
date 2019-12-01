@@ -37,6 +37,7 @@ use Reservas\Domain\Quartos\Exceptions\ValidarQuartoException;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommand;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\AdicionarMidiasQuartoCommandHandler;
 use Reservas\UseCases\Quartos\AdicionarMidiasQuarto\Exceptions\AdicionarMidiasQuartoException;
+use Reservas\UseCases\Quartos\EditarQuarto\EditarQuartoCommand;
 use Reservas\UseCases\Quartos\EditarQuarto\EditarQuartoCommandHandler;
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\Exceptions\ExcluirMidiaQuartoException;
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommand;
@@ -121,7 +122,16 @@ class GerenciadorMidiasController extends PainelDLXController
 
                 if (!is_null($quarto->getId())) {
                     /* @see EditarQuartoCommandHandler */
-                    $this->command_bus->handle(new EditarQuartoCommandHandler($quarto));
+                    $this->command_bus->handle(new EditarQuartoCommand(
+                        $quarto->getNome(),
+                        $quarto->getDescricao(),
+                        $quarto->getMaximoHospedes(),
+                        $quarto->getQuantidade(),
+                        $quarto->getTamanhoM2(),
+                        $quarto->getValorMinimo(),
+                        $quarto->getLink(),
+                        $quarto->getId()
+                    ));
                 }
             });
 
@@ -154,8 +164,17 @@ class GerenciadorMidiasController extends PainelDLXController
                 $this->command_bus->handle(new ExcluirMidiaQuartoCommand($quarto, $post['arquivo']));
 
                 if (!is_null($quarto->getId())) {
-                    /* @see SalvarQuartoCommandHandler */
-                    $this->command_bus->handle(new SalvarQuartoCommand($quarto));
+                    /* @see EditarQuartoCommandHandler */
+                    $this->command_bus->handle(new EditarQuartoCommand(
+                        $quarto->getNome(),
+                        $quarto->getDescricao(),
+                        $quarto->getMaximoHospedes(),
+                        $quarto->getQuantidade(),
+                        $quarto->getTamanhoM2(),
+                        $quarto->getValorMinimo(),
+                        $quarto->getLink(),
+                        $quarto->getId()
+                    ));
                 }
             });
 

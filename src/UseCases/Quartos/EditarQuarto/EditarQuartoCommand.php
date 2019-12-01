@@ -39,24 +39,24 @@ class EditarQuartoCommand extends CriarNovoQuartoCommand
      * EditarQuartoCommand constructor.
      * @param string $nome
      * @param string $descricao
-     * @param int $max_hospedes
-     * @param int $qtde
+     * @param int $maximo_hospedes
+     * @param int $quantidade
      * @param int $tamanho_m2
-     * @param float $valor_min
+     * @param float $valor_minimo
      * @param string $link
      * @param int $quarto_id
      */
     public function __construct(
         string $nome,
         string $descricao,
-        int $max_hospedes,
-        int $qtde,
+        int $maximo_hospedes,
+        int $quantidade,
         int $tamanho_m2,
-        float $valor_min,
+        float $valor_minimo,
         string $link,
         int $quarto_id
     ) {
-        parent::__construct($nome, $descricao, $max_hospedes, $qtde, $tamanho_m2, $valor_min, $link);
+        parent::__construct($nome, $descricao, $maximo_hospedes, $quantidade, $tamanho_m2, $valor_minimo, $link);
         $this->quarto_id = $quarto_id;
     }
 
