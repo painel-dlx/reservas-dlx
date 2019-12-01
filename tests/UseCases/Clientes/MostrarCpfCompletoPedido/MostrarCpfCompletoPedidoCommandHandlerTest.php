@@ -30,6 +30,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
@@ -83,8 +84,9 @@ class MostrarCpfCompletoPedidoCommandHandlerTest extends ReservasTestCase
 
         $this->assertIsString($cpf);
 
-        $pedido->getReservas()->map(function (Reserva $reserva) {
-            $this->assertTrue($reserva->getVisualizacoesCpf()->count() > 0);
-        });
+        /** @var PedidoItem $pedido_item */
+        foreach ($pedido->getItens() as $pedido_item) {
+            $this->assertTrue($pedido_item->getReserva()->getVisualizacoesCpf()->count() > 0);
+        }
     }
 }

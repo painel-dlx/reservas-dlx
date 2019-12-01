@@ -17,16 +17,16 @@ create procedure gerar_calendario (data_inicial date, data_final date, quarto in
                 data between data_inicial and data_final;
 
         start transaction;
-            insert into disponibilidade (data, quarto_id, quantidade)
+            insert into reservas.Disponibilidade (data, quarto_id, quantidade)
             select
                 c.data as dia,
                 q.quarto_id as quarto,
                 0 as quantidade
             from
                 calendario c,
-                dlx_reservas_quartos q
+                reservas.Quarto q
             left join
-                disponibilidade drd on q.quarto_id = drd.quarto_id
+                reservas.Disponibilidade drd on q.quarto_id = drd.quarto_id
             where
                 drd.data is null
                 and (

@@ -43,23 +43,7 @@ class Itens2Reservas
 
         /** @var PedidoItem $item */
         foreach ($itens as $item) {
-            $reserva = new Reserva(
-                $item->getQuarto(),
-                $item->getCheckin(),
-                $item->getCheckout(),
-                $item->getQuantidadeAdultos()
-            );
-
-            $reserva->setValor($item->getValorTotal());
-            $reserva->setQuantidadeCriancas($item->getQuantidadeCriancas());
-
-            $reserva->setHospede($pedido->getNome());
-            $reserva->setCpf($pedido->getCpf());
-            $reserva->setTelefone($pedido->getTelefone());
-            $reserva->setEmail($pedido->getEmail());
-            $reserva->setOrigem('Website');
-
-            $pedido->addReserva($reserva);
+            $item->gerarReserva();
         }
     }
 }

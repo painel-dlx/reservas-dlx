@@ -243,4 +243,33 @@ class PedidoItem extends Entity
     {
         return !$this->getDetalhamento()->isEmpty();
     }
+
+    /**
+     * Gerar as reservas de acordo com as informações do item
+     * @return $this
+     */
+    public function gerarReserva(): self
+    {
+        if (!$this->hasReservaGerada()) {
+            $reserva = new Reserva(
+                $this->getQuarto(),
+                $this->getCheckin(),
+                $this->getCheckout(),
+                $this->getQuantidadeAdultos()
+            );
+
+            $reserva->setQuantidadeCriancas($this->getQuantidadeCriancas());
+            $reserva->setValor($this->getValorTotal());
+
+            $reserva->setHospede($this->getPedido()->getNome());
+            $reserva->setCpf($this->getPedido()->getCpf());
+            $reserva->setTelefone($this->getPedido()->getTelefone());
+            $reserva->setEmail($this->getPedido()->getEmail());
+            $reserva->setOrigem('Website');
+
+            $this->reserva = $reserva;
+        }
+
+        return $this;
+    }
 }

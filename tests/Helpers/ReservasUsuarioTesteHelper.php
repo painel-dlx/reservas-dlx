@@ -43,9 +43,9 @@ class ReservasUsuarioTesteHelper extends UsuarioTesteHelper
     {
         $query = '
             select
-                *
+                usuario_id
             from
-                dlx_usuarios
+                dlx.Usuario
             order by 
                 rand()
             limit 1

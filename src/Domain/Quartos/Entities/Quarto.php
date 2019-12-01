@@ -283,7 +283,7 @@ class Quarto extends Entity
      * @param float $desconto
      * @return Quarto
      */
-    public function addDisponibilidade(DateTime $data, int $quantidade, array $valores, float $desconto = 0): self
+    public function addDisponibilidade(DateTime $data, int $quantidade, array $valores, float $desconto = 0.): self
     {
         /** @var Disponibilidade $disponibilidade */
         $disponibilidade = $this->disponibilidade->filter(function (Disponibilidade $dispon) use ($data) {
@@ -296,7 +296,7 @@ class Quarto extends Entity
             $this->disponibilidade->add($disponibilidade);
         } else { // Editar uma dispobibilidade existente
             $disponibilidade->setQuantidade($quantidade);
-            $disponibilidade->setDesconto($quantidade);
+            $disponibilidade->setDesconto($desconto);
         }
 
         foreach ($valores as $quantidade => $valor) {

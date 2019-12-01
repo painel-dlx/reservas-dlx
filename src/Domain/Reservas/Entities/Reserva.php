@@ -431,7 +431,7 @@ class Reserva extends Entity
 
         $dispon_quarto = $this->getQuarto()->getDisponibilidade($this->getCheckin(), $this->getCheckout());
         $dispon_quarto->map(function (Disponibilidade $dispon) use (&$valor_reserva, $total_hospedes) {
-            $valor_reserva += (float)$dispon->getValorPorQtdePessoas($total_hospedes);
+            $valor_reserva += (float)$dispon->getValorPorQtdePessoasComDesconto($total_hospedes);
         });
 
         $this->setValor($valor_reserva);

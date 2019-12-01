@@ -39,6 +39,7 @@ use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoHistorico;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Domain\Reservas\Entities\Reserva;
@@ -93,7 +94,6 @@ class PedidoTest extends ReservasTestCase
 
         $this->assertInstanceOf(Pedido::class, $pedido);
         $this->assertInstanceOf(Collection::class, $pedido->getItens());
-        $this->assertInstanceOf(ArrayCollection::class, $pedido->getReservas());
         $this->assertInstanceOf(ArrayCollection::class, $pedido->getHistorico());
         $this->assertTrue($pedido->isPendente());
         $this->assertEquals('digitada', $pedido->getFormaPagamento());
@@ -248,8 +248,8 @@ class PedidoTest extends ReservasTestCase
             return $historico->getStatus() === Pedido::STATUS_CANCELADO;
         });
 
-        $has_reserva_ativa = $pedido->getReservas()->exists(function ($key, Reserva $reserva) {
-             return !$reserva->isCancelada();
+        $has_reserva_ativa = $pedido->getItens()->exists(function ($key, PedidoItem $pedido_item) {
+             return $pedido_item->hasReservaGerada() && !$pedido_item->getReserva()->isCancelada();
         });
 
         $this->assertTrue($pedido->isCancelado());

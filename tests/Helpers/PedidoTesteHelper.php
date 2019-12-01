@@ -59,7 +59,7 @@ class PedidoTesteHelper
             select
                 pedido_id
             from
-                dlx_reservas_pedidos
+                reservas.Pedido
             order by 
                 rand()
             limit 1

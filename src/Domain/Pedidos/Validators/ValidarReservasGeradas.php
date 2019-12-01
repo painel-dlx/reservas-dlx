@@ -28,6 +28,7 @@ namespace Reservas\Domain\Pedidos\Validators;
 
 use Reservas\Domain\Pedidos\Contracts\PedidoValidatorInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 
 /**
@@ -45,8 +46,13 @@ class ValidarReservasGeradas implements PedidoValidatorInterface
      */
     public function validar(Pedido $pedido): bool
     {
-        $qtde_reservas = $pedido->getReservas()->count();
-        $qtde_itens = count($pedido->getItens());
+        $qtde_itens = $pedido->getItens()->count();
+        $qtde_reservas = 0;
+
+        /** @var PedidoItem $pedido_item */
+        foreach ($pedido->getItens() as $pedido_item) {
+            $qtde_reservas += (int)$pedido_item->hasReservaGerada();
+        }
 
         if ($qtde_reservas < 1) {
             throw PedidoInvalidoException::nenhumaReservaEncontrada();

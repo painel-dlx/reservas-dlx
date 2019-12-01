@@ -65,9 +65,9 @@ class DetalheReservaControllerTest extends ReservasTestCase
         $query_select = '
             select
                 reserva_id,
-                reserva_quarto
+                quarto_id
             from 
-                dlx_reservas_cadastro
+                reservas.Reserva
             order by 
                 rand()
             limit 1
@@ -76,7 +76,7 @@ class DetalheReservaControllerTest extends ReservasTestCase
         $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query_select);
         $rs = $sql->fetch();
         $reserva_id = $rs['reserva_id'];
-        $quarto_id = $rs['reserva_quarto'];
+        $quarto_id = $rs['quarto_id'];
 
         if ($is_checkin_valido) {
             $dt_checkin = (new DateTime())->modify('+1 day');
@@ -84,11 +84,11 @@ class DetalheReservaControllerTest extends ReservasTestCase
 
             $query_update = "
                 update
-                    dlx_reservas_cadastro
+                    reservas.Reserva
                 set
-                    reserva_checkin = :data_checkin,
-                    reserva_checkout = :data_checkout,
-                    reserva_status = 'Pendente'
+                    checkin = :data_checkin,
+                    checkout = :data_checkout,
+                    status = 'Pendente'
                 where
                     reserva_id = :reserva_id
             ";
@@ -103,14 +103,14 @@ class DetalheReservaControllerTest extends ReservasTestCase
                 delete
                     v
                 from
-                    reservas_disponibilidade_valores v
+                    reservas.DisponibilidadeValor v
                 inner join 
-                    disponibilidade as d on d.dispon_id = v.dispon_id
+                    reservas.Disponibilidade as d on d.disponibilidade_id = v.disponibilidade_id
                 inner join
-                    dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
+                    reservas.Reserva r on r.quarto_id = d.quarto_id
                 where
                     r.reserva_id = :reserva_id
-                    and d.data between r.reserva_checkin and r.reserva_checkout
+                    and d.data between r.checkin and r.checkout
             ';
 
             $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_delete_valores);
@@ -121,12 +121,12 @@ class DetalheReservaControllerTest extends ReservasTestCase
                 delete
                     d
                 from
-                    disponibilidade as d
+                    reservas.Disponibilidade as d
                 inner join
-                    dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
+                    reservas.Reserva r on r.quarto_id = d.quarto_id
                 where
                     r.reserva_id = :reserva_id
-                    and d.data between r.reserva_checkin and r.reserva_checkout
+                    and d.data between r.checkin and r.checkout
             ';
 
             $sql = EntityManagerX::getInstance()->getConnection()->prepare($query_delete_dispon);
@@ -143,7 +143,7 @@ class DetalheReservaControllerTest extends ReservasTestCase
 
             $query_update_dispon = '
                 update
-                    disponibilidade
+                    reservas.Disponibilidade
                 set
                     quantidade = 10
                 where
@@ -158,51 +158,51 @@ class DetalheReservaControllerTest extends ReservasTestCase
             $sql->execute();
 
             $query_incluir_valores = "
-                insert into reservas_disponibilidade_valores (dispon_id, qtde_pessoas, valor)
+                insert into reservas.DisponibilidadeValor (disponibilidade_id, quantidade_pessoas, valor)
                     select
-                        d.dispon_id,
+                        d.disponibilidade_id,
                         1,
-                        q.quarto_valor_min
+                        q.valor_minimo
                     from
-                        disponibilidade d
+                        reservas.Disponibilidade d
                     inner join
-                        dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
+                        reservas.Reserva r on r.quarto_id = d.quarto_id
                     inner join
-                        dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
+                        reservas.Quarto q on q.quarto_id = r.quarto_id
                     where
-                        d.data between r.reserva_checkin and r.reserva_checkout
+                        d.data between r.checkin and r.checkout
                         and r.reserva_id = :reserva_id1
                     
                     union
                     
                     select
-                        d.dispon_id,
+                        d.disponibilidade_id,
                         2,
-                        q.quarto_valor_min
+                        q.valor_minimo
                     from
-                        disponibilidade d
+                        reservas.Disponibilidade d
                     inner join
-                        dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
+                        reservas.Reserva r on r.quarto_id = d.quarto_id
                     inner join
-                        dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
+                        reservas.Quarto q on q.quarto_id = r.quarto_id
                     where
-                        d.data between r.reserva_checkin and r.reserva_checkout
+                        d.data between r.checkin and r.checkout
                         and r.reserva_id = :reserva_id2
 
                     union
                     
                     select
-                        d.dispon_id,
+                        d.disponibilidade_id,
                         3,
-                        q.quarto_valor_min
+                        q.valor_minimo
                     from
-                        disponibilidade d
+                        reservas.Disponibilidade d
                     inner join
-                        dlx_reservas_cadastro r on r.reserva_quarto = d.quarto_id
+                        reservas.Reserva r on r.quarto_id = d.quarto_id
                     inner join
-                        dlx_reservas_quartos q on q.quarto_id = r.reserva_quarto
+                        reservas.Quarto q on q.quarto_id = r.quarto_id
                     where
-                        d.data between r.reserva_checkin and r.reserva_checkout
+                        d.data between r.checkin and r.checkout
                         and r.reserva_id = :reserva_id3
             ";
 
@@ -252,9 +252,9 @@ class DetalheReservaControllerTest extends ReservasTestCase
     {
         $query = '
             select
-                *
+                reserva_id
             from
-                dlx_reservas_cadastro
+                reservas.Reserva
             order by 
                 rand()
             limit 1

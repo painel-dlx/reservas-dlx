@@ -73,16 +73,18 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
      * @param Quarto $quarto
      * @param int $qtde
      * @param array $valores
+     * @param float $desconto
      * @return bool
-     * @throws Throwable
+     * @throws Exception
      */
-    public function salvarDisponPorPeriodo(DateTime $data_inicial, DateTime $data_final, Quarto $quarto, int $qtde, array $valores): bool
+    public function salvarDisponPorPeriodo(DateTime $data_inicial, DateTime $data_final, Quarto $quarto, int $qtde, array $valores, float $desconto = 0.): bool
     {
         $update_dispon = '
             update
-                disponibilidade
+                reservas.Disponibilidade
             set
-                quantidade = :qtde
+                quantidade = :qtde,
+                desconto = :desconto
             where
                 quarto_id = :quarto_id
                 and data between :data_inicial and :data_final
@@ -92,22 +94,22 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
             delete
                 v
             from
-                disponibilidade d 
+                reservas.Disponibilidade d 
             inner join 
-                reservas_disponibilidade_valores v on v.dispon_id = d.dispon_id
+                reservas.DisponibilidadeValor v on v.disponibilidade_id = d.disponibilidade_id
             where 
                 d.quarto_id = :quarto_id
                 and d.data between :data_inicial and :data_final
         ';
 
         $insert_dispon_valor = '
-            insert into reservas_disponibilidade_valores (dispon_id, qtde_pessoas, valor)
+            insert into reservas.DisponibilidadeValor (disponibilidade_id, quantidade_pessoas, valor)
                 select 
-                    dispon_id,
+                    disponibilidade_id,
                     :qtde_pessoas,
                     :valor
                 from
-                    disponibilidade
+                    reservas.Disponibilidade
                 where
                     quarto_id = :quarto_id
                     and data between :data_inicial and :data_final
@@ -121,6 +123,7 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
             // Atualizar as disponibilidades
             $sql = $con->prepare($update_dispon);
             $sql->bindValue(':qtde', $qtde, ParameterType::INTEGER);
+            $sql->bindValue(':desconto', $desconto);
             $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
             $sql->bindValue(':data_inicial', $data_inicial->format('Y-m-d'), ParameterType::STRING);
             $sql->bindValue(':data_final', $data_final->format('Y-m-d'), ParameterType::STRING);
@@ -162,7 +165,7 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
      */
     public function ultimaDataDisponibilidade(): DateTime
     {
-        $query = 'select max(data) from disponibilidade';
+        $query = 'select max(data) from reservas.Disponibilidade';
         $sql = $this->_em->getConnection()->executeQuery($query);
         $data = $sql->fetchColumn();
 

@@ -80,10 +80,9 @@ class EditarQuartoControllerTest extends ReservasTestCase
             select
                 quarto_id
             from
-                dlx_reservas_quartos
+                reservas.Quarto
             where
-                quarto_publicar = 1
-                and quarto_delete = 0
+                deletado = 0
             order by 
                 rand()
             limit 1

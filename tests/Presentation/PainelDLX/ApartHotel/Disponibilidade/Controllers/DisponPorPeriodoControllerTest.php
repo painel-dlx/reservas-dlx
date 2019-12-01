@@ -100,9 +100,7 @@ class DisponPorPeriodoControllerTest extends ReservasTestCase
             select
                 quarto_id
             from
-                dlx_reservas_quartos
-            where
-                quarto_publicar = 1
+                reservas.Quarto
             order by 
                 rand()
         ';

@@ -44,7 +44,7 @@ class QuartoTesteHelper
             select
                 quarto_id
             from
-                dlx_reservas_quartos
+                reservas.Quarto
             order by 
                 rand()
             limit 1

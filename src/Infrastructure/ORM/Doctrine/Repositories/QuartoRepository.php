@@ -83,20 +83,17 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
     {
         $qtde_diarias_desejadas = $checkin->diff($checkout)->days;
 
-        $qb = $this->_em->createQueryBuilder();
-        $qb->select(['q'])
-            ->from(Quarto::class, 'q')
+        $qb = $this->createQueryBuilder('q')
             ->innerJoin(Disponibilidade::class, 'd', Join::WITH, 'q.id = d.quarto')
             ->where('d.data between :dt_checkin and :dt_checkout')
-                ->andWhere('d.qtde >= :qtde_quartos')
-                ->andWhere('q.max_hospedes >= :qtde_hospedes')
-                ->andWhere('q.publicar = 1')
+                ->andWhere('d.quantidade >= :qtde_quartos')
+                ->andWhere('q.maximo_hospedes >= :qtde_hospedes')
             ->groupBy('q.id')
                 ->addGroupBy('q.nome')
                 ->addGroupBy('q.descricao')
-                ->addGroupBy('q.max_hospedes')
-                ->addGroupBy('q.qtde')
-                ->addGroupBy('q.valor_min')
+                ->addGroupBy('q.maximo_hospedes')
+                ->addGroupBy('q.quantidade')
+                ->addGroupBy('q.valor_minimo')
                 ->addGroupBy('q.tamanho_m2')
                 ->addGroupBy('q.link')
             ->having('count(d.data) >= :qtde_diarias')

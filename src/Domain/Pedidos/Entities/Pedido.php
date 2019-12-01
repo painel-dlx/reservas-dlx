@@ -452,7 +452,9 @@ class Pedido extends Entity
         // Cancelar todas as reservas
         /** @var PedidoItem $item */
         foreach ($this->getItens() as $item) {
-            $item->getReserva()->cancelada($motivo, $usuario);
+            if ($item->hasReservaGerada()) {
+                $item->getReserva()->cancelada($motivo, $usuario);
+            }
         }
 
         return $this;

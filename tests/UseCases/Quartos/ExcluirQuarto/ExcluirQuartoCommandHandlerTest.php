@@ -120,11 +120,11 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
         // Encontrar um quarto qualquer que tenha reserva para excluir (marcar como deletado)
         $query = '
             select
-                quarto_id
+                q.quarto_id
             from
-                dlx_reservas_quartos q 
+                reservas.Quarto q 
             inner join  
-                dlx_reservas_cadastro drc on q.quarto_id = drc.reserva_quarto
+                reservas.Reserva drc on q.quarto_id = drc.quarto_id
             limit 1
         ';
 

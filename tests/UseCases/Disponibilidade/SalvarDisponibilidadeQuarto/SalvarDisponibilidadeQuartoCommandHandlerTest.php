@@ -56,7 +56,7 @@ class SalvarDisponibilidadeQuartoCommandHandlerTest extends ReservasTestCase
         $quarto_repository = EntityManagerX::getRepository(Quarto::class);
 
         $query = '
-            insert into dlx_reservas_quartos (quarto_nome, quarto_descricao, quarto_maxhospedes, quarto_qtde, quarto_valor_min, quarto_tamanho_m2, quarto_link)
+            insert into reservas.Quarto (nome, descricao, maximo_hospedes, quantidade, valor_minimo, tamanho_m2, link)
                 values (?, ?, ?, ?, ?, ?, ?) 
         ';
 

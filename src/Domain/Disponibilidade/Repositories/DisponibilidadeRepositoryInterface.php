@@ -51,6 +51,7 @@ interface DisponibilidadeRepositoryInterface extends EntityRepositoryInterface
      * @param Quarto $quarto
      * @param int $qtde
      * @param array $valores
+     * @param float $desconto
      * @return bool
      */
     public function salvarDisponPorPeriodo(
@@ -58,7 +59,8 @@ interface DisponibilidadeRepositoryInterface extends EntityRepositoryInterface
         DateTime $data_final,
         Quarto $quarto,
         int $qtde,
-        array $valores
+        array $valores,
+        float $desconto = 0.
     ): bool;
 
     /**

@@ -44,8 +44,6 @@ use Vilex\Exceptions\ViewNaoEncontradaException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
-$_SESSION = [];
-
 /**
  * Class DetalhePedidoControllerTest
  * @package Reservas\Tests\Presentation\Site\ApartHotel\Controllers

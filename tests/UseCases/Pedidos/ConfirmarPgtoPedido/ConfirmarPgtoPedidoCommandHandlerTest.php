@@ -95,8 +95,8 @@ class ConfirmarPgtoPedidoCommandHandlerTest extends TestCase
             ->setEmail('cliente@gmail.com')
             ->setValorTotal(1234);
 
-        $pedido->addItem($quarto1, $checkin1->format('Y-m-d'), $checkout1->format('Y-m-d'), 2, 0, 616);
-        $pedido->addItem($quarto2, $checkin2->format('Y-m-d'), $checkout2->format('Y-m-d'), 2, 1, 616);
+        $pedido->addItem($quarto1, $checkin1, $checkout1, 2, 0, 616);
+        $pedido->addItem($quarto2, $checkin2, $checkout2, 2, 1, 616);
 
         $command = new GerarReservasPedidoCommand($pedido);
         (new GerarReservasPedidoCommandHandler($quarto_repository))->handle($command);
@@ -105,6 +105,5 @@ class ConfirmarPgtoPedidoCommandHandlerTest extends TestCase
         (new ConfirmarPgtoPedidoCommandHandler($pedido_repository))->handle($command);
 
         $this->assertTrue($pedido->isPago());
-        $this->assertCount(count($pedido->getItens()), $pedido->getReservas());
     }
 }

@@ -194,7 +194,7 @@ class ReservaTest extends ReservasTestCase
 
         $qtde_quartos_dispon = 1;
         $valor_diaria = 10;
-        $valor_total = $valor_diaria * (iterator_count($dt_periodo) - 1);
+        $valor_total = $valor_diaria * iterator_count($dt_periodo);
 
         $valores_diarias = [];
         for ($i = 1; $i <= $quarto->getMaximoHospedes(); $i++) {

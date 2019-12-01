@@ -25,12 +25,14 @@
 
 namespace Reservas\Tests\Domain\Pedidos\Validators;
 
+use CPF\CPF;
 use DateTime;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\ORMException;
+use Exception;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Pedidos\Validators\ValidarReservasGeradas;
-use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 use Reservas\Tests\Helpers\QuartoTesteHelper;
 use Reservas\Tests\ReservasTestCase;
@@ -51,7 +53,7 @@ class ValidarReservasGeradasTest extends ReservasTestCase
     public function test_Validar_deve_lancar_excecao_quando_nenhuma_reserva_tiver_sido_gerada()
     {
         $quarto = QuartoTesteHelper::getRandom();
-        $data = date('Y-m-d');
+        $data = new DateTime();
 
         $pedido = new Pedido();
         $pedido->addItem($quarto, $data, $data, 1, 0, 1);
@@ -65,19 +67,29 @@ class ValidarReservasGeradasTest extends ReservasTestCase
      * @throws DBALException
      * @throws ORMException
      * @throws PedidoInvalidoException
+     * @throws Exception
      */
     public function test_Validar_deve_lancar_excecao_quando_qtde_itens_diferente_reservas()
     {
-        $data = date('Y-m-d');
+        $data = new DateTime();
 
         $quarto1 = QuartoTesteHelper::getRandom();
         $quarto2 = QuartoTesteHelper::getRandom();
 
         $pedido = new Pedido();
+        $pedido->setId(1);
+        $pedido->setNome('Nome do Cliente');
+        $pedido->setEmail('email.cliente@gmail.com');
+        $pedido->setCpf(new CPF('177.965.730-73'));
+        $pedido->setTelefone('(61) 9 8350-3517');
         $pedido->addItem($quarto1, $data, $data, 1, 0, 1);
         $pedido->addItem($quarto2, $data, $data, 1, 0, 1);
 
-        $pedido->addReserva(new Reserva($quarto1, new DateTime(), new DateTime(), 1));
+        /** @var PedidoItem $item */
+        foreach ($pedido->getItens() as $item) {
+            $item->gerarReserva();
+            break;
+        }
 
         $this->expectException(PedidoInvalidoException::class);
 

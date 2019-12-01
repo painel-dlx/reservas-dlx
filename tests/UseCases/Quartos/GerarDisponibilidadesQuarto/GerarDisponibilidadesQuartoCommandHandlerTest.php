@@ -79,7 +79,7 @@ class GerarDisponibilidadesQuartoCommandHandlerTest extends ReservasTestCase
      */
     public function test_Handle_deve_criar_disponibilidade_para_determinado_quarto(GerarDisponibilidadesQuartoCommandHandler $handler)
     {
-        $query = 'insert into dlx_reservas_quartos (quarto_nome, quarto_maxhospedes, quarto_qtde, quarto_valor_min, quarto_tamanho_m2, quarto_link) values (:nome, :maxhospedes, :qtde, :valor_min, :tamanho_m2, :link)';
+        $query = 'insert into reservas.Quarto (nome, maximo_hospedes, quantidade, valor_minimo, tamanho_m2, link) values (:nome, :maxhospedes, :qtde, :valor_min, :tamanho_m2, :link)';
         $con = EntityManagerX::getInstance()->getConnection();
 
         $sql = $con->prepare($query);
@@ -101,7 +101,7 @@ class GerarDisponibilidadesQuartoCommandHandlerTest extends ReservasTestCase
         $command = new GerarDisponibilidadesQuartoCommand($quarto);
         $handler->handle($command);
 
-        $query = 'select * from disponibilidade where quarto_id = :quarto and data between :dt_inicial and :dt_final';
+        $query = 'select * from reservas.Disponibilidade where quarto_id = :quarto and data between :dt_inicial and :dt_final';
         $sql = $con->prepare($query);
         $sql->bindValue(':quarto', $id, ParameterType::INTEGER);
         $sql->bindValue(':dt_inicial', $dt_inicial->format('Y-m-d'), ParameterType::STRING);

@@ -218,7 +218,7 @@ class Disponibilidade extends Entity
             return $dispon_valor->getQuantidadePessoas() === $qtde_pessoas;
         })->first();
 
-        return $dispon_valor ? $dispon_valor->getValorComDesconto() : null;
+        return !is_null($dispon_valor) ? $dispon_valor->getValorComDesconto() : null;
     }
 
     /**
