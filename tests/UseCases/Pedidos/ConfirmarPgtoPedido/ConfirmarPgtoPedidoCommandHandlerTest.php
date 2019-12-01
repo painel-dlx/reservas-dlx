@@ -26,8 +26,11 @@
 namespace Reservas\Tests\UseCases\Pedidos\ConfirmarPgtoPedido;
 
 use CPF\CPF;
+use DateInterval;
+use DatePeriod;
 use DateTime;
 use DLX\Infrastructure\EntityManagerX;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
@@ -35,6 +38,7 @@ use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Tests\TestCase\TesteComTransaction;
 use PHPUnit\Framework\TestCase;
+use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
@@ -61,13 +65,15 @@ class ConfirmarPgtoPedidoCommandHandlerTest extends TestCase
     public function test_Handle_deve_configurar_Pedido_como_pago_e_criar_Reservas()
     {
         $quarto1 = $this->createMock(Quarto::class);
+        $quarto1->method('getDisponibilidade')->willReturn(new ArrayCollection());
         $quarto1->method('isDisponivelPeriodo')->willReturn(true);
+
+        $quarto2 = $this->createMock(Quarto::class);
+        $quarto2->method('getDisponibilidade')->willReturn(new ArrayCollection());
+        $quarto2->method('isDisponivelPeriodo')->willReturn(true);
 
         $checkin1 = new DateTime();
         $checkout1 = (clone $checkin1)->modify('+1 day');
-
-        $quarto2 = $this->createMock(Quarto::class);
-        $quarto2->method('isDisponivelPeriodo')->willReturn(true);
 
         $checkin2 = (new DateTime())->modify('+7 days');
         $checkout2 = (clone $checkin1)->modify('+1 day');

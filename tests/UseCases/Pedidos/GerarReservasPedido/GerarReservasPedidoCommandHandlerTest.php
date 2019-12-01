@@ -26,12 +26,15 @@
 namespace Reservas\Tests\UseCases\Pedidos\GerarReservasPedido;
 
 use CPF\CPF;
+use DateInterval;
+use DatePeriod;
 use DateTime;
 use DLX\Infrastructure\EntityManagerX;
 use Doctrine\ORM\ORMException;
 use Exception;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommand;
@@ -72,6 +75,11 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
         $quarto = QuartoTesteHelper::getRandom();
         $checkin = new DateTime();
         $checkout = (clone $checkin)->modify('+2 days');
+        $periodo = new DatePeriod($checkin, new DateInterval('P1D'), $checkout);
+
+        foreach ($periodo as $data) {
+            $quarto->addDisponibilidade($data, 2, [1 => $quarto->getValorMinimo()], 0.1);
+        }
 
         $pedido = new Pedido();
         $pedido->setNome('Teste de Cliente');
@@ -85,12 +93,15 @@ class GerarReservasPedidoCommandHandlerTest extends ReservasTestCase
             $checkout,
             1,
             1,
-            12.34
+            0
         );
 
         $command = new GerarReservasPedidoCommand($pedido);
         $handler->handle($command);
 
-        $this->assertCount(count($pedido->getItens()), $pedido->getReservas());
+        /** @var PedidoItem $item */
+        foreach ($pedido->getItens() as $item) {
+            $this->assertTrue($item->hasReservaGerada());
+        }
     }
 }

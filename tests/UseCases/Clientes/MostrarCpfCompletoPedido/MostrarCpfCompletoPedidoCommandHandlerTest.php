@@ -33,6 +33,7 @@ use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
+use Reservas\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
 use Reservas\Tests\Helpers\PedidoTesteHelper;
@@ -67,12 +68,27 @@ class MostrarCpfCompletoPedidoCommandHandlerTest extends ReservasTestCase
      * @param MostrarCpfCompletoPedidoCommandHandler $handler
      * @throws DBALException
      * @throws ORMException
+     * @throws VisualizarCpfException
      * @covers ::handle
      * @depends test__construct
      */
     public function test_Handle_retornar_cpf_completo_e_adicionar_visualizacao_de_cpf_em_todas_reservas(MostrarCpfCompletoPedidoCommandHandler $handler)
     {
-        $pedido = PedidoTesteHelper::getRandom();
+        $query = '
+            select
+                pedido_id
+            from
+                reservas.PedidoItem
+            where
+                reserva_id is not null;
+        ';
+
+        $sql = EntityManagerX::getInstance()->getConnection()->executeQuery($query);
+        $pedido_id = $sql->fetchColumn();
+
+        $pedido = EntityManagerX::getInstance()->find(Pedido::class, $pedido_id);
+
+        // $pedido = PedidoTesteHelper::getRandom();
         $usuario = ReservasUsuarioTesteHelper::getUsuarioRandom();
 
         if (is_null($pedido)) {

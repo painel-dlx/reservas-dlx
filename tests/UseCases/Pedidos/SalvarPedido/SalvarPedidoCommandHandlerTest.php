@@ -48,6 +48,8 @@ class SalvarPedidoCommandHandlerTest extends TestCase
      */
     public function test_Handle_deve_criar_novo_Pedido()
     {
+        $this->markTestSkipped('A hanler SalvarpedidoCommandHandler não está mais sendo usada e/ou atualizada.');
+
         $quarto = $this->createMock(Quarto::class);
         $quarto->method('isDisponivelPeriodo')->willReturn(true);
 

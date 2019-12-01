@@ -47,13 +47,15 @@ class DisponibilidadeTest extends ReservasTestCase
         $quarto = new Quarto('Teste', 10, 10);
         $hoje = new DateTime();
         $qtde_dispon = mt_rand(1, 10);
+        $desconto = mt_rand(0,10) / 100;
 
-        $dispon = new Disponibilidade($quarto, $hoje, $qtde_dispon);
+        $dispon = new Disponibilidade($quarto, $hoje, $qtde_dispon, $desconto);
 
         $this->assertInstanceOf(Disponibilidade::class, $dispon);
         $this->assertEquals($quarto, $dispon->getQuarto());
         $this->assertEquals($hoje, $dispon->getData());
         $this->assertEquals($qtde_dispon, $dispon->getQuantidade());
+        $this->assertEquals($desconto, $dispon->getDesconto());
         $this->assertInstanceOf(Collection::class, $dispon->getValores());
 
         return $dispon;

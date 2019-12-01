@@ -33,6 +33,7 @@ use Exception;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
+use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Tests\ReservasTestCase;
 use Reservas\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommand;
 use Reservas\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponibilidadePorDataQuartoCommandHandler;
@@ -45,32 +46,20 @@ use Reservas\UseCases\Disponibilidade\GetDisponibilidadePorDataQuarto\GetDisponi
 class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
 {
     /**
-     * @return GetDisponibilidadePorDataQuartoCommandHandler
-     * @throws ORMException
-     */
-    public function test__construct(): GetDisponibilidadePorDataQuartoCommandHandler
-    {
-        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
-        $disponibilidade_repository = EntityManagerX::getRepository(Disponibilidade::class);
-        $handler = new GetDisponibilidadePorDataQuartoCommandHandler($disponibilidade_repository);
-
-        $this->assertInstanceOf(GetDisponibilidadePorDataQuartoCommandHandler::class, $handler);
-
-        return $handler;
-    }
-
-    /**
      * @throws Exception
      * @covers ::handle
-     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_null_quando_nao_encontrar_no_bd(GetDisponibilidadePorDataQuartoCommandHandler $handler)
+    public function test_Handle_deve_retornar_null_quando_nao_encontrar_registro()
     {
-        $quarto = new Quarto('Teste', 10, 10);
-        $quarto->setId(0);
-
+        $disponibilidade_repository = $this->createMock(DisponibilidadeRepositoryInterface::class);
+        $disponibilidade_repository->method('findOneBy')->willReturn(null);
+        $quarto = $this->createMock(Quarto::class);
         $data = new DateTime();
 
+        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
+        /** @var Quarto $quarto */
+
+        $handler = new GetDisponibilidadePorDataQuartoCommandHandler($disponibilidade_repository);
         $command = new GetDisponibilidadePorDataQuartoCommand($quarto, $data);
         $disponibilidade = $handler->handle($command);
 
@@ -78,35 +67,23 @@ class GetDisponibilidadePorDataQuartoCommandHandlerTest extends ReservasTestCase
     }
 
     /**
-     * @param GetDisponibilidadePorDataQuartoCommandHandler $handler
-     * @throws ORMException
-     * @throws DBALException
+     * @throws Exception
      * @covers ::handle
-     * @depends test__construct
      */
-    public function test_Handle_deve_retornar_Disponibilidade_quando_encontrar_no_bd(GetDisponibilidadePorDataQuartoCommandHandler $handler)
+    public function test_Handle_deve_retornar_Disponibilidade_quando_encontrar_registro()
     {
-        $query = '
-            select
-                quarto_id
-            from
-                reservas.Quarto
-            where
-               deletado = 0
-            order by
-                rand()
-            limit 1
-        ';
+        $disponibilidade = $this->createMock(Disponibilidade::class);
 
-        $sql = EntityManagerX::getInstance()->getConnection()->prepare($query);
-        $sql->execute();
+        $disponibilidade_repository = $this->createMock(DisponibilidadeRepositoryInterface::class);
+        $disponibilidade_repository->method('findOneBy')->willReturn($disponibilidade);
 
-        $id = $sql->fetchColumn();
-
-        /** @var Quarto $quarto */
-        $quarto = EntityManagerX::getRepository(Quarto::class)->find($id);
+        $quarto = $this->createMock(Quarto::class);
         $data = new DateTime();
 
+        /** @var DisponibilidadeRepositoryInterface $disponibilidade_repository */
+        /** @var Quarto $quarto */
+
+        $handler = new GetDisponibilidadePorDataQuartoCommandHandler($disponibilidade_repository);
         $command = new GetDisponibilidadePorDataQuartoCommand($quarto, $data);
         $disponibilidade = $handler->handle($command);
 

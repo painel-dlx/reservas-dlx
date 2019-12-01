@@ -26,7 +26,7 @@
 namespace Reservas\UseCases\Clientes\MostrarCpfCompletoPedido;
 
 
-use Reservas\Domain\Reservas\Entities\Reserva;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
@@ -54,19 +54,23 @@ class MostrarCpfCompletoPedidoCommandHandler
     /**
      * @param MostrarCpfCompletoPedidoCommand $command
      * @return string
+     * @throws VisualizarCpfException
      */
     public function handle(MostrarCpfCompletoPedidoCommand $command): string
     {
         $pedido = $command->getPedido();
         $usuario = $command->getUsuario();
 
-        $pedido->getReservas()->map(function (Reserva $reserva) use ($usuario) {
+        /** @var PedidoItem $item */
+        foreach ($pedido->getItens() as $item) {
+            $reserva = $item->getReserva();
+
             if (!$reserva->podeVisualizarCpfCompleto($usuario)) {
                 throw VisualizarCpfException::limiteVisualizacoesAlcancado();
             }
 
             $reserva->addVisualizacaoCpf($usuario);
-        });
+        }
 
         $this->pedido_repository->update($pedido);
 
