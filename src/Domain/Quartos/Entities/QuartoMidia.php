@@ -118,6 +118,10 @@ class QuartoMidia extends Entity
     {
         $arquivo = $mini && !empty($this->getMiniatura()) ? $this->getMiniatura() : $this->getArquivoOriginal();
 
+        if (stream_resolve_include_path($arquivo) === false) {
+            return '';
+        }
+
         $mime_type = mime_content_type($arquivo);
         $src = "{$base_html}{$arquivo}";
 
