@@ -285,6 +285,8 @@ class Quarto extends Entity
      */
     public function addDisponibilidade(DateTime $data, int $quantidade, array $valores, float $desconto = 0.): self
     {
+        $data->setTime(0, 0, 0);
+
         /** @var Disponibilidade $disponibilidade */
         $disponibilidade = $this->disponibilidade->filter(function (Disponibilidade $dispon) use ($data) {
             return $dispon->getData()->format('Y-m-d') ===  $data->format('Y-m-d');

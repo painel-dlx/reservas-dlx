@@ -25,7 +25,12 @@
 
 namespace Reservas\Tests\Domain\Quartos\Entities;
 
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
+use ReflectionProperty;
 use Reservas\Domain\Quartos\Contracts\QuartoMidiaCollectionInterface;
 use Reservas\Domain\Quartos\Entities\Quarto;
 
@@ -76,5 +81,31 @@ class QuartoTest extends TestCase
 
         $this->assertCount(1, $quarto->getMidias());
         $this->assertTrue($has_arquivo);
+    }
+
+    /**
+     * @covers ::getDisponibilidade
+     * @throws ReflectionException
+     */
+    public function test_GetDisponibilidade_deve_retornar_Collection_com_Disponibilidade_referente_ao_periodo()
+    {
+        $quarto = new Quarto('Teste', 1, 99);
+
+        $data_inicial = new DateTime();
+        $data_final = (clone $data_inicial)->modify('+1 day');
+
+        $periodo = new DatePeriod($data_inicial, new DateInterval('P1D'), $data_final);
+
+        foreach ($periodo as $data) {
+            $quarto->addDisponibilidade($data, 1, [1 => 99], 0);
+        }
+
+        $rfx_disponibilidade = new ReflectionProperty($quarto, 'disponibilidade');
+        $rfx_disponibilidade->setAccessible(true);
+
+        $disponibilidade = $quarto->getDisponibilidade($data_inicial, $data_final);
+
+        $this->assertCount(1, $rfx_disponibilidade->getValue($quarto));
+        $this->assertCount(1, $disponibilidade);
     }
 }
