@@ -24,7 +24,7 @@
  */
 
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Reservas\Domain\Reservas\Entities\Reserva;
+use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Vilex\VileX;
 
 /**
@@ -105,19 +105,19 @@ $pedido = $this->getAtributo('pedido');
 
         <tbody>
         <?php
-        /** @var Reserva $reserva */
-        foreach ($pedido->getReservas() as $reserva) : ?>
+        /** @var PedidoItem $item */
+        foreach ($pedido->getItens() as $item) : ?>
         <tr style="border-bottom: 1px solid #efefef;">
-            <td headers="id" style="text-align: center; padding: 10px 0"><?php echo $reserva->getId() ?></td>
-            <td headers="quarto"><?php echo $reserva->getQuarto() ?></td>
-            <td headers="checkin"><?php echo $reserva->getCheckin()->format('d/m/Y') ?></td>
-            <td headers="checkout"><?php echo $reserva->getCheckout()->format('d/m/Y') ?></td>
+            <td headers="id" style="text-align: center; padding: 10px 0"><?php echo $item->getReserva()->getId() ?></td>
+            <td headers="quarto"><?php echo $item->getQuarto() ?></td>
+            <td headers="checkin"><?php echo $item->getCheckin()->format('d/m/Y') ?></td>
+            <td headers="checkout"><?php echo $item->getCheckout()->format('d/m/Y') ?></td>
             <td headers="qtde">
-                <?php printf('%d adultos, %d crianças', $reserva->getQuantidadeAdultos(), $reserva->getQuantidadeCriancas()) ?>
+                <?php printf('%d adultos, %d crianças', $item->getQuantidadeAdultos(), $item->getQuantidadeCriancas()) ?>
             </td>
-            <td headers="status"><?php echo $reserva->getStatus() ?></td>
+            <td headers="status"><?php echo $item->getReserva()->getStatus() ?></td>
             <td headers="valor" style="text-align: right">
-                <?php echo 'R$ ' . number_format($reserva->getValor(), 2, ',', '') ?>
+                <?php echo 'R$ ' . number_format($item->getValorTotal(), 2, ',', '') ?>
             </td>
         </tr>
         <?php endforeach; ?>
