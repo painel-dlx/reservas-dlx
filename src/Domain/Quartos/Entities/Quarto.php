@@ -38,7 +38,6 @@ use Reservas\Domain\Quartos\Contracts\QuartoMidiaCollectionInterface;
 use Reservas\Domain\Quartos\Exceptions\QuartoIndisponivelException;
 use Reservas\Domain\Quartos\Services\VerificarDisponQuarto;
 use Reservas\Infrastructure\ORM\Doctrine\Collections\QuartoMidiaCollection;
-use Reservas\Tests\Domain\Quartos\Entities\QuartoTest;
 
 /**
  * Class Quarto

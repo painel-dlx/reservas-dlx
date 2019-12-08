@@ -56,6 +56,10 @@ class SalvarDisponPeriodoCommand
      * @var array
      */
     private $valores;
+    /**
+     * @var float|null
+     */
+    private $desconto;
 
     /**
      * SalvarDisponPeriodoCommand constructor.
@@ -64,19 +68,22 @@ class SalvarDisponPeriodoCommand
      * @param Quarto $quarto
      * @param int $qtde
      * @param array $valores
+     * @param float|null $desconto
      */
     public function __construct(
         DateTime $data_inicial,
         DateTime $data_final,
         Quarto $quarto,
         int $qtde,
-        array $valores
+        array $valores,
+        ?float $desconto
     ) {
         $this->data_inicial = $data_inicial;
         $this->data_final = $data_final;
         $this->quarto = $quarto;
         $this->qtde = $qtde;
         $this->valores = $valores;
+        $this->desconto = $desconto;
     }
 
     /**
@@ -117,5 +124,13 @@ class SalvarDisponPeriodoCommand
     public function getValores(): array
     {
         return $this->valores;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getDesconto(): ?float
+    {
+        return $this->desconto;
     }
 }

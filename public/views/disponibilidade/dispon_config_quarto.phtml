@@ -50,6 +50,11 @@ $quarto = $this->getAtributo('quarto');
             <input type="number" name="valores[<?php echo $i ?>]" id="num-valor-<?php echo $i ?>" value="<?php echo $quarto->getValorMinimo() ?>" min="<?php echo $quarto->getValorMinimo() ?>" max="9999.99" step="0.01" class="form-controle form-controle-numero" required>
         </p>
     <?php endfor; ?>
+
+    <p class="form-paragr">
+        <label for="num-desconto" class="form-rotulo">Desconto:</label>
+        <input type="number" name="desconto" id="num-desconto" min="0.00" max="99.99" class="form-controle form-controle-numero"> %
+    </p>
 <?php else : ?>
     <p class="sem-registros">Quarto não encontrado.</p>
 <?php endif; ?>

@@ -78,8 +78,8 @@ $lista_quartos = $this->getAtributo('lista-quartos');
 [SCRIPTS]
 <script>
     $('#sel-quarto').on('change', function () {
-        var $this = $(this);
-        var quarto_id = $this.val();
+        const $this = $(this);
+        const quarto_id = $this.val();
 
         $.ajax({
             url: '/painel-dlx/apart-hotel/disponibilidade/configuracoes-quarto',

@@ -103,13 +103,13 @@ class DisponPorPeriodoController extends PainelDLXController
 
             // JS
             $versao = Configure::get('app', 'versao');
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', false, $versao);
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js', false, $versao);
+            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', false, VERSAO_RESERVAS_DLX);
+            $this->view->addArquivoJS('public/js/apart-hotel-min.js', false, VERSAO_RESERVAS_DLX);
         } catch (UserException $e) {
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 
@@ -143,7 +143,7 @@ class DisponPorPeriodoController extends PainelDLXController
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 
@@ -162,6 +162,7 @@ class DisponPorPeriodoController extends PainelDLXController
             'data_inicial' => FILTER_DEFAULT,
             'data_final' => FILTER_DEFAULT,
             'qtde' => FILTER_VALIDATE_INT,
+            'desconto' => ['filter' => FILTER_VALIDATE_FLOAT, 'options' => ['min_range' => 0.00, 'max_range' => 99.99, 'default' => 0]],
             'valores' => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => FILTER_REQUIRE_ARRAY]
         ]);
 
@@ -180,7 +181,8 @@ class DisponPorPeriodoController extends PainelDLXController
                     $data_final,
                     $quarto,
                     $post['qtde'],
-                    $post['valores']
+                    $post['valores'],
+                    $post['desconto']
                 ));
             });
 

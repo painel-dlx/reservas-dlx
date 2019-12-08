@@ -55,7 +55,8 @@ class SalvarDisponPeriodoCommandHandler
             $command->getDataFinal(),
             $command->getQuarto(),
             $command->getQtde(),
-            $command->getValores()
+            $command->getValores(),
+            $command->getDesconto()
         );
     }
 }
