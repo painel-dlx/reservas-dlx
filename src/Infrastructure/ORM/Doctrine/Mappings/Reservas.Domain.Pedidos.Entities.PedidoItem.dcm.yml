@@ -55,6 +55,8 @@ Reservas\Domain\Pedidos\Entities\PedidoItem:
         reserva:
             targetEntity: Reservas\Domain\Reservas\Entities\Reserva
             inversedBy: pedido_item
+            cascade:
+                - persist
             joinColumns:
                 reserva_id:
                     referencedColumnName: reserva_id
