@@ -157,14 +157,7 @@ class DisponPorPeriodoController extends PainelDLXController
      */
     public function salvarDisponPorPeriodo(ServerRequestInterface $request): ResponseInterface
     {
-        $post = filter_var_array($request->getParsedBody(), [
-            'quarto_id' => FILTER_VALIDATE_INT,
-            'data_inicial' => FILTER_DEFAULT,
-            'data_final' => FILTER_DEFAULT,
-            'qtde' => FILTER_VALIDATE_INT,
-            'desconto' => ['filter' => FILTER_VALIDATE_FLOAT, 'options' => ['min_range' => 0.00, 'max_range' => 99.99, 'default' => 0]],
-            'valores' => ['filter' => FILTER_VALIDATE_FLOAT, 'flags' => FILTER_REQUIRE_ARRAY]
-        ]);
+        $post = $request->getParsedBody();
 
         $data_inicial = new DateTime($post['data_inicial']);
         $data_final = new DateTime($post['data_final']);

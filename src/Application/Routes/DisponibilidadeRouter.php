@@ -35,6 +35,7 @@ use PainelDLX\Application\Routes\PainelDLXRouter;
 use PainelDLX\Application\Services\PainelDLX;
 use Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\DisponPorPeriodoController;
 use Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers\MapaDisponController;
+use Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Middlewares\SalvarDisponibilidadePorPeriodoFilter;
 
 class DisponibilidadeRouter extends PainelDLXRouter
 {
@@ -95,7 +96,8 @@ class DisponibilidadeRouter extends PainelDLXRouter
             [DisponPorPeriodoController::class, 'salvarDisponPorPeriodo']
         )->middlewares(
             $verificar_logon,
-            $autorizacao
+            $autorizacao,
+            new SalvarDisponibilidadePorPeriodoFilter
         );
     }
 }

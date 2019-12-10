@@ -83,11 +83,13 @@ class WidgetPedidoController extends PainelDLXController
     public function quantidadePedidosPorStatus(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
         $get = array_merge($request->getQueryParams(), $args);
+        $data_inicial = $get['data_inicial'] ?? null;
+        $data_final = $get['data_final'] ?? null;
 
         try {
             /** @var int $quantidade_pedidos */
             /* @see QuantidadePedidosPorStatusCommandHandler */
-            $quantidade_pedidos = $this->command_bus->handle(new QuantidadePedidosPorStatusCommand($get['status'], $get['data_inicial'], $get['data_final']));
+            $quantidade_pedidos = $this->command_bus->handle(new QuantidadePedidosPorStatusCommand($get['status'], $data_inicial, $data_final));
 
             // View
             $this->view->setAtributo('status', $get['status']);
