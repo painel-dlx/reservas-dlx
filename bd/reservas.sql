@@ -88,9 +88,10 @@ create table reservas.PedidoItem (
     checkin datetime not null,
     checkout datetime  not null,
     quantidade int not null check (quantidade > 0),
-    adultos int not null check (adultos > 0),
-    criancas int not null,
-    valor_total decimal(10,4)
+    quantidade_adultos int not null check (quantidade_adultos > 0),
+    quantidade_criancas int not null,
+    valor_total decimal(10,4),
+    reserva_id int references reservas.Reserva(reserva_id)
 ) engine = innodb;
 
 create table reservas.PedidoItemDetalhe (
@@ -105,13 +106,14 @@ create table reservas.PedidoItemDetalhe (
 drop table if exists reservas.PedidoCartao;
 create table reservas.PedidoCartao (
     pedido_id int not null references reservas.Pedido (pedido_id),
+    tipo varchar(10) not null default 'credit' check ( tipo in ('debit', 'credit') ),
     dono varchar(100) not null,
     numero_cartao varchar(20) not null,
     validade varchar(7) not null,
     codigo_seguranca varchar(5),
     valor float not null,
     parcelas int not null default 1 check (parcelas > 0)
-) engine=innodb;
+) engine = innodb;
 
 drop table if exists reservas.PedidoEndereco;
 create table reservas.PedidoEndereco (
