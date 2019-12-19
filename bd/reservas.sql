@@ -140,9 +140,15 @@ create table reservas.PedidoHistorico (
 -- INSERIR INFORMAÇÕES -------------------------------------------------------------------------------------------------
 insert into dlx.PermissaoUsuario (alias, descricao) values
     ('VER_LISTA_QUARTOS', 'Ver a lista de quartos.'),
-    ('GERENCIAR_DISPONIBILIDADE', 'Gerenciar disponibilidade de quartos para reserva.'),
-    ('VER_LISTA_RESERVAS', 'Ver a lista de reservas cadastradas.'),
-    ('VER_LISTA_PEDIDOS', 'Ver a lista de pedidos enviados pelo site.');
+    ('GERENCIAR_DISPONIBILIDADE', 'Gerenciar disponibilidade de quartos para reserva'),
+    ('VER_LISTA_RESERVAS', 'Ver a lista de reservas cadastradas'),
+    ('VER_LISTA_PEDIDOS', 'Ver a lista de pedidos enviados pelo site'),
+    ('RESERVAR_QUARTOS', 'Reservas quartos'),
+    ('VER_DETALHE_RESERVAS', 'Ver os detalhes da reserva'),
+    ('CONFIRMAR_RESERVAS', 'Confirmar reservas'),
+    ('CANCELAR_RESERVAS', 'Cancelar reservas'),
+    ('CADASTRAR_NOVO_QUARTO', 'Cadastrar um novo quarto'),
+    ('EDITAR_QUARTO', 'Editar quarto existente');
 
 insert into dlx.Menu (nome) values ('Apart Hotel');
 set @menu_id = last_insert_id();

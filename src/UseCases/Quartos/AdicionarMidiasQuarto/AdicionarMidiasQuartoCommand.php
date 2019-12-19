@@ -38,16 +38,22 @@ class AdicionarMidiasQuartoCommand
      * @var array
      */
     private $midias;
+    /**
+     * @var bool
+     */
+    private $auto_salvar;
 
     /**
      * AdicionarMidiasQuartoCommand constructor.
      * @param Quarto $quarto
      * @param array $midias
+     * @param bool $auto_salvar
      */
-    public function __construct(Quarto $quarto, array $midias)
+    public function __construct(Quarto $quarto, array $midias, bool $auto_salvar = true)
     {
         $this->quarto = $quarto;
         $this->midias = $midias;
+        $this->auto_salvar = $auto_salvar;
     }
 
     /**
@@ -64,5 +70,13 @@ class AdicionarMidiasQuartoCommand
     public function getMidias(): array
     {
         return $this->midias;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutoSalvar(): bool
+    {
+        return $this->auto_salvar;
     }
 }

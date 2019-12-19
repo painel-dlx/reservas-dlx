@@ -47,6 +47,7 @@ use Vilex\Exceptions\ContextoInvalidoException;
 use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
 use Vilex\Exceptions\ViewNaoEncontradaException;
 use Vilex\VileX;
+use Zend\Diactoros\Exception\UploadedFileErrorException;
 use Zend\Diactoros\Response\JsonResponse;
 
 class GerenciadorMidiasController extends PainelDLXController
@@ -117,27 +118,15 @@ class GerenciadorMidiasController extends PainelDLXController
 
         try {
             $this->transaction->transactional(function () use ($quarto, $arquivos) {
-                /* @see AdicionarMidiasQuartoCommandHandler */
-                $this->command_bus->handle(new AdicionarMidiasQuartoCommand($quarto, $arquivos));
+                $is_auto_salvar = !is_null($quarto->getId());
 
-                if (!is_null($quarto->getId())) {
-                    /* @see EditarQuartoCommandHandler */
-                    $this->command_bus->handle(new EditarQuartoCommand(
-                        $quarto->getNome(),
-                        $quarto->getDescricao(),
-                        $quarto->getMaximoHospedes(),
-                        $quarto->getQuantidade(),
-                        $quarto->getTamanhoM2(),
-                        $quarto->getValorMinimo(),
-                        $quarto->getLink(),
-                        $quarto->getId()
-                    ));
-                }
+                /* @see AdicionarMidiasQuartoCommandHandler */
+                $this->command_bus->handle(new AdicionarMidiasQuartoCommand($quarto, $arquivos, $is_auto_salvar));
             });
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Mídias salvas com sucesso!';
-        } catch (AdicionarMidiasQuartoException | ValidarQuartoException | UserException $e) {
+        } catch (AdicionarMidiasQuartoException | ValidarQuartoException | UploadedFileErrorException | UserException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }
@@ -180,7 +169,7 @@ class GerenciadorMidiasController extends PainelDLXController
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = 'Arquivo de mídia excluída com sucesso!';
-        } catch (ExcluirMidiaQuartoException | ValidarQuartoException $e) {
+        } catch (ExcluirMidiaQuartoException | ValidarQuartoException | UploadedFileErrorException $e) {
             $json['retorno'] = 'erro';
             $json['mensagem'] = $e->getMessage();
         }

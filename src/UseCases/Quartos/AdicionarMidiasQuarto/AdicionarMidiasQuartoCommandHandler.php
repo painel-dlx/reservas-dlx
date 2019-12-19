@@ -78,6 +78,10 @@ class AdicionarMidiasQuartoCommandHandler
             $quarto->addMidia($arquivo_original);
         }
 
+        if ($command->isAutoSalvar()) {
+            $this->quarto_repository->update($quarto);
+        }
+
         return $quarto;
     }
 
@@ -88,8 +92,10 @@ class AdicionarMidiasQuartoCommandHandler
      */
     public function criarDiretorios(string $dir_midias): void
     {
-        if (!is_writable($dir_midias)) {
-            throw AdicionarMidiasQuartoException::semPermissao($dir_midias);
+        $dir_base = dirname($dir_midias);
+
+        if (!is_writable($dir_base)) {
+            throw AdicionarMidiasQuartoException::semPermissao($dir_base);
         }
 
         mkdir($dir_midias, 0755, true);
