@@ -110,25 +110,27 @@ class QuartoMidia extends Entity
 
     /**
      * Retorna a mídia em HTML
-     * @param string|null $base_html
      * @param bool $mini
      * @return string|null
      */
-    public function getTagHtml(?string $base_html = null, bool $mini = true): ?string
+    public function getTagHtml(bool $mini = true): ?string
     {
         $arquivo = $mini && !empty($this->getMiniatura()) ? $this->getMiniatura() : $this->getArquivoOriginal();
+        $caminho_absoluto = stream_resolve_include_path($arquivo);
 
-        if (stream_resolve_include_path($arquivo) === false) {
+        if ($caminho_absoluto === false) {
             return '';
         }
 
+        $caminho_relativo = preg_replace("~^{$_SERVER['DOCUMENT_ROOT']}~", '', $caminho_absoluto);
+
         $mime_type = mime_content_type($arquivo);
-        $src = "{$base_html}{$arquivo}";
+        $html = null;
 
         if (preg_match('~^image/~', $mime_type)) {
-            $html = sprintf(self::HTML_IMAGEM, $src, $this->getQuarto()->getNome());
+            $html = sprintf(self::HTML_IMAGEM, $caminho_relativo, $this->getQuarto()->getNome());
         } elseif (preg_match('~^video/~', $mime_type)) {
-            $html = sprintf(self::HTML_VIDEO, $src, $mime_type);
+            $html = sprintf(self::HTML_VIDEO, $caminho_relativo, $mime_type);
         }
 
         return $html;
