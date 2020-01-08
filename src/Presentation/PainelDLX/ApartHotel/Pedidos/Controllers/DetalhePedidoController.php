@@ -32,7 +32,7 @@ use League\Tactician\CommandBus;
 use PainelDLX\Application\Services\Exceptions\ErroAoEnviarEmailException;
 use PainelDLX\UseCases\Usuarios\GetUsuarioPeloId\GetUsuarioPeloIdCommand;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Presentation\Site\Common\Controllers\PainelDLXController;
+use PainelDLX\Presentation\Web\Common\Controllers\PainelDLXController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;

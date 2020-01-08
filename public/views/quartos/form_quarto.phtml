@@ -24,10 +24,10 @@
  */
 
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var Vilex $this
+ * @var AbstractTemplate $this
  */
 
 /** @var Quarto $quarto */
@@ -35,7 +35,7 @@ $quarto = $this->getAtributo('quarto');
 ?>
 
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <div class="form-botoes-externo">
     <button type="button" onclick="popupUploadMidias()" class="botao-upload">
@@ -120,8 +120,8 @@ $quarto = $this->getAtributo('quarto');
 
     $('#form-quarto').formAjax({
         func_antes: function () {
-            var $cke_descricao = $('#cke_txt-descricao iframe');
-            var html = $cke_descricao.contents().find('[contenteditable]').html();
+            const $cke_descricao = $('#cke_txt-descricao iframe');
+            const html = $cke_descricao.contents().find('[contenteditable]').html();
 
             $('#txt-descricao').val(html);
 

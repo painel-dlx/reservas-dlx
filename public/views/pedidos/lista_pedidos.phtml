@@ -24,10 +24,10 @@
  */
 
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var VileX $this
+ * @var AbstractTemplate $this
  */
 
 $lista_pedidos = $this->getAtributo('lista-pedidos');
@@ -35,7 +35,7 @@ $filtro = $this->getAtributo('filtro');
 $status = $this->getAtributo('status-pedidos');
 ?>
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <nav class="menu-opcoes">
     <form id="filtro-registros" class="filtro-registros">

@@ -24,17 +24,17 @@
  */
 
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var VileX $this
+ * @var AbstractTemplate $this
  */
 
 /** @var Pedido|null $pedido */
 $pedido = $this->getAtributo('pedido');
 ?>
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <form id="form-cancelar-pedido" action="/painel-dlx/apart-hotel/pedidos/confirmar-pedido" method="post">
     <input type="hidden" name="id" value="<?php echo $pedido->getId() ?>">

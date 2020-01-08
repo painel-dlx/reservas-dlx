@@ -30,7 +30,7 @@ use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
 use League\Tactician\CommandBus;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
-use PainelDLX\Presentation\Site\Common\Controllers\PainelDLXController;
+use PainelDLX\Presentation\Web\Common\Controllers\PainelDLXController;
 use PainelDLX\UseCases\Usuarios\GetUsuarioPeloId\GetUsuarioPeloIdCommand;
 use PainelDLX\UseCases\Usuarios\GetUsuarioPeloId\GetUsuarioPeloIdCommandHandler;
 use Psr\Http\Message\ResponseInterface;

@@ -23,20 +23,19 @@
  * SOFTWARE.
  */
 
-use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Pedidos\Entities\PedidoItemDetalhe;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var VileX $this
+ * @var AbstractTemplate $this
  */
 
 /** @var PedidoItem $pedido_item */
 $pedido_item = $this->getAtributo('pedido-item');
 ?>
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <table id="lista-pedido-item-detalhamento" class="lista-registros">
     <thead>

@@ -26,11 +26,10 @@
 namespace Reservas\Presentation\PainelDLX\ApartHotel\Home\Controller;
 
 
-use DLX\Core\Configure;
 use League\Tactician\CommandBus;
-use PainelDLX\Presentation\Site\Home\Controllers\PaginaInicialController;
+use PainelDLX\Presentation\Web\Home\Controllers\PaginaInicialController;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 
 class HomeController extends PaginaInicialController
@@ -40,7 +39,7 @@ class HomeController extends PaginaInicialController
      * @param VileX $view
      * @param CommandBus $commandBus
      * @param SessionInterface $session
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(VileX $view, CommandBus $commandBus, SessionInterface $session)
     {

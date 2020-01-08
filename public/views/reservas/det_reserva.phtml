@@ -26,10 +26,10 @@
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use Reservas\Domain\Reservas\Entities\Reserva;
 use Reservas\Domain\Reservas\Entities\ReservaHistorico;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var VileX $this
+ * @var AbstractTemplate $this
  */
 
 /** @var Reserva|null $reserva */
@@ -39,7 +39,7 @@ $reserva = $this->getAtributo('reserva');
 $usuario_logado = $this->getAtributo('usuario-logado');
 ?>
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <div class="layout-barra-lateral">
     <aside class="barra-lateral">

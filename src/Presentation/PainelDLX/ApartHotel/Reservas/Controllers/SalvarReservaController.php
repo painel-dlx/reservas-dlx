@@ -33,7 +33,7 @@ use DLX\Contracts\TransactionInterface;
 use DLX\Core\Exceptions\UserException;
 use Exception;
 use League\Tactician\CommandBus;
-use PainelDLX\Presentation\Site\Common\Controllers\PainelDLXController;
+use PainelDLX\Presentation\Web\Common\Controllers\PainelDLXController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Domain\Quartos\Entities\Quarto;

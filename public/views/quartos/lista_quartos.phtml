@@ -24,17 +24,17 @@
  */
 
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var VileX $this
+ * @var AbstractTemplate $this
  */
 
 $lista_reservas = $this->getAtributo('lista-quartos');
 $filtro = $this->getAtributo('filtro');
 ?>
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <nav class="menu-opcoes">
     <form id="filtro-registros" class="filtro-registros">

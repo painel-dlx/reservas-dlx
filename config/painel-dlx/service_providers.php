@@ -23,10 +23,12 @@
  * SOFTWARE.
  */
 
+use PainelDLX\Application\ServiceProviders\DefaultServiceProvider;
 use PainelDLX\Application\ServiceProviders\PainelDLXServiceProvider;
 use Reservas\Application\ServiceProviders\ReservasServiceProvider;
 
 return [
+    DefaultServiceProvider::class,
     PainelDLXServiceProvider::class,
     ReservasServiceProvider::class
 ];

@@ -23,20 +23,18 @@
  * SOFTWARE.
  */
 
-use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
-use Reservas\Domain\Reservas\Entities\ReservaHistorico;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var VileX $this
+ * @var AbstractTemplate $this
  */
 
 /** @var Reserva|null $reserva */
 $reserva = $this->getAtributo('reserva');
 ?>
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <form id="form-cancelar-reserva" action="/painel-dlx/apart-hotel/reservas/cancelar-reserva" method="post">
     <input type="hidden" name="id" value="<?php echo $reserva->getId() ?>">

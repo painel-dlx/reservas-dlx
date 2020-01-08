@@ -23,19 +23,18 @@
  * SOFTWARE.
  */
 
-use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var Vilex $this
+ * @var AbstractTemplate $this
  */
 
 $lista_quartos = $this->getAtributo('lista-quartos');
 ?>
 
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <p class="mensagem-usuario -atencao">
     Atenção! Caso já exista uma configuração de disponibilidade para a data informada, a mesma será atualizada.

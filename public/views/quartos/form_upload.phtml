@@ -24,10 +24,10 @@
  */
 
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var Vilex $this
+ * @var AbstractTemplate $this
  */
 
 /** @var Quarto $quarto */
@@ -35,7 +35,7 @@ $quarto = $this->getAtributo('quarto');
 ?>
 
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <form id="form-upload" action="/painel-dlx/apart-hotel/quartos/upload-midias" method="post" enctype="multipart/form-data">
     <div class="upload-arquivos">

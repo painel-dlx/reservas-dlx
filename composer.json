@@ -1,6 +1,6 @@
 {
     "name": "painel-dlx/reservas-dlx",
-    "version": "1.1.2",
+    "version": "1.1.3",
     "license": "MIT",
     "require-dev": {
         "phpunit/phpunit": "^7.5"

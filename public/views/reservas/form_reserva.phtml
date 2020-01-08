@@ -25,20 +25,19 @@
 
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
-use Reservas\Domain\Reservas\Entities\ReservaHistorico;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
 /**
- * @var VileX $this
+ * @var AbstractTemplate $this
  */
 
-/** @var \Reservas\Domain\Reservas\Entities\Reserva|null $reserva */
+/** @var Reserva|null $reserva */
 $reserva = $this->getAtributo('reserva');
-/** @var \Reservas\Domain\Quartos\Entities\Quarto[] $lista_quartos */
+/** @var Quarto[] $lista_quartos */
 $lista_quartos = $this->getAtributo('lista-quartos');
 ?>
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <form id="form-reserva" action="/painel-dlx/apart-hotel/reservas/salvar-reserva" method="post">
     <div class="layout-barra-lateral">

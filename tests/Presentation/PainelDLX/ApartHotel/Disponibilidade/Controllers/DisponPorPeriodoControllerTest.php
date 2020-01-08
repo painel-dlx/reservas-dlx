@@ -131,7 +131,8 @@ class DisponPorPeriodoControllerTest extends ReservasTestCase
             'data_inicial' => date('Y-m-d'),
             'data_final' => date('Y-m-d'),
             'qtde' => 1,
-            'valores' => [1 => 99.]
+            'valores' => [1 => 99.],
+            'desconto' => 0
         ]);
 
         /** @var ServerRequestInterface $request */

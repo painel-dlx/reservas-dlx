@@ -25,11 +25,9 @@
 
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
-use Vilex\VileX;
+use Vilex\Templates\AbstractTemplate;
 
-/**
- * @var Vilex $this
- */
+/** @var AbstractTemplate $this */
 
 $lista = $this->getAtributo('lista-dispon');
 $quartos = [];
@@ -44,7 +42,7 @@ $filtro = $this->getAtributo('filtro');
 ?>
 
 [CORPO]
-<h1 class="titulo-pagina"><?php echo $this->getAtributo('titulo-pagina') ?></h1>
+<h1 class="titulo-pagina">{{ titulo-pagina }}</h1>
 
 <div class="menu-opcoes">
     <form id="form-filtro-mapa" class="filtro-registros-mapa">
@@ -163,13 +161,13 @@ foreach ($quartos as $lista_dispon) :
         $(this).parents('form').submit();
     });
 
-    var $forms_dispon = $('form[id!="form-filtro-mapa"]');
+    const $forms_dispon = $('form[id!="form-filtro-mapa"]');
     $forms_dispon.formAjax({
         func_depois: function (json, form, xhr) {
-            var $form = $(form);
+            const $form = $(form);
 
             if (json.retorno === 'sucesso') {
-                var $inputs = $form.find('input.-pendente');
+                const $inputs = $form.find('input.-pendente');
 
                 $inputs.each(function () {
                     this.defaultValue = this.value;
@@ -181,7 +179,7 @@ foreach ($quartos as $lista_dispon) :
                 msgUsuario.mostrar('Disponibilidade salva com sucesso!', 'sucesso', xhr.id);
             }
 
-            var $status = $form.find('.status-dispon');
+            const $status = $form.find('.status-dispon');
 
             if (json.publicado) {
                 $status.removeClass('-nao-publicado');
@@ -194,9 +192,9 @@ foreach ($quartos as $lista_dispon) :
     });
 
     $forms_dispon.find('input').on('change', function () {
-        var $this = $(this);
-        var $form = $this.parents('form');
-        var classe = '-pendente';
+        const $this = $(this);
+        const $form = $this.parents('form');
+        const classe = '-pendente';
 
         if (this.defaultValue !== this.value) {
             $this.addClass(classe);
