@@ -1,12 +1,13 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Regra para levar o usuário ao conteúdo do Painel DLX
+    RewriteRule ^index\.php$ index.php?ambiente=paineldlx-dev [QSA]
+
     # Direcionar o usuário para o Painel DLX
     RewriteCond %{SCRIPT_FILENAME} !-d
     RewriteCond %{SCRIPT_FILENAME} !-f
 
     # Regra para levar o usuário ao conteúdo do Painel DLX
-    RewriteRule .* index.php?ambiente=paineldlx-dev [QSA,L,END]
-    # Regra para levar o usuário ao conteúdo do Painel DLX
-    RewriteRule ^$ index.php?ambiente=paineldlx-dev [QSA,L]
+    RewriteRule .* index.php?ambiente=paineldlx-dev [QSA]
 </IfModule>

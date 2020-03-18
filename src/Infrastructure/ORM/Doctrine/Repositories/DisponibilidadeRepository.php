@@ -30,11 +30,12 @@ use DateTime;
 use DLX\Infrastructure\ORM\Doctrine\Repositories\EntityRepository;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\ORM\Query\Expr\Join;
 use Exception;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
+use Reservas\Domain\Disponibilidade\Entities\DisponibilidadeValor;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
-use Throwable;
 
 class DisponibilidadeRepository extends EntityRepository implements DisponibilidadeRepositoryInterface
 {
@@ -79,73 +80,75 @@ class DisponibilidadeRepository extends EntityRepository implements Disponibilid
      */
     public function salvarDisponPorPeriodo(DateTime $data_inicial, DateTime $data_final, Quarto $quarto, int $qtde, array $valores, float $desconto = 0.): bool
     {
-        $update_dispon = '
-            update
-                reservas.Disponibilidade
-            set
-                quantidade = :qtde,
-                desconto = :desconto
-            where
-                quarto_id = :quarto_id
-                and data between :data_inicial and :data_final
-        ';
+        $disponibilidade_meta_data = $this->_em->getClassMetadata(Disponibilidade::class);
+        $tbl_disponibilidade = $disponibilidade_meta_data->getSchemaName() . '.' . $disponibilidade_meta_data->getTableName();
 
-        $delete_dispon_valor = '
-            delete
-                v
-            from
-                reservas.Disponibilidade d 
-            inner join 
-                reservas.DisponibilidadeValor v on v.disponibilidade_id = d.disponibilidade_id
-            where 
-                d.quarto_id = :quarto_id
-                and d.data between :data_inicial and :data_final
-        ';
+        $disponibilidade_valor_meta_data = $this->_em->getClassMetadata(DisponibilidadeValor::class);
+        $tbl_disponibilidade_valor = $disponibilidade_valor_meta_data->getSchemaName() . '.' . $disponibilidade_valor_meta_data->getTableName();
 
-        $insert_dispon_valor = '
-            insert into reservas.DisponibilidadeValor (disponibilidade_id, quantidade_pessoas, valor)
-                select 
-                    disponibilidade_id,
-                    :qtde_pessoas,
-                    :valor
-                from
-                    reservas.Disponibilidade
-                where
-                    quarto_id = :quarto_id
-                    and data between :data_inicial and :data_final
-        ';
+        $conn = $this->_em->getConnection();
+
+        $select_dispon = $conn->createQueryBuilder()
+            ->select('disponibilidade_id')
+            ->from($tbl_disponibilidade, 'd')
+            ->where('quarto_id = :quarto_id')
+            ->andWhere('data between :data_inicial and :data_final');
+
+        $update_dispon = $conn->createQueryBuilder()
+            ->update($tbl_disponibilidade)
+            ->set('quantidade', ':qtde')
+            ->set('desconto', ':desconto')
+            ->where('quarto_id = :quarto_id')
+            ->andWhere('data between :data_inicial and :data_final');
+
+        $delete_dispon_valor = $conn->createQueryBuilder();
+        $delete_dispon_valor->delete($tbl_disponibilidade_valor)
+            ->where($delete_dispon_valor->expr()->in(
+                'disponibilidade_id',
+                $select_dispon->getSQL()
+            ));
+
+        $insert_dispon_valor = $conn->createQueryBuilder()
+            ->insert($tbl_disponibilidade_valor)
+            ->setValue('disponibilidade_id', ':disponibilidade_id')
+            ->setValue('quantidade_pessoas', ':qtde_pessoas')
+            ->setValue('valor', ':valor');
 
         try {
             $this->_em->beginTransaction();
 
-            $con = $this->_em->getConnection();
-
             // Atualizar as disponibilidades
-            $sql = $con->prepare($update_dispon);
-            $sql->bindValue(':qtde', $qtde, ParameterType::INTEGER);
-            $sql->bindValue(':desconto', $desconto);
-            $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
-            $sql->bindValue(':data_inicial', $data_inicial->format('Y-m-d'), ParameterType::STRING);
-            $sql->bindValue(':data_final', $data_final->format('Y-m-d'), ParameterType::STRING);
-            $sql->execute();
+            $update_dispon
+                ->setParameter(':qtde', $qtde, ParameterType::INTEGER)
+                ->setParameter(':desconto', $desconto)
+                ->setParameter(':quarto_id', $quarto->getId(), ParameterType::INTEGER)
+                ->setParameter(':data_inicial', $data_inicial->format('Y-m-d'), ParameterType::STRING)
+                ->setParameter(':data_final', $data_final->format('Y-m-d'), ParameterType::STRING)
+                ->execute();
 
             // Excluir os valores atuais
-            $sql = $con->prepare($delete_dispon_valor);
-            $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
-            $sql->bindValue(':data_inicial', $data_inicial->format('Y-m-d'));
-            $sql->bindValue(':data_final', $data_final->format('Y-m-d'));
-            $sql->execute();
+            $delete_dispon_valor
+                ->setParameter(':quarto_id', $quarto->getId(), ParameterType::INTEGER)
+                ->setParameter(':data_inicial', $data_inicial->format('Y-m-d'))
+                ->setParameter(':data_final', $data_final->format('Y-m-d'))
+                ->execute();
+
+            $lista_dispon = $select_dispon
+                ->setParameter(':quarto_id', $quarto->getId())
+                ->setParameter(':data_inicial', $data_inicial->format('Y-m-d'))
+                ->setParameter(':data_final', $data_final->format('Y-m-d'))
+                ->execute()
+                ->fetchAll();
 
             // Reinserir os valore atualizados
-            $sql = $con->prepare($insert_dispon_valor);
-
             foreach ($valores as $qtde_pessoas => $valor) {
-                $sql->bindValue(':qtde_pessoas', $qtde_pessoas, ParameterType::INTEGER);
-                $sql->bindValue(':valor', $valor);
-                $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
-                $sql->bindValue(':data_inicial', $data_inicial->format('Y-m-d'));
-                $sql->bindValue(':data_final', $data_final->format('Y-m-d'));
-                $sql->execute();
+                foreach ($lista_dispon as $dispon) {
+                    $insert_dispon_valor
+                        ->setParameter(':disponibilidade_id', $dispon['disponibilidade_id'], ParameterType::INTEGER)
+                        ->setParameter(':qtde_pessoas', $qtde_pessoas, ParameterType::INTEGER)
+                        ->setParameter(':valor', $valor)
+                        ->execute();
+                }
             }
 
             $this->_em->commit();
