@@ -35,8 +35,10 @@ use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Presentation\Web\Common\Controllers\PainelDLXController;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Reservas\Domain\Common\Events\EventManagerInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoItem;
+use Reservas\Domain\Pedidos\Events\PagamentoPedidoConfirmado;
 use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 use Reservas\Domain\Pedidos\Exceptions\PedidoNaoEncontradoException;
 use Reservas\Domain\Quartos\Exceptions\QuartoIndisponivelException;
@@ -46,8 +48,6 @@ use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedido
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
 use Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommand;
 use Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommandHandler;
-use Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommand;
-use Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommand;
 use Reservas\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\UseCases\Pedidos\FindPedidoItemPorId\FindPedidoItemPorIdCommand;
@@ -56,9 +56,8 @@ use Reservas\UseCases\Pedidos\GerarReservasPedido\GerarReservasPedidoCommandHand
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -73,6 +72,10 @@ class DetalhePedidoController extends PainelDLXController
      * @var TransactionInterface
      */
     private $transaction;
+    /**
+     * @var EventManagerInterface
+     */
+    private $event_manager;
 
     /**
      * DetalhePedidoController constructor.
@@ -80,25 +83,27 @@ class DetalhePedidoController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @param EventManagerInterface $event_manager
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
         CommandBus $commandBus,
         SessionInterface $session,
-        TransactionInterface $transaction
+        TransactionInterface $transaction,
+        EventManagerInterface $event_manager
     ) {
         parent::__construct($view, $commandBus, $session);
         $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
+        $this->event_manager = $event_manager;
     }
 
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function detalhePedido(ServerRequestInterface $request): ResponseInterface
     {
@@ -145,9 +150,8 @@ class DetalhePedidoController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formConfirmarPgtoPedido(ServerRequestInterface $request): ResponseInterface
     {
@@ -209,9 +213,7 @@ class DetalhePedidoController extends PainelDLXController
             $this->transaction->transactional(function () use ($pedido, $post, $usuario_logado) {
                 /* @see ConfirmarPgtoPedidoCommandHandler */
                 $this->command_bus->handle(new ConfirmarPgtoPedidoCommand($pedido, $post['motivo'], $usuario_logado));
-
-                /* @see EnviarNotificacaoConfirmacaoPedidoCommandHandler */
-                $this->command_bus->handle(new EnviarNotificacaoConfirmacaoPedidoCommand($pedido));
+                $this->event_manager->dispatch(new PagamentoPedidoConfirmado($pedido));
             });
 
             $json['retorno'] = 'sucesso';
@@ -236,9 +238,8 @@ class DetalhePedidoController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formCancelarPedido(ServerRequestInterface $request): ResponseInterface
     {

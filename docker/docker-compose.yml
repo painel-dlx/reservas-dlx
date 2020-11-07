@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+    reservas.dlx.com.br:
+        container_name: br.com.dlx.reservas
+        build:
+            context: .
+        volumes:
+            - "/Volumes/Arquivos/Pessoal/dlepera/ProjetosWeb/painel-dlx/reservas-dlx/:/var/www/html/reservas.dlx.com.br"
+        ports:
+            - "8082:80"
+        restart: always
+        environment:
+            - PHP_IDE_CONFIG=serverName=reservas.dlx.com.br
+            - XDEBUG_CONFIG=remote_host=${DOCKER_IP} remote_port=9000
+        networks:
+            - bd
+            - dlx
+networks:
+    bd:
+        external: true
+    dlx: {}

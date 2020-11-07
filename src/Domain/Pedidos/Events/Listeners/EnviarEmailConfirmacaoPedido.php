@@ -23,7 +23,8 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido;
+namespace Reservas\Domain\Pedidos\Events\Listeners;
+
 
 use PainelDLX\Application\Services\Exceptions\ErroAoEnviarEmailException;
 use PainelDLX\Domain\Emails\Repositories\ConfigSmtpRepositoryInterface;
@@ -31,46 +32,58 @@ use PainelDLX\Infrastructure\Services\Email\EnviarEmail;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Events\Common\PedidoEvent;
+use Reservas\Domain\Pedidos\Events\Common\PedidoEventListener;
 use Vilex\Exceptions\PaginaMestraInvalidaException;
 use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 
 /**
- * Class EnviarNotificacaoConfirmacaoPedidoCommandHandler
- * @package Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido
- * @deprecated movido para utilização de eventos
+ * Class EnviarEmailConfirmacaoPedido
+ * @package Reservas\Domain\Pedidos\Events\Listeners
+ * @covers EnviarEmailConfirmacaoPedidoTest
  */
-class EnviarNotificacaoConfirmacaoPedidoCommandHandler
+class EnviarEmailConfirmacaoPedido implements PedidoEventListener
 {
     /**
      * @var VileX
      */
     private $vile_x;
+    /**
+     * @var PHPMailer
+     */
+    private $PHP_mailer;
+    /**
+     * @var ConfigSmtpRepositoryInterface
+     */
+    private $config_smtp_repository;
 
     /**
-     * EnviarEmailResetSenhaCommandHandler constructor.
+     * EnviarEmailConfirmacaoPedido constructor.
+     * @param VileX $vile_x
      * @param PHPMailer $PHP_mailer
      * @param ConfigSmtpRepositoryInterface $config_smtp_repository
-     * @param VileX $vile_x
      */
     public function __construct(
+        VileX $vile_x,
         PHPMailer $PHP_mailer,
-        ConfigSmtpRepositoryInterface $config_smtp_repository,
-        VileX $vile_x
+        ConfigSmtpRepositoryInterface $config_smtp_repository
     ) {
+        $this->vile_x = $vile_x;
         $this->PHP_mailer = $PHP_mailer;
         $this->config_smtp_repository = $config_smtp_repository;
-        $this->vile_x = $vile_x;
     }
 
     /**
-     * @param EnviarNotificacaoConfirmacaoPedidoCommand $command
+     * @inheritDoc
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      * @throws ErroAoEnviarEmailException
      * @throws Exception
      */
-    public function handle(EnviarNotificacaoConfirmacaoPedidoCommand $command)
+    public function handle(PedidoEvent $pedido_event): void
     {
-        $pedido = $command->getPedido();
+        $pedido = $pedido_event->getPedido();
         $config_smtp = $this->config_smtp_repository->findOneBy(['nome' => 'SMTP Gmail']);
 
         $corpo = $this->gerarCorpoHtml($pedido);
@@ -87,8 +100,8 @@ class EnviarNotificacaoConfirmacaoPedidoCommandHandler
      */
     private function gerarCorpoHtml(Pedido $pedido): string
     {
-        $this->vile_x->setPaginaMestra('public/views/paginas-mestras/email-master.phtml');
-        $this->vile_x->setViewRoot('public/views/emails');
+        $this->vile_x->setPaginaMestra('../paginas-mestras/email-master');
+        $this->vile_x->setViewRoot('public/views/emails/');
 
         // Views
         $this->vile_x->addTemplate('topo');

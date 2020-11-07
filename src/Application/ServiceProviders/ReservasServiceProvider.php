@@ -28,9 +28,12 @@ namespace Reservas\Application\ServiceProviders;
 use League\Container\Container;
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use PainelDLX\Infrastructure\ORM\Doctrine\Services\RepositoryFactory;
+use Reservas\Domain\Common\Events\EventManagerInterface;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoItem;
+use Reservas\Domain\Pedidos\Events\Listeners\EnviarEmailConfirmacaoPedido;
+use Reservas\Domain\Pedidos\Events\PagamentoPedidoConfirmado;
 use Reservas\Domain\Pedidos\Repositories\PedidoItemRepositoryInterface;
 use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Reservas\Entities\Reserva;
@@ -38,6 +41,7 @@ use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 use Reservas\Domain\Disponibilidade\Repositories\DisponibilidadeRepositoryInterface;
 use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 use Reservas\Domain\Reservas\Repositories\ReservaRepositoryInterface;
+use Reservas\Infrastructure\Events\EventManager;
 
 class ReservasServiceProvider extends AbstractServiceProvider
 {
@@ -47,6 +51,7 @@ class ReservasServiceProvider extends AbstractServiceProvider
         ReservaRepositoryInterface::class,
         PedidoRepositoryInterface::class,
         PedidoItemRepositoryInterface::class,
+        EventManagerInterface::class,
     ];
 
     /**
@@ -57,6 +62,12 @@ class ReservasServiceProvider extends AbstractServiceProvider
      * @return void
      */
     public function register()
+    {
+        $this->registerRepositories();
+        $this->registerEvents();
+    }
+
+    private function registerRepositories(): void
     {
         /** @var Container $container */
         $container = $this->getContainer();
@@ -84,6 +95,26 @@ class ReservasServiceProvider extends AbstractServiceProvider
         $container->add(
             PedidoItemRepositoryInterface::class,
             RepositoryFactory::create(PedidoItem::class)
+        );
+    }
+
+    private function registerEvents(): void
+    {
+        /** @var Container $container */
+        $container = $this->getContainer();
+
+        $container->add(
+            EventManagerInterface::class,
+            function () use ($container) {
+                $event_manager = new EventManager($container);
+
+                $event_manager->addLitener(
+                    PagamentoPedidoConfirmado::class,
+                    EnviarEmailConfirmacaoPedido::class
+                );
+
+                return $event_manager;
+            }
         );
     }
 }

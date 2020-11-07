@@ -23,24 +23,27 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
+namespace Reservas\Tests\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers;
 
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\Domain\Pedidos\Exceptions\PedidoNaoEncontradoException;
+use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\DetalhePedidoController;
 use Reservas\Tests\Helpers\PedidoTesteHelper;
 use Reservas\Tests\ReservasTestCase;
 use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
 use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -80,11 +83,10 @@ class DetalhePedidoControllerTest extends ReservasTestCase
 
     /**
      * @param DetalhePedidoController $controller
-     * @throws ContextoInvalidoException
-     * @throws ORMException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
      * @throws DBALException
+     * @throws ORMException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      * @covers ::detalhePedido
      * @depends test__construct
      */
@@ -105,11 +107,10 @@ class DetalhePedidoControllerTest extends ReservasTestCase
 
     /**
      * @param DetalhePedidoController $controller
-     * @throws ContextoInvalidoException
      * @throws DBALException
      * @throws ORMException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      * @covers ::formConfirmarPgtoPedido
      * @depends test__construct
      */
@@ -164,11 +165,10 @@ class DetalhePedidoControllerTest extends ReservasTestCase
 
     /**
      * @param DetalhePedidoController $controller
-     * @throws ContextoInvalidoException
      * @throws DBALException
      * @throws ORMException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      * @covers ::formCancelarPedido
      * @depends test__construct
      */
@@ -219,5 +219,112 @@ class DetalhePedidoControllerTest extends ReservasTestCase
             $this->assertEquals('atencao', $json->retorno);
             $this->assertRegExp('~Pedido não encontrado com o ID informado: \d+.~', $json->mensagem);
         }
+    }
+
+    /**
+     * @test
+     * @param DetalhePedidoController $controller
+     * @throws DBALException
+     * @throws ORMException
+     * @depends test__construct
+     */
+    public function deve_confirmar_pagamento_do_pedido(DetalhePedidoController $controller)
+    {
+        $query = "
+            insert into reservas.Pedido (
+                nome, 
+                cpf, 
+                email, 
+                telefone, 
+                valor_total, 
+                forma_pagamento,
+                status
+            ) values (
+                'Diego Lepera',
+                '360.105.668-27',
+                'dlepera88@gmail.com',
+                '(61) 9 8350-3517',
+                100.00,
+                'e.Rede',
+                'Pendente'
+            )
+        ";
+
+        $conexao = EntityManagerX::getInstance()->getConnection();
+        $conexao->executeQuery($query);
+        $pedido_id = $conexao->lastInsertId();
+
+        $checkin = (new DateTime)->modify('+1 day');
+        $checkout = (new DateTime)->modify('+3 days');
+
+        $query = '
+            insert into reservas.PedidoItem (
+                pedido_id, 
+                quarto_id, 
+                checkin, 
+                checkout, 
+                quantidade, 
+                quantidade_adultos, 
+                quantidade_criancas, 
+                valor_total
+            ) values (
+                :pedido_id,
+                7,
+                :checkin,
+                :checkout,
+                1,
+                1,
+                0,
+                100.00
+            )
+        ';
+
+        $sql = $conexao->prepare($query);
+        $sql->bindValue(':pedido_id', $pedido_id, ParameterType::INTEGER);
+        $sql->bindValue(':checkin', $checkin->format('Y-m-d'), ParameterType::STRING);
+        $sql->bindValue(':checkout', $checkout->format('Y-m-d'), ParameterType::STRING);
+        $sql->execute();
+
+        $conexao->executeQuery('delete from reservas.Disponibilidade where quarto_id = 7');
+
+        $periodo = new DatePeriod($checkin, new DateInterval('P1D'), $checkout);
+
+        $values = [];
+        foreach ($periodo as $data) {
+            $values[] = "('{$data->format('Y-m-d')}', 7, 1, 0)";
+        }
+
+        $query = 'insert into reservas.Disponibilidade (data, quarto_id, quantidade, desconto) values ';
+        $query .= implode(', ', $values);
+        $conexao->executeQuery($query);
+
+        $conexao->executeQuery('
+            insert into reservas.DisponibilidadeValor 
+            select
+                disponibilidade_id,
+                1,
+                100.00
+            from
+                reservas.Disponibilidade
+            where
+                quarto_id = 7
+        ');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getParsedBody')->willReturn([
+            'id' => $pedido_id,
+            'motivo' => 'Teste unitário'
+        ]);
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->confirmarPgtoPedido($request);
+        $this->assertInstanceOf(JsonResponse::class, $response);
+
+        $json = json_decode((string)$response->getBody());
+
+        $this->assertObjectHasAttribute('retorno', $json);
+        $this->assertObjectHasAttribute('mensagem', $json);
+        $this->assertObjectHasAttribute('sucesso', $json->retorno);
     }
 }
