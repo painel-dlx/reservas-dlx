@@ -285,6 +285,15 @@ class DetalhePedidoControllerTest extends ReservasTestCase
         $sql->bindValue(':checkout', $checkout->format('Y-m-d'), ParameterType::STRING);
         $sql->execute();
 
+        $query = "
+            insert into reservas.PedidoCartao (pedido_id, dono, numero_cartao, validade, codigo_seguranca, valor) values 
+                (:pedido_id, 'Diego Lepera', '1234-5678-9012-3456', '10/2029', '123', 100.00)
+        ";
+
+        $sql = $conexao->prepare($query);
+        $sql->bindValue(':pedido_id', $pedido_id, ParameterType::INTEGER);
+        $sql->execute();
+
         $conexao->executeQuery('delete from reservas.Disponibilidade where quarto_id = 7');
 
         $periodo = new DatePeriod($checkin, new DateInterval('P1D'), $checkout);
@@ -325,6 +334,6 @@ class DetalhePedidoControllerTest extends ReservasTestCase
 
         $this->assertObjectHasAttribute('retorno', $json);
         $this->assertObjectHasAttribute('mensagem', $json);
-        $this->assertObjectHasAttribute('sucesso', $json->retorno);
+        $this->assertEquals('sucesso', $json->retorno);
     }
 }

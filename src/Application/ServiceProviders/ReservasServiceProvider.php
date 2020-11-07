@@ -33,6 +33,7 @@ use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Pedidos\Events\Listeners\EnviarEmailConfirmacaoPedido;
+use Reservas\Domain\Pedidos\Events\Listeners\MascararDadosCartao;
 use Reservas\Domain\Pedidos\Events\PagamentoPedidoConfirmado;
 use Reservas\Domain\Pedidos\Repositories\PedidoItemRepositoryInterface;
 use Reservas\Domain\Quartos\Entities\Quarto;
@@ -110,6 +111,7 @@ class ReservasServiceProvider extends AbstractServiceProvider
 
                 $event_manager->addLitener(
                     PagamentoPedidoConfirmado::class,
+                    MascararDadosCartao::class,
                     EnviarEmailConfirmacaoPedido::class
                 );
 
