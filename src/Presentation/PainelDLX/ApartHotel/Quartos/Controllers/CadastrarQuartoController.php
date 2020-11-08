@@ -39,9 +39,8 @@ use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommandHandler;
 use Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommand;
 use Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -58,12 +57,12 @@ class CadastrarQuartoController extends PainelDLXController
     private $transaction;
 
     /**
-     * ListaQuartosController constructor.
+     * CadastrarQuartoController constructor.
      * @param VileX $view
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -77,12 +76,10 @@ class CadastrarQuartoController extends PainelDLXController
     }
 
     /**
-     * Formulário para cadastrar um novo quarto.
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formNovoQuarto(ServerRequestInterface $request): ResponseInterface
     {

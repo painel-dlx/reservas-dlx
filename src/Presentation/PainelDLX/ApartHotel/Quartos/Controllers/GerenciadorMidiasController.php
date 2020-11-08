@@ -43,9 +43,8 @@ use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\Exceptions\ExcluirMidiaQuartoEx
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommand;
 use Reservas\UseCases\Quartos\ExcluirMidiaQuarto\ExcluirMidiaQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Exception\UploadedFileErrorException;
 use Zend\Diactoros\Response\JsonResponse;
@@ -58,12 +57,12 @@ class GerenciadorMidiasController extends PainelDLXController
     private $transaction;
 
     /**
-     * UploadMidiasController constructor.
+     * GerenciadorMidiasController constructor.
      * @param VileX $view
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -78,9 +77,8 @@ class GerenciadorMidiasController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
-     * @throws ContextoInvalidoException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formUpload(ServerRequestInterface $request): ResponseInterface
     {

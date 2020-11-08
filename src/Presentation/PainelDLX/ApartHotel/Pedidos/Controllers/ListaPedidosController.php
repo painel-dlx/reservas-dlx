@@ -35,9 +35,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Reservas\UseCases\Pedidos\ListaPedidos\ListaPedidosCommand;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 
 /**
@@ -58,7 +57,7 @@ class ListaPedidosController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -75,9 +74,8 @@ class ListaPedidosController extends PainelDLXController
      * @param ServerRequestInterface $request
      * @param array $args
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function listaPedidos(ServerRequestInterface $request, array $args = []): ResponseInterface
     {

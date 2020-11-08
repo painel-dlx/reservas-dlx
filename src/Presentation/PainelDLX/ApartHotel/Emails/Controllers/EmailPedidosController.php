@@ -32,9 +32,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommand;
 use Reservas\UseCases\Pedidos\GetPedidoPorId\GetPedidoPorIdCommandHandler;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 
 class EmailPedidosController
@@ -65,12 +64,10 @@ class EmailPedidosController
     }
 
     /**
-     * Enviar notificação para confirmação de pedido
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
-     * @throws ContextoInvalidoException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function notificacaoConfirmacaoPedido(ServerRequestInterface $request): ResponseInterface
     {
@@ -95,12 +92,10 @@ class EmailPedidosController
     }
 
     /**
-     * Enviar notificação para cancelamento de pedido
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function notificacaoCancelamentoPedido(ServerRequestInterface $request): ResponseInterface
     {

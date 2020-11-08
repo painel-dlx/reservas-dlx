@@ -48,9 +48,8 @@ use Reservas\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
 use Reservas\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use Reservas\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -67,12 +66,12 @@ class DetalheReservaController extends PainelDLXController
     private $transaction;
 
     /**
-     * ListaQuartosController constructor.
+     * DetalheReservaController constructor.
      * @param VileX $view
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -88,9 +87,8 @@ class DetalheReservaController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function detalhesReserva(ServerRequestInterface $request): ResponseInterface
     {
@@ -133,9 +131,8 @@ class DetalheReservaController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formConfirmarReserva(ServerRequestInterface $request): ResponseInterface
     {
@@ -171,9 +168,8 @@ class DetalheReservaController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formCancelarReserva(ServerRequestInterface $request): ResponseInterface
     {

@@ -45,9 +45,8 @@ use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler;
 use Reservas\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -69,7 +68,7 @@ class MapaDisponController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -85,10 +84,8 @@ class MapaDisponController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ContextoInvalidoException
-     * @throws ViewNaoEncontradaException
-     * @throws Exception
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function calendario(ServerRequestInterface $request): ResponseInterface
     {

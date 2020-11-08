@@ -40,9 +40,8 @@ use Reservas\UseCases\Quartos\EditarQuarto\EditarQuartoCommandHandler;
 use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -59,12 +58,12 @@ class EditarQuartoController extends PainelDLXController
     private $transaction;
 
     /**
-     * ListaQuartosController constructor.
+     * EditarQuartoController constructor.
      * @param VileX $view
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -78,12 +77,10 @@ class EditarQuartoController extends PainelDLXController
     }
 
     /**
-     * Formulário para editar as informações do quarto.
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
-     * @throws ContextoInvalidoException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formEditarQuarto(ServerRequestInterface $request): ResponseInterface
     {

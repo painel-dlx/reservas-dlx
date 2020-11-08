@@ -40,9 +40,8 @@ use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use Reservas\UseCases\Quartos\ListaQuartos\ListaQuartosCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -59,7 +58,7 @@ class ListaQuartosController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -74,9 +73,8 @@ class ListaQuartosController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function listaQuartos(ServerRequestInterface $request): ResponseInterface
     {

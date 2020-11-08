@@ -47,8 +47,6 @@ use Reservas\Domain\Reservas\Exceptions\ReservaInvalidaException;
 use Reservas\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
-use Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommand;
-use Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommand;
 use Reservas\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\UseCases\Pedidos\FindPedidoItemPorId\FindPedidoItemPorIdCommand;
@@ -364,9 +362,8 @@ class DetalhePedidoController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws ViewNaoEncontradaException
-     * @throws PaginaMestraNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function detalhamentoPeriodo(ServerRequestInterface $request): ResponseInterface
     {
