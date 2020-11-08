@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido;
+namespace Reservas\Domain\Pedidos\Events\Listeners;
 
 
 use PainelDLX\Application\Services\Exceptions\ErroAoEnviarEmailException;
@@ -32,58 +32,63 @@ use PainelDLX\Infrastructure\Services\Email\EnviarEmail;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Reservas\Domain\Pedidos\Entities\Pedido;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Reservas\Domain\Pedidos\Entities\PedidoHistorico;
+use Reservas\Domain\Pedidos\Events\Common\PedidoEvent;
+use Reservas\Domain\Pedidos\Events\Common\PedidoEventListener;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 
-class EnviarNotificacaoCancelamentoPedidoCommandHandler
+class EnviarEmailPedidoCancelado implements PedidoEventListener
 {
     /**
-     * @var PHPMailer
+     * @var VileX
      */
-    private $PHP_mailer;
+    private $vile_x;
     /**
      * @var ConfigSmtpRepositoryInterface
      */
     private $config_smtp_repository;
     /**
-     * @var VileX
+     * @var PHPMailer
      */
-    private $vile_x;
+    private $php_mailer;
 
     /**
-     * EnviarNotificacaoCancelamentoPedidoCommandHandler constructor.
-     * @param PHPMailer $PHP_mailer
-     * @param ConfigSmtpRepositoryInterface $config_smtp_repository
+     * EnviarEmailPedidoCancelado constructor.
      * @param VileX $vile_x
+     * @param PHPMailer $php_mailer
+     * @param ConfigSmtpRepositoryInterface $config_smtp_repository
      */
     public function __construct(
-        PHPMailer $PHP_mailer,
-        ConfigSmtpRepositoryInterface $config_smtp_repository,
-        VileX $vile_x
+        VileX $vile_x,
+        PHPMailer $php_mailer,
+        ConfigSmtpRepositoryInterface $config_smtp_repository
     ) {
-        $this->PHP_mailer = $PHP_mailer;
-        $this->config_smtp_repository = $config_smtp_repository;
         $this->vile_x = $vile_x;
+        $this->config_smtp_repository = $config_smtp_repository;
+        $this->php_mailer = $php_mailer;
     }
 
     /**
-     * @param EnviarNotificacaoCancelamentoPedidoCommand $command
-     * @throws ContextoInvalidoException
+     * @inheritDoc
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      * @throws ErroAoEnviarEmailException
      * @throws Exception
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
      */
-    public function handle(EnviarNotificacaoCancelamentoPedidoCommand $command)
+    public function handle(PedidoEvent $pedido_event): void
     {
-        $pedido = $command->getPedido();
+        $pedido = $pedido_event->getPedido();
         $config_smtp = $this->config_smtp_repository->findOneBy(['nome' => 'SMTP Gmail']);
 
-        $corpo = $this->gerarCorpoHtml($pedido, $command->getMotivo());
+        /** @var PedidoHistorico $ultimo_historico */
+        $ultimo_historico = $pedido->getHistorico()->last();
+        $motivo = $ultimo_historico->getMotivo();
 
-        $enviar_email = new EnviarEmail($this->PHP_mailer, $config_smtp, 'Seu pedido de reservas foi cancelado!', $corpo);
+        $corpo = $this->gerarCorpoHtml($pedido, $motivo);
+
+        $enviar_email = new EnviarEmail($this->php_mailer, $config_smtp, 'Seu pedido de reservas foi cancelado!', $corpo);
         $enviar_email->enviarPara($pedido->getEmail());
     }
 
@@ -91,14 +96,13 @@ class EnviarNotificacaoCancelamentoPedidoCommandHandler
      * @param Pedido $pedido
      * @param string $motivo
      * @return string
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     private function gerarCorpoHtml(Pedido $pedido, string $motivo): string
     {
-        $this->vile_x->setPaginaMestra('public/views/paginas-mestras/email-master.phtml');
-        $this->vile_x->setViewRoot('public/views/emails');
+        $this->vile_x->setPaginaMestra('../paginas-mestras/email-master');
+        $this->vile_x->setViewRoot('public/views/emails/');
 
         // Views
         $this->vile_x->addTemplate('topo');
@@ -112,8 +116,6 @@ class EnviarNotificacaoCancelamentoPedidoCommandHandler
 
         $response = $this->vile_x->render();
 
-        $corpo = (string)$response->getBody();
-
-        return $corpo;
+        return (string)$response->getBody();
     }
 }

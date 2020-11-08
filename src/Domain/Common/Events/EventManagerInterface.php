@@ -23,37 +23,20 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido;
+namespace Reservas\Domain\Common\Events;
 
 
-use Reservas\Domain\Pedidos\Entities\Pedido;
-
-/**
- * Class EnviarNotificacaoConfirmacaoPedidoCommand
- * @package Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido
- * @covers EnviarNotificacaoConfirmacaoPedidoCommandTest
- */
-class EnviarNotificacaoConfirmacaoPedidoCommand
+interface EventManagerInterface
 {
     /**
-     * @var Pedido
+     * @param string $nome_evento
+     * @param string ...$listeners
+     * @return EventManagerInterface
      */
-    private $pedido;
+    public function addLitener(string $nome_evento, string ... $listeners): EventManagerInterface;
 
     /**
-     * EnviarNotificacaoConfirmacaoPedidoCommand constructor.
-     * @param Pedido $pedido
+     * @param Event $event
      */
-    public function __construct(Pedido $pedido)
-    {
-        $this->pedido = $pedido;
-    }
-
-    /**
-     * @return Pedido
-     */
-    public function getPedido(): Pedido
-    {
-        return $this->pedido;
-    }
+    public function dispatch(Event $event): void;
 }

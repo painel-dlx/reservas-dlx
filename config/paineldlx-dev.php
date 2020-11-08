@@ -66,9 +66,9 @@ return [
         'conexao' => [
             'dbname' => 'reservas',
             'user' => 'root',
-            'password' => '$d5Ro0t',
-            'host' => 'localhost',
-            'driver' => 'pdo_mysql',
+            'password' => 'root',
+            'host' => 'mysql56',
+            'driver' => 'pdo_mysql'
         ]
     ]
 ];

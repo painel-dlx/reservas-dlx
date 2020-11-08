@@ -23,51 +23,43 @@
  * SOFTWARE.
  */
 
-namespace Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido;
+namespace Reservas\Domain\Pedidos\Events\Listeners;
 
 
-use Reservas\Domain\Pedidos\Entities\Pedido;
+use Reservas\Domain\Pedidos\Events\Common\PedidoEvent;
+use Reservas\Domain\Pedidos\Events\Common\PedidoEventListener;
+use Reservas\Domain\Pedidos\Repositories\PedidoRepositoryInterface;
 
-/**
- * Class EnviarNotificacaoCancelamentoPedidoCommand
- * @package Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido
- * @covers EnviarNotificacaoCancelamentoPedidoCommandTest
- */
-class EnviarNotificacaoCancelamentoPedidoCommand
+class MascararDadosCartao implements PedidoEventListener
 {
     /**
-     * @var Pedido
+     * @var PedidoRepositoryInterface
      */
-    private $pedido;
-    /**
-     * @var string
-     */
-    private $motivo;
+    private $pedido_repository;
 
     /**
-     * EnviarNotificacaoCancelamentoPedidoCommand constructor.
-     * @param Pedido $pedido
-     * @param string $motivo
+     * MascararDadosCartao constructor.
+     * @param PedidoRepositoryInterface $pedido_repository
      */
-    public function __construct(Pedido $pedido, string $motivo)
+    public function __construct(PedidoRepositoryInterface $pedido_repository)
     {
-        $this->pedido = $pedido;
-        $this->motivo = $motivo;
+        $this->pedido_repository = $pedido_repository;
     }
 
     /**
-     * @return Pedido
+     * @inheritDoc
      */
-    public function getPedido(): Pedido
+    public function handle(PedidoEvent $pedido_event): void
     {
-        return $this->pedido;
-    }
+        $pedido = $pedido_event->getPedido();
 
-    /**
-     * @return string
-     */
-    public function getMotivo(): string
-    {
-        return $this->motivo;
+        if ($pedido->isPendente()) {
+            return;
+        }
+
+        $cartao = $pedido->getCartao();
+        $cartao->mascararDados();
+
+        $this->pedido_repository->update($cartao);
     }
 }

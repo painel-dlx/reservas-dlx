@@ -182,4 +182,15 @@ class PedidoCartao extends Entity
         $this->bandeira = (new IdentificarBandeiraCartao())->executar($this->getNumeroCartao());
         return $this;
     }
+
+    /**
+     * @return $this
+     */
+    public function mascararDados(): self
+    {
+        $this->numero_cartao = preg_replace('~^([0-9]{4}-){3}~', '****-****-****-', $this->numero_cartao);
+        $this->codigo_seguranca = '***';
+
+        return $this;
+    }
 }
