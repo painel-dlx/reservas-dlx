@@ -44,7 +44,7 @@ return [
         'service-providers' => include 'service_providers.php',
         'mapping' => include 'mapping.php',
         'favicon' => PainelDLX::$dir . '/src/Presentation/Site/public/imgs/favicon.png',
-        'versao' => '1.1.2'
+        'versao' => '1.1.5'
     ],
 
     'bd' => [
