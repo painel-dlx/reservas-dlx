@@ -99,7 +99,6 @@ class EditarQuartoController extends PainelDLXController
             $this->view->addTemplate('quartos/form_quarto');
 
             // Parâmetros
-            $this->view->setAtributo('titulo-pagina', 'Editar quarto');
             $this->view->setAtributo('form-action', '/painel-dlx/apart-hotel/quartos/atualizar-informacoes');
             $this->view->setAtributo('quarto', $quarto);
 
@@ -110,11 +109,12 @@ class EditarQuartoController extends PainelDLXController
         } catch (QuartoNaoEncontradoException | UserException $e) {
             $tipo = $e instanceof QuartoNaoEncontradoException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
-                'texto' => $e->getMessage()
+                'mensagem' => $e->getMessage()
             ]);
+        } finally {
+            $this->view->setAtributo('titulo-pagina', 'Editar quarto');
         }
 
         return $this->view->render();

@@ -94,8 +94,7 @@ class WidgetPedidoController extends PainelDLXController
 
             $this->view->addTemplate('pedidos/widgets/quantidade_pedidos');
         } catch (Throwable $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);

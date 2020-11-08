@@ -117,8 +117,7 @@ class ListaReservasController extends PainelDLXController
             // Views
             $this->view->addTemplate('reservas/lista_reservas');
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);

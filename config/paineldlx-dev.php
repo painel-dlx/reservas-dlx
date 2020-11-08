@@ -49,7 +49,7 @@ return [
         'orm' => 'doctrine',
         'mapping' => 'yaml',
         'dev-mode' => true,
-        //'debug' => EchoSQLLogger::class,
+//        'debug' => EchoSQLLogger::class,
         'dir' => [
             'src/Infrastructure/ORM/Doctrine/Mappings',
             'src/Infrastructure/ORM/Doctrine/Repositories',

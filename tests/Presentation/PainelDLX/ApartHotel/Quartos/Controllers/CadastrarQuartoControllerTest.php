@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
+namespace Reservas\Tests\Presentation\PainelDLX\ApartHotel\Quartos\Controllers;
 
 use Exception;
 use PainelDLX\Tests\TestCase\TesteComTransaction;
@@ -34,7 +34,6 @@ use Reservas\Tests\ReservasTestCase;
 use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
 use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
-use Vilex\Exceptions\ViewNaoEncontradaException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -72,10 +71,7 @@ class CadastrarQuartoControllerTest extends ReservasTestCase
      */
     public function test_FormNovoQuarto_deve_retornar_HtmlResponse(CadastrarQuartoController $controller)
     {
-        $request = $this->createMock(ServerRequestInterface::class);
-
-        /** @var ServerRequestInterface $request */
-        $response = $controller->formNovoQuarto($request);
+        $response = $controller->formNovoQuarto();
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
@@ -96,7 +92,7 @@ class CadastrarQuartoControllerTest extends ReservasTestCase
             'qtde' => 1,
             'tamanho_m2' => 10,
             'valor_min' => 12.34,
-            'link' => '/teste/unitario'
+            'link' => '/teste/' . uniqid()
         ]);
 
         $session = SessionFactory::createPHPSession();

@@ -92,7 +92,6 @@ class CadastrarQuartoController extends PainelDLXController
 
         try {
             // Parâmetros
-            $this->view->setAtributo('titulo-pagina', 'Cadastrar novo quarto');
             $this->view->setAtributo('form-action', '/painel-dlx/apart-hotel/quartos/salvar-novo');
             $this->view->setAtributo('quarto', $quarto);
 
@@ -104,11 +103,12 @@ class CadastrarQuartoController extends PainelDLXController
             $this->view->adicionarJS('/vendor/ckeditor/ckeditor/ckeditor.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
             $this->view->adicionarJS('public/js/apart-hotel-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
+        } finally {
+            $this->view->setAtributo('titulo-pagina', 'Cadastrar novo quarto');
         }
 
         return $this->view->render();

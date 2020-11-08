@@ -118,10 +118,9 @@ class ListaQuartosController extends PainelDLXController
             // JS
             $this->view->addArquivoJS('public/js/apart-hotel-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 

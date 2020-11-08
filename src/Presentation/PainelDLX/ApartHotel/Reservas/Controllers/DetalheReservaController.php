@@ -118,8 +118,7 @@ class DetalheReservaController extends PainelDLXController
         } catch (ReservaNaoEncontradaException | UserException $e) {
             $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -154,8 +153,7 @@ class DetalheReservaController extends PainelDLXController
         } catch (ReservaNaoEncontradaException | UserException $e) {
             $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -191,7 +189,10 @@ class DetalheReservaController extends PainelDLXController
         } catch (ReservaNaoEncontradaException | ReservaInvalidaException $e) {
             $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
+            $this->view->addTemplate('common/mensagem_usuario', [
+                'tipo' => $tipo,
+                'texto' => $e->getMessage()
+            ]);
             $this->view->setAtributo('mensagem', [
                 'tipo' => $tipo,
                 'mensagem' => $e->getMessage()
@@ -231,10 +232,8 @@ class DetalheReservaController extends PainelDLXController
             /* @see GetUsuarioPeloIdCommandHandler */
             $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getId()));
 
-            $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
-                /* @see ConfirmarReservaCommandHandler */
-                $this->command_bus->handle(new ConfirmarReservaCommand($reserva, $usuario, $motivo));
-            });
+            /* @see ConfirmarReservaCommandHandler */
+            $this->command_bus->handle(new ConfirmarReservaCommand($reserva, $usuario, $motivo));
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} confirmada com sucesso!";
@@ -278,10 +277,8 @@ class DetalheReservaController extends PainelDLXController
             /* @see GetUsuarioPeloIdCommandHandler */
             $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getId()));
 
-            $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
-                /* @see CancelarReservaCommandHandler */
-                $this->command_bus->handle(new CancelarReservaCommand($reserva, $usuario, $motivo));
-            });
+            /* @see CancelarReservaCommandHandler */
+            $this->command_bus->handle(new CancelarReservaCommand($reserva, $usuario, $motivo));
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} cancelada com sucesso!";

@@ -28,7 +28,6 @@ namespace Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers
 
 use DateTime;
 use DLX\Contracts\TransactionInterface;
-use DLX\Core\Configure;
 use DLX\Core\Exceptions\UserException;
 use Exception;
 use League\Tactician\CommandBus;
@@ -102,8 +101,7 @@ class DisponPorPeriodoController extends PainelDLXController
             $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_RESERVAS_DLX);
             $this->view->adicionarJS('public/js/apart-hotel-min.js',VERSAO_RESERVAS_DLX);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);
@@ -135,8 +133,7 @@ class DisponPorPeriodoController extends PainelDLXController
             // Parâmetros
             $this->view->setAtributo('quarto', $quarto);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);

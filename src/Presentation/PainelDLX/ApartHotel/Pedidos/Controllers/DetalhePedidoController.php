@@ -136,8 +136,7 @@ class DetalhePedidoController extends PainelDLXController
         } catch (PedidoNaoEncontradoException | UserException $e) {
             $tipo = $e instanceof PedidoNaoEncontradoException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -172,8 +171,7 @@ class DetalhePedidoController extends PainelDLXController
         } catch (PedidoNaoEncontradoException | UserException $e) {
             $tipo = $e instanceof PedidoNaoEncontradoException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -260,8 +258,7 @@ class DetalhePedidoController extends PainelDLXController
         } catch (PedidoNaoEncontradoException | UserException $e) {
             $tipo = $e instanceof PedidoNaoEncontradoException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -380,8 +377,7 @@ class DetalhePedidoController extends PainelDLXController
             // View
             $this->view->addTemplate('pedidos/detalhe_periodo');
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);

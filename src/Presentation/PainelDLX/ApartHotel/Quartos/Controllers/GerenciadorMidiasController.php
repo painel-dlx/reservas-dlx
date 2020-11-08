@@ -92,8 +92,7 @@ class GerenciadorMidiasController extends PainelDLXController
             $this->view->setAtributo('titulo-pagina', 'Upload de mídias');
             $this->view->setAtributo('quarto', $quarto);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);
