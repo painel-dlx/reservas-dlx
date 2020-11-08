@@ -39,9 +39,8 @@ use Reservas\UseCases\Quartos\CriarNovoQuarto\CriarNovoQuartoCommandHandler;
 use Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommand;
 use Reservas\UseCases\Quartos\GerarDisponibilidadesQuarto\GerarDisponibilidadesQuartoCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -58,12 +57,12 @@ class CadastrarQuartoController extends PainelDLXController
     private $transaction;
 
     /**
-     * ListaQuartosController constructor.
+     * CadastrarQuartoController constructor.
      * @param VileX $view
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -72,19 +71,16 @@ class CadastrarQuartoController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
     /**
-     * Formulário para cadastrar um novo quarto.
-     * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
-    public function formNovoQuarto(ServerRequestInterface $request): ResponseInterface
+    public function formNovoQuarto(): ResponseInterface
     {
         /** @var Quarto $quarto */
         $quarto = $this->session->get('editando:quarto');
@@ -96,7 +92,6 @@ class CadastrarQuartoController extends PainelDLXController
 
         try {
             // Parâmetros
-            $this->view->setAtributo('titulo-pagina', 'Cadastrar novo quarto');
             $this->view->setAtributo('form-action', '/painel-dlx/apart-hotel/quartos/salvar-novo');
             $this->view->setAtributo('quarto', $quarto);
 
@@ -104,15 +99,16 @@ class CadastrarQuartoController extends PainelDLXController
             $this->view->addTemplate('quartos/form_quarto');
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('/vendor/ckeditor/ckeditor/ckeditor.js');
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js');
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('/vendor/ckeditor/ckeditor/ckeditor.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('public/js/apart-hotel-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
+        } finally {
+            $this->view->setAtributo('titulo-pagina', 'Cadastrar novo quarto');
         }
 
         return $this->view->render();

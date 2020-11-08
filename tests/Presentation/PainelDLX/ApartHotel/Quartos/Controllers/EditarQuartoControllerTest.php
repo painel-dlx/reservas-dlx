@@ -23,7 +23,7 @@
  * SOFTWARE.
  */
 
-namespace Reservas\Tests\Presentation\Site\ApartHotel\Controllers;
+namespace Reservas\Tests\Presentation\PainelDLX\ApartHotel\Quartos\Controllers;
 
 use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
@@ -36,9 +36,8 @@ use Reservas\Tests\ReservasTestCase;
 use SechianeX\Exceptions\SessionAdapterInterfaceInvalidaException;
 use SechianeX\Exceptions\SessionAdapterNaoEncontradoException;
 use SechianeX\Factories\SessionFactory;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -73,6 +72,7 @@ class EditarQuartoControllerTest extends ReservasTestCase
      * @throws DBALException
      * @throws ORMException
      * @throws Exception
+     * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function getQuartoRandom()
     {
@@ -96,11 +96,11 @@ class EditarQuartoControllerTest extends ReservasTestCase
 
     /**
      * @param EditarQuartoController $controller
-     * @throws ContextoInvalidoException
      * @throws DBALException
      * @throws ORMException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
+     * @throws \Doctrine\DBAL\Driver\Exception
      * @covers ::formEditarQuarto
      * @depends test__construct
      */
@@ -118,9 +118,8 @@ class EditarQuartoControllerTest extends ReservasTestCase
 
     /**
      * @param EditarQuartoController $controller
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      * @covers ::formEditarQuarto
      * @depends test__construct
      */
@@ -140,6 +139,7 @@ class EditarQuartoControllerTest extends ReservasTestCase
      * @param EditarQuartoController $controller
      * @throws DBALException
      * @throws ORMException
+     * @throws \Doctrine\DBAL\Driver\Exception
      * @covers ::editarInformacoesQuarto
      * @depends test__construct
      */
@@ -156,7 +156,7 @@ class EditarQuartoControllerTest extends ReservasTestCase
             'qtde' => 1,
             'tamanho_m2' => 10,
             'valor_min' => 10.00,
-            'link' => '/teste/teste'
+            'link' => '/teste/' . uniqid()
         ]);
 
         /** @var ServerRequestInterface $request */

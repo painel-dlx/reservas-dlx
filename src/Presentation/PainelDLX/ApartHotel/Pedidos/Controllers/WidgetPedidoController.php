@@ -27,7 +27,6 @@ namespace Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers;
 
 
 use DLX\Contracts\TransactionInterface;
-use DLX\Core\Configure;
 use League\Tactician\CommandBus;
 use PainelDLX\Presentation\Web\Common\Controllers\PainelDLXController;
 use Psr\Http\Message\ResponseInterface;
@@ -36,9 +35,8 @@ use Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus\QuantidadePedidosPorSta
 use Reservas\UseCases\Pedidos\QuantidadePedidosPorStatus\QuantidadePedidosPorStatusCommandHandler;
 use SechianeX\Contracts\SessionInterface;
 use Throwable;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 
 /**
@@ -59,7 +57,7 @@ class WidgetPedidoController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -68,7 +66,7 @@ class WidgetPedidoController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
@@ -76,9 +74,8 @@ class WidgetPedidoController extends PainelDLXController
      * @param ServerRequestInterface $request
      * @param array $args
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
+     * @throws PaginaMestraInvalidaException
      */
     public function quantidadePedidosPorStatus(ServerRequestInterface $request, array $args = []): ResponseInterface
     {
@@ -97,8 +94,7 @@ class WidgetPedidoController extends PainelDLXController
 
             $this->view->addTemplate('pedidos/widgets/quantidade_pedidos');
         } catch (Throwable $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);

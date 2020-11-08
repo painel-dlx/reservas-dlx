@@ -47,8 +47,6 @@ use Reservas\Domain\Reservas\Exceptions\ReservaInvalidaException;
 use Reservas\Domain\Reservas\Exceptions\VisualizarCpfException;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommand;
 use Reservas\UseCases\Clientes\MostrarCpfCompletoPedido\MostrarCpfCompletoPedidoCommandHandler;
-use Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommand;
-use Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommand;
 use Reservas\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
 use Reservas\UseCases\Pedidos\FindPedidoItemPorId\FindPedidoItemPorIdCommand;
@@ -95,7 +93,7 @@ class DetalhePedidoController extends PainelDLXController
         EventManagerInterface $event_manager
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
         $this->event_manager = $event_manager;
     }
@@ -133,13 +131,12 @@ class DetalhePedidoController extends PainelDLXController
             $this->view->addTemplate('pedidos/det_pedido');
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js');
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('public/js/apart-hotel-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (PedidoNaoEncontradoException | UserException $e) {
             $tipo = $e instanceof PedidoNaoEncontradoException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -174,8 +171,7 @@ class DetalhePedidoController extends PainelDLXController
         } catch (PedidoNaoEncontradoException | UserException $e) {
             $tipo = $e instanceof PedidoNaoEncontradoException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -262,8 +258,7 @@ class DetalhePedidoController extends PainelDLXController
         } catch (PedidoNaoEncontradoException | UserException $e) {
             $tipo = $e instanceof PedidoNaoEncontradoException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -364,9 +359,8 @@ class DetalhePedidoController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws ViewNaoEncontradaException
-     * @throws PaginaMestraNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function detalhamentoPeriodo(ServerRequestInterface $request): ResponseInterface
     {
@@ -383,8 +377,7 @@ class DetalhePedidoController extends PainelDLXController
             // View
             $this->view->addTemplate('pedidos/detalhe_periodo');
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);

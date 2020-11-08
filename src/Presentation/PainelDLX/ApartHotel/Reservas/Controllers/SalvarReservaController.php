@@ -43,9 +43,8 @@ use Reservas\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use Reservas\UseCases\Reservas\SalvarReserva\SalvarReservaCommand;
 use Reservas\UseCases\Reservas\SalvarReserva\SalvarReservaCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -62,7 +61,7 @@ class SalvarReservaController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -71,18 +70,16 @@ class SalvarReservaController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws ViewNaoEncontradaException
-     * @throws PaginaMestraNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
-    public function formReservarQuarto(ServerRequestInterface $request): ResponseInterface
+    public function formReservarQuarto(): ResponseInterface
     {
         try {
             /** @var Quarto[] $lista_quartos */
@@ -100,13 +97,12 @@ class SalvarReservaController extends PainelDLXController
             $this->view->setAtributo('lista-quartos', $lista_quartos);
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-mascara/jquery.mascara.plugin-min.js');
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-mascara/jquery.mascara.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
-                'mensagem' => $e->getMessage()
+                'texto' => $e->getMessage()
             ]);
         }
 
@@ -148,10 +144,9 @@ class SalvarReservaController extends PainelDLXController
             $reserva->setEmail($post['email']);
             $reserva->setOrigem('Painel DLX');
 
-            $this->transaction->transactional(function () use ($reserva) {
-                /* @see SalvarReservaCommandHandler */
-                $this->command_bus->handle(new SalvarReservaCommand($reserva));
-            });
+            /* @see SalvarReservaCommandHandler */
+            $this->command_bus->handle(new SalvarReservaCommand($reserva));
+
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} gerada com sucesso!";

@@ -67,8 +67,8 @@ class ReservasTestCase extends TestCase
     }
 
     /**
-     * @throws MappingException
      * @throws ORMException
+     * @throws \Doctrine\Persistence\Mapping\MappingException
      */
     protected function tearDown()
     {

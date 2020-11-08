@@ -69,7 +69,6 @@ class MostrarCpfCompletoCommandHandlerTest extends ReservasTestCase
      * @throws DBALException
      * @throws ORMException
      * @throws VisualizarCpfException
-     * @throws UsuarioJaPossuiGrupoException
      * @covers ::handle
      * @depends test__construct
      */

@@ -216,7 +216,7 @@ class Disponibilidade extends Entity
         /** @var DisponibilidadeValor|null $dispon_valor */
         $dispon_valor = $this->getValores()->filter(function (DisponibilidadeValor $dispon_valor) use ($qtde_pessoas) {
             return $dispon_valor->getQuantidadePessoas() === $qtde_pessoas;
-        })->first();
+        })->first() ?: null;
 
         return !is_null($dispon_valor) ? $dispon_valor->getValorComDesconto() : null;
     }

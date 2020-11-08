@@ -48,9 +48,8 @@ use Reservas\UseCases\Reservas\ConfirmarReserva\ConfirmarReservaCommand;
 use Reservas\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommand;
 use Reservas\UseCases\Reservas\GetReservaPorId\GetReservaPorIdCommandHandler;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -67,12 +66,12 @@ class DetalheReservaController extends PainelDLXController
     private $transaction;
 
     /**
-     * ListaQuartosController constructor.
+     * DetalheReservaController constructor.
      * @param VileX $view
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -81,16 +80,15 @@ class DetalheReservaController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function detalhesReserva(ServerRequestInterface $request): ResponseInterface
     {
@@ -115,13 +113,12 @@ class DetalheReservaController extends PainelDLXController
             $this->view->addTemplate('reservas/det_reserva');
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js');
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('public/js/apart-hotel-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (ReservaNaoEncontradaException | UserException $e) {
             $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -133,9 +130,8 @@ class DetalheReservaController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formConfirmarReserva(ServerRequestInterface $request): ResponseInterface
     {
@@ -157,8 +153,7 @@ class DetalheReservaController extends PainelDLXController
         } catch (ReservaNaoEncontradaException | UserException $e) {
             $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => $tipo,
                 'texto' => $e->getMessage()
             ]);
@@ -171,9 +166,8 @@ class DetalheReservaController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function formCancelarReserva(ServerRequestInterface $request): ResponseInterface
     {
@@ -195,7 +189,10 @@ class DetalheReservaController extends PainelDLXController
         } catch (ReservaNaoEncontradaException | ReservaInvalidaException $e) {
             $tipo = $e instanceof ReservaNaoEncontradaException ? 'atencao' : 'erro';
 
-            $this->view->addTemplate('common/mensagem_usuario');
+            $this->view->addTemplate('common/mensagem_usuario', [
+                'tipo' => $tipo,
+                'texto' => $e->getMessage()
+            ]);
             $this->view->setAtributo('mensagem', [
                 'tipo' => $tipo,
                 'mensagem' => $e->getMessage()
@@ -235,10 +232,8 @@ class DetalheReservaController extends PainelDLXController
             /* @see GetUsuarioPeloIdCommandHandler */
             $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getId()));
 
-            $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
-                /* @see ConfirmarReservaCommandHandler */
-                $this->command_bus->handle(new ConfirmarReservaCommand($reserva, $usuario, $motivo));
-            });
+            /* @see ConfirmarReservaCommandHandler */
+            $this->command_bus->handle(new ConfirmarReservaCommand($reserva, $usuario, $motivo));
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} confirmada com sucesso!";
@@ -282,10 +277,8 @@ class DetalheReservaController extends PainelDLXController
             /* @see GetUsuarioPeloIdCommandHandler */
             $usuario = $this->command_bus->handle(new GetUsuarioPeloIdCommand($usuario->getId()));
 
-            $this->transaction->transactional(function () use ($reserva, $usuario, $motivo) {
-                /* @see CancelarReservaCommandHandler */
-                $this->command_bus->handle(new CancelarReservaCommand($reserva, $usuario, $motivo));
-            });
+            /* @see CancelarReservaCommandHandler */
+            $this->command_bus->handle(new CancelarReservaCommand($reserva, $usuario, $motivo));
 
             $json['retorno'] = 'sucesso';
             $json['mensagem'] = "Reserva #{$reserva->getId()} cancelada com sucesso!";

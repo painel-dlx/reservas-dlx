@@ -54,7 +54,8 @@ class SalvarDisponPeriodoCommandTest extends ReservasTestCase
             $data_final,
             $quarto,
             1,
-            [12.34]
+            [12.34],
+            10
         );
 
         $this->assertInstanceOf(SalvarDisponPeriodoCommand::class, $command);

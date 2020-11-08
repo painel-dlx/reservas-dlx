@@ -28,7 +28,6 @@ namespace Reservas\Presentation\PainelDLX\ApartHotel\Disponibilidade\Controllers
 
 use DateTime;
 use DLX\Contracts\TransactionInterface;
-use DLX\Core\Configure;
 use DLX\Core\Exceptions\UserException;
 use Exception;
 use League\Tactician\CommandBus;
@@ -41,9 +40,8 @@ use Reservas\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCom
 use Reservas\UseCases\Quartos\GetQuartoPorId\GetQuartoPorIdCommand;
 use Reservas\UseCases\Quartos\ListaQuartos\ListaQuartosCommand;
 use SechianeX\Contracts\SessionInterface;
-use Vilex\Exceptions\ContextoInvalidoException;
-use Vilex\Exceptions\PaginaMestraNaoEncontradaException;
-use Vilex\Exceptions\ViewNaoEncontradaException;
+use Vilex\Exceptions\PaginaMestraInvalidaException;
+use Vilex\Exceptions\TemplateInvalidoException;
 use Vilex\VileX;
 use Zend\Diactoros\Response\JsonResponse;
 
@@ -65,7 +63,7 @@ class DisponPorPeriodoController extends PainelDLXController
      * @param CommandBus $commandBus
      * @param SessionInterface $session
      * @param TransactionInterface $transaction
-     * @throws ViewNaoEncontradaException
+     * @throws TemplateInvalidoException
      */
     public function __construct(
         VileX $view,
@@ -75,19 +73,17 @@ class DisponPorPeriodoController extends PainelDLXController
     ) {
         parent::__construct($view, $commandBus, $session);
 
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
 
         $this->transaction = $transaction;
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
-    public function formDisponPorPeriodo(ServerRequestInterface $request): ResponseInterface
+    public function formDisponPorPeriodo(): ResponseInterface
     {
         try {
             /** @var array $lista_quartos */
@@ -102,12 +98,10 @@ class DisponPorPeriodoController extends PainelDLXController
             $this->view->setAtributo('lista-quartos', $lista_quartos);
 
             // JS
-            $versao = Configure::get('app', 'versao');
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', false, VERSAO_RESERVAS_DLX);
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js', false, VERSAO_RESERVAS_DLX);
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_RESERVAS_DLX);
+            $this->view->adicionarJS('public/js/apart-hotel-min.js',VERSAO_RESERVAS_DLX);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);
@@ -119,9 +113,8 @@ class DisponPorPeriodoController extends PainelDLXController
     /**
      * @param ServerRequestInterface $request
      * @return ResponseInterface
-     * @throws ContextoInvalidoException
-     * @throws PaginaMestraNaoEncontradaException
-     * @throws ViewNaoEncontradaException
+     * @throws PaginaMestraInvalidaException
+     * @throws TemplateInvalidoException
      */
     public function disponConfigQuarto(ServerRequestInterface $request): ResponseInterface
     {
@@ -140,8 +133,7 @@ class DisponPorPeriodoController extends PainelDLXController
             // Parâmetros
             $this->view->setAtributo('quarto', $quarto);
         } catch (UserException $e) {
-            $this->view->addTemplate('common/mensagem_usuario');
-            $this->view->setAtributo('mensagem', [
+            $this->view->addTemplate('common/mensagem_usuario', [
                 'tipo' => 'erro',
                 'texto' => $e->getMessage()
             ]);

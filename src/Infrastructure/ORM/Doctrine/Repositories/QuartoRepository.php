@@ -29,7 +29,10 @@ namespace Reservas\Infrastructure\ORM\Doctrine\Repositories;
 use DateTime;
 use DLX\Infrastructure\ORM\Doctrine\Repositories\EntityRepository;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\ParameterType;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
 use Reservas\Domain\Quartos\Entities\Quarto;
@@ -47,14 +50,22 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
      * Verificar se existe outro quarto com o mesmo nome.
      * @param Quarto $quarto
      * @return bool
+     * @throws NoResultException
+     * @throws NonUniqueResultException
      */
     public function existsOutroQuartoComMesmoNome(Quarto $quarto): bool
     {
-        $lista = $this->findBy(['nome' => $quarto->getNome()]);
+        $qb = $this->createQueryBuilder('q')
+            ->select('COUNT(q.id)')
+            ->where('q.deletado = 0')
+            ->andWhere('q.nome = :nome')
+            ->andWhere('q.id <> :quarto_id')
+            ->setParameter(':nome', $quarto->getNome(), ParameterType::STRING)
+            ->setParameter(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
 
-        return !empty(array_filter($lista, function (Quarto $quarto_lista) use ($quarto) {
-            return $quarto_lista->getId() !== $quarto->getId();
-        }));
+        $query = $qb->getQuery();
+
+        return $query->getSingleScalarResult() > 0;
     }
 
     /**
@@ -124,6 +135,7 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
      * @param DateTime $dt_inicial
      * @param DateTime $dt_final
      * @throws DBALException
+     * @throws Exception
      */
     public function gerarDisponibilidadesQuarto(Quarto $quarto, DateTime $dt_inicial, DateTime $dt_final): void
     {
@@ -135,5 +147,28 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
         $sql->bindValue(':quarto', $quarto->getId(), ParameterType::INTEGER);
 
         $sql->execute();
+    }
+
+    /**
+     * @inheritDoc
+     * @throws Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function hasReservas(Quarto $quarto): bool
+    {
+        $query = '
+            select
+                *
+            from
+                reservas.Reserva
+            where
+                quarto_id = :quarto_id
+        ';
+
+        $sql = $this->_em->getConnection()->prepare($query);
+        $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
+        $sql->execute();
+
+        return $sql->rowCount() > 0;
     }
 }

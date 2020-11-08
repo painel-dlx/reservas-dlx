@@ -27,8 +27,14 @@ namespace Reservas\UseCases\Quartos\ExcluirQuarto;
 
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Reservas\Domain\Quartos\Entities\Quarto;
 use Reservas\Domain\Quartos\Repositories\QuartoRepositoryInterface;
 
+/**
+ * Class ExcluirQuartoCommandHandler
+ * @package Reservas\UseCases\Quartos\ExcluirQuarto
+ * @covers ExcluirQuartoCommandHandlerTest
+ */
 class ExcluirQuartoCommandHandler
 {
     /**
@@ -51,17 +57,28 @@ class ExcluirQuartoCommandHandler
      */
     public function handle(ExcluirQuartoCommand $command): bool
     {
-        // Caso ocorra um erro por constraint, o registro deve ser marcado como deletado
-        $command->getQuarto()->setDeletado(true);
-        $this->quarto_repository->update($command->getQuarto());
+        $quarto = $command->getQuarto();
 
-        try {
-            $this->quarto_repository->delete($command->getQuarto());
-        } catch (ForeignKeyConstraintViolationException $e) {
-            // Erro de exclusão por constraint não precisa ser lançada pra controller,
-            // pois o registro já foi marcado como deletado
-        }
+        $has_reservas = $this->quarto_repository->hasReservas($quarto);
+        $has_reservas ? $this->marcarQuartoComoDeletado($quarto) : $this->excluirQuarto($quarto);
 
         return true;
+    }
+
+    /**
+     * @param Quarto $quarto
+     */
+    private function marcarQuartoComoDeletado(Quarto $quarto): void
+    {
+        $quarto->setDeletado(true);
+        $this->quarto_repository->update($quarto);
+    }
+
+    /**
+     * @param Quarto $quarto
+     */
+    private function excluirQuarto(Quarto $quarto): void
+    {
+        $this->quarto_repository->delete($quarto);
     }
 }

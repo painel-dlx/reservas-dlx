@@ -30,6 +30,7 @@ use DatePeriod;
 use DateTime;
 use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
@@ -136,36 +137,6 @@ class DetalhePedidoControllerTest extends ReservasTestCase
      * @param DetalhePedidoController $controller
      * @throws DBALException
      * @throws ORMException
-     * @covers ::confirmarPgtoPedido
-     * @depends test__construct
-     */
-    public function test_ConfirmarPgtoPedido_deve_retornar_JsonResponse(DetalhePedidoController $controller)
-    {
-        $pedido_id = PedidoTesteHelper::getPedidoIdRandom();
-
-        $request = $this->createMock(ServerRequestInterface::class);
-        $request->method('getParsedBody')->willReturn([
-            'id' => $pedido_id,
-            'motivo' => 'Teste unitário'
-        ]);
-
-        /** @var ServerRequestInterface $request */
-
-        $response = $controller->confirmarPgtoPedido($request);
-        $this->assertInstanceOf(JsonResponse::class, $response);
-
-        $json = json_decode((string)$response->getBody());
-
-        if (empty($pedido_id)) {
-            $this->assertEquals('atencao', $json->retorno);
-            $this->assertRegExp('~Pedido não encontrado com o ID informado: \d+.~', $json->mensagem);
-        }
-    }
-
-    /**
-     * @param DetalhePedidoController $controller
-     * @throws DBALException
-     * @throws ORMException
      * @throws PaginaMestraInvalidaException
      * @throws TemplateInvalidoException
      * @covers ::formCancelarPedido
@@ -191,40 +162,11 @@ class DetalhePedidoControllerTest extends ReservasTestCase
     }
 
     /**
-     * @param DetalhePedidoController $controller
-     * @throws DBALException
-     * @throws ORMException
-     * @covers ::cancelarPedido
-     * @depends test__construct
-     */
-    public function test_CancelarPedido_deve_retornar_JsonResponse(DetalhePedidoController $controller)
-    {
-        $pedido_id = PedidoTesteHelper::getPedidoIdRandom();
-
-        $request = $this->createMock(ServerRequestInterface::class);
-        $request->method('getParsedBody')->willReturn([
-            'id' => $pedido_id,
-            'motivo' => 'Teste unitário'
-        ]);
-
-        /** @var ServerRequestInterface $request */
-
-        $response = $controller->cancelarPedido($request);
-        $this->assertInstanceOf(JsonResponse::class, $response);
-
-        $json = json_decode((string)$response->getBody());
-
-        if (empty($pedido_id)) {
-            $this->assertEquals('atencao', $json->retorno);
-            $this->assertRegExp('~Pedido não encontrado com o ID informado: \d+.~', $json->mensagem);
-        }
-    }
-
-    /**
      * @test
      * @param DetalhePedidoController $controller
      * @throws DBALException
      * @throws ORMException
+     * @throws Exception
      * @depends test__construct
      */
     public function deve_confirmar_pagamento_do_pedido(DetalhePedidoController $controller)
@@ -341,6 +283,7 @@ class DetalhePedidoControllerTest extends ReservasTestCase
      * @param DetalhePedidoController $controller
      * @throws DBALException
      * @throws ORMException
+     * @throws Exception
      * @depends test__construct
      */
     public function deve_cancelar_o_pedido(DetalhePedidoController $controller)
