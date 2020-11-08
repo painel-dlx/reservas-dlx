@@ -38,10 +38,6 @@ use Reservas\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto\SalvarDisponib
 use Reservas\UseCases\Disponibilidade\SalvarDisponibilidadeQuarto\SalvarDisponibilidadeQuartoCommandHandler;
 use Reservas\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommand;
 use Reservas\UseCases\Disponibilidade\SalvarDisponPeriodo\SalvarDisponPeriodoCommandHandler;
-use Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommand;
-use Reservas\UseCases\Emails\EnviarNotificacaoCancelamentoPedido\EnviarNotificacaoCancelamentoPedidoCommandHandler;
-use Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommand;
-use Reservas\UseCases\Emails\EnviarNotificacaoConfirmacaoPedido\EnviarNotificacaoConfirmacaoPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommand;
 use Reservas\UseCases\Pedidos\CancelarPedido\CancelarPedidoCommandHandler;
 use Reservas\UseCases\Pedidos\ConfirmarPgtoPedido\ConfirmarPgtoPedidoCommand;
@@ -108,9 +104,7 @@ class ReservasDLXMapping
         ConfirmarPgtoPedidoCommand::class => ConfirmarPgtoPedidoCommandHandler::class,
         MostrarCpfCompletoCommand::class => MostrarCpfCompletoCommandHandler::class,
         MostrarCpfCompletoPedidoCommand::class => MostrarCpfCompletoPedidoCommandHandler::class,
-        EnviarNotificacaoConfirmacaoPedidoCommand::class => EnviarNotificacaoConfirmacaoPedidoCommandHandler::class,
         CancelarPedidoCommand::class => CancelarPedidoCommandHandler::class,
-        EnviarNotificacaoCancelamentoPedidoCommand::class => EnviarNotificacaoCancelamentoPedidoCommandHandler::class,
         GerarDisponibilidadesQuartoCommand::class => GerarDisponibilidadesQuartoCommandHandler::class,
         AdicionarMidiasQuartoCommand::class => AdicionarMidiasQuartoCommandHandler::class,
         ExcluirMidiaQuartoCommand::class => ExcluirMidiaQuartoCommandHandler::class,

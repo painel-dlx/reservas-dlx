@@ -39,6 +39,7 @@ use Reservas\Domain\Common\Events\EventManagerInterface;
 use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Domain\Pedidos\Entities\PedidoItem;
 use Reservas\Domain\Pedidos\Events\PagamentoPedidoConfirmado;
+use Reservas\Domain\Pedidos\Events\PedidoCancelado;
 use Reservas\Domain\Pedidos\Exceptions\PedidoInvalidoException;
 use Reservas\Domain\Pedidos\Exceptions\PedidoNaoEncontradoException;
 use Reservas\Domain\Quartos\Exceptions\QuartoIndisponivelException;
@@ -298,9 +299,7 @@ class DetalhePedidoController extends PainelDLXController
             $this->transaction->transactional(function () use ($pedido, $post, $usuario_logado) {
                 /* @see CancelarPedidoCommandHandler */
                 $this->command_bus->handle(new CancelarPedidoCommand($pedido, $post['motivo'], $usuario_logado));
-
-                /* @see EnviarNotificacaoCancelamentoPedidoCommandHandler */
-                $this->command_bus->handle(new EnviarNotificacaoCancelamentoPedidoCommand($pedido, $post['motivo']));
+                $this->event_manager->dispatch(new PedidoCancelado($pedido));
             });
 
             $json['retorno'] = 'sucesso';

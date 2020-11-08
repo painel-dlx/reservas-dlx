@@ -35,7 +35,6 @@ use Doctrine\ORM\ORMException;
 use PainelDLX\Domain\Usuarios\Entities\Usuario;
 use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Psr\Http\Message\ServerRequestInterface;
-use Reservas\Domain\Pedidos\Entities\Pedido;
 use Reservas\Presentation\PainelDLX\ApartHotel\Pedidos\Controllers\DetalhePedidoController;
 use Reservas\Tests\Helpers\PedidoTesteHelper;
 use Reservas\Tests\ReservasTestCase;
@@ -328,6 +327,66 @@ class DetalhePedidoControllerTest extends ReservasTestCase
         /** @var ServerRequestInterface $request */
 
         $response = $controller->confirmarPgtoPedido($request);
+        $this->assertInstanceOf(JsonResponse::class, $response);
+
+        $json = json_decode((string)$response->getBody());
+
+        $this->assertObjectHasAttribute('retorno', $json);
+        $this->assertObjectHasAttribute('mensagem', $json);
+        $this->assertEquals('sucesso', $json->retorno);
+    }
+
+    /**
+     * @test
+     * @param DetalhePedidoController $controller
+     * @throws DBALException
+     * @throws ORMException
+     * @depends test__construct
+     */
+    public function deve_cancelar_o_pedido(DetalhePedidoController $controller)
+    {
+        $query = "
+            insert into reservas.Pedido (
+                nome, 
+                cpf, 
+                email, 
+                telefone, 
+                valor_total, 
+                forma_pagamento,
+                status
+            ) values (
+                'Diego Lepera',
+                '360.105.668-27',
+                'dlepera88@gmail.com',
+                '(61) 9 8350-3517',
+                100.00,
+                'e.Rede',
+                'Pendente'
+            )
+        ";
+
+        $conexao = EntityManagerX::getInstance()->getConnection();
+        $conexao->executeQuery($query);
+        $pedido_id = $conexao->lastInsertId();
+
+        $query = "
+            insert into reservas.PedidoCartao (pedido_id, dono, numero_cartao, validade, codigo_seguranca, valor) values 
+                (:pedido_id, 'Diego Lepera', '1234-5678-9012-3456', '10/2029', '123', 100.00)
+        ";
+
+        $sql = $conexao->prepare($query);
+        $sql->bindValue(':pedido_id', $pedido_id, ParameterType::INTEGER);
+        $sql->execute();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->method('getParsedBody')->willReturn([
+            'id' => $pedido_id,
+            'motivo' => 'Teste unitário'
+        ]);
+
+        /** @var ServerRequestInterface $request */
+
+        $response = $controller->cancelarPedido($request);
         $this->assertInstanceOf(JsonResponse::class, $response);
 
         $json = json_decode((string)$response->getBody());
