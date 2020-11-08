@@ -68,7 +68,8 @@ return [
             'user' => 'root',
             'password' => 'root',
             'host' => 'mysql56',
-            'driver' => 'pdo_mysql'
+            'driver' => 'pdo_mysql',
+            'charset' => 'utf8'
         ]
     ]
 ];
