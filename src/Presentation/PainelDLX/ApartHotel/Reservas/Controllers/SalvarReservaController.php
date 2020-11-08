@@ -70,17 +70,16 @@ class SalvarReservaController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return ResponseInterface
      * @throws PaginaMestraInvalidaException
      * @throws TemplateInvalidoException
      */
-    public function formReservarQuarto(ServerRequestInterface $request): ResponseInterface
+    public function formReservarQuarto(): ResponseInterface
     {
         try {
             /** @var Quarto[] $lista_quartos */
@@ -98,8 +97,8 @@ class SalvarReservaController extends PainelDLXController
             $this->view->setAtributo('lista-quartos', $lista_quartos);
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-mascara/jquery.mascara.plugin-min.js');
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-mascara/jquery.mascara.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (UserException $e) {
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [

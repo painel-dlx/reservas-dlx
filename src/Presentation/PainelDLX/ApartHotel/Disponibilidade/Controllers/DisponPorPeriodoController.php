@@ -74,18 +74,17 @@ class DisponPorPeriodoController extends PainelDLXController
     ) {
         parent::__construct($view, $commandBus, $session);
 
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
 
         $this->transaction = $transaction;
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return ResponseInterface
      * @throws PaginaMestraInvalidaException
      * @throws TemplateInvalidoException
      */
-    public function formDisponPorPeriodo(ServerRequestInterface $request): ResponseInterface
+    public function formDisponPorPeriodo(): ResponseInterface
     {
         try {
             /** @var array $lista_quartos */
@@ -100,9 +99,8 @@ class DisponPorPeriodoController extends PainelDLXController
             $this->view->setAtributo('lista-quartos', $lista_quartos);
 
             // JS
-            $versao = Configure::get('app', 'versao');
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', false, VERSAO_RESERVAS_DLX);
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js', false, VERSAO_RESERVAS_DLX);
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_RESERVAS_DLX);
+            $this->view->adicionarJS('public/js/apart-hotel-min.js',VERSAO_RESERVAS_DLX);
         } catch (UserException $e) {
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [

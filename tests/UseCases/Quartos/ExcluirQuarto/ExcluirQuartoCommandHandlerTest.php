@@ -27,6 +27,7 @@ namespace Reservas\Tests\UseCases\Quartos\ExcluirQuarto;
 
 use DLX\Infrastructure\EntityManagerX;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\ORMException;
 use PainelDLX\Tests\TestCase\TesteComTransaction;
 use Reservas\Domain\Quartos\Entities\Quarto;
@@ -110,8 +111,9 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
 
     /**
      * @param ExcluirQuartoCommandHandler $handler
-     * @throws DBALException
      * @throws ORMException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws Exception
      * @covers ::handle
      * @depends test__construct
      */
@@ -147,7 +149,6 @@ class ExcluirQuartoCommandHandlerTest extends ReservasTestCase
         $handler->handle($command);
 
         // EntityManagerX::commit();
-
         $this->assertNotNull($quarto->getId());
         $this->assertTrue($quarto->isDeletado());
     }

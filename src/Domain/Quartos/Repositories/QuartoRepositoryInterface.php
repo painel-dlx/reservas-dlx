@@ -68,4 +68,11 @@ interface QuartoRepositoryInterface extends EntityRepositoryInterface
      * @param DateTime $dt_final
      */
     public function gerarDisponibilidadesQuarto(Quarto $quarto, DateTime $dt_inicial, DateTime $dt_final): void;
+
+    /**
+     * Verifica se um quarto possui reservas.
+     * @param Quarto $quarto
+     * @return bool
+     */
+    public function hasReservas(Quarto $quarto): bool;
 }

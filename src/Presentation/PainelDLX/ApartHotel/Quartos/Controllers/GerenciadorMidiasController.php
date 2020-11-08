@@ -75,12 +75,11 @@ class GerenciadorMidiasController extends PainelDLXController
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return ResponseInterface
      * @throws PaginaMestraInvalidaException
      * @throws TemplateInvalidoException
      */
-    public function formUpload(ServerRequestInterface $request): ResponseInterface
+    public function formUpload(): ResponseInterface
     {
         /** @var Quarto|null $quarto */
         $quarto = $this->session->get('editando:quarto');

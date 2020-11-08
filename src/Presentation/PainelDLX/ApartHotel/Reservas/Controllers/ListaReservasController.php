@@ -67,7 +67,7 @@ class ListaReservasController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
@@ -116,9 +116,6 @@ class ListaReservasController extends PainelDLXController
 
             // Views
             $this->view->addTemplate('reservas/lista_reservas');
-
-            // JS
-            // $this->view->addArquivoJS('public/js/apart-hotel-min.js');
         } catch (UserException $e) {
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [

@@ -1,4 +1,7 @@
 drop procedure if exists gerar_calendario;
+
+delimiter //
+
 create procedure gerar_calendario (data_inicial date, data_final date, quarto int)
     begin
         drop temporary table if exists calendario;
@@ -34,4 +37,4 @@ create procedure gerar_calendario (data_inicial date, data_final date, quarto in
                     or q.quarto_id = quarto
                 );
         commit;
-    end;
+    end; //

@@ -29,6 +29,7 @@ namespace Reservas\Infrastructure\ORM\Doctrine\Repositories;
 use DateTime;
 use DLX\Infrastructure\ORM\Doctrine\Repositories\EntityRepository;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\Query\Expr\Join;
 use Reservas\Domain\Disponibilidade\Entities\Disponibilidade;
@@ -124,6 +125,7 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
      * @param DateTime $dt_inicial
      * @param DateTime $dt_final
      * @throws DBALException
+     * @throws Exception
      */
     public function gerarDisponibilidadesQuarto(Quarto $quarto, DateTime $dt_inicial, DateTime $dt_final): void
     {
@@ -135,5 +137,28 @@ class QuartoRepository extends EntityRepository implements QuartoRepositoryInter
         $sql->bindValue(':quarto', $quarto->getId(), ParameterType::INTEGER);
 
         $sql->execute();
+    }
+
+    /**
+     * @inheritDoc
+     * @throws Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function hasReservas(Quarto $quarto): bool
+    {
+        $query = '
+            select
+                *
+            from
+                reservas.Reserva
+            where
+                quarto_id = :quarto_id
+        ';
+
+        $sql = $this->_em->getConnection()->prepare($query);
+        $sql->bindValue(':quarto_id', $quarto->getId(), ParameterType::INTEGER);
+        $sql->execute();
+
+        return $sql->rowCount() > 0;
     }
 }

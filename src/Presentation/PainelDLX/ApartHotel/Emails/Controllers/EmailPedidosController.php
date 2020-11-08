@@ -59,7 +59,7 @@ class EmailPedidosController
         $this->view = $view;
         $this->command_bus = $command_bus;
 
-        $this->view->setPaginaMestra('public/views/paginas-mestras/email-master.phtml');
+        $this->view->setPaginaMestra('paginas-mestras/email-master');
         $this->view->setViewRoot('public/views/');
     }
 

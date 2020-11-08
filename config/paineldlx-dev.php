@@ -28,8 +28,6 @@ use DLX\Core\Configure;
 use Doctrine\DBAL\Logging\EchoSQLLogger;
 use PainelDLX\Application\Services\PainelDLX;
 
-// ini_set('session.save_handler', 'files');
-
 $dir_painel_dlx = !empty(PainelDLX::$dir) ? PainelDLX::$dir . DIRECTORY_SEPARATOR : '';
 
 return [
@@ -39,13 +37,12 @@ return [
         'nome' => 'reservas-dlx',
         'nome-amigavel' => 'Reservas DLX',
         'base-html' => '/',
-        'base-url' => 'http://reservas-dlx.localhost/',
+        'base-url' => 'http://reservas.dlx.com.br:8082/',
         'diretorios' => include 'painel-dlx/diretorios.php',
         'rotas' => include 'painel-dlx/rotas.php',
         'service-providers' => include 'painel-dlx/service_providers.php',
         'mapping' => include 'painel-dlx/mapping.php',
-        'favicon' => PainelDLX::$dir . '/public/imgs/favicon.png',
-        'versao' => '1.1.5'
+        'favicon' => PainelDLX::$dir . '/public/imgs/favicon.png'
     ],
 
     'bd' => [

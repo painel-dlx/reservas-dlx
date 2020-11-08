@@ -77,7 +77,8 @@ class SalvarDisponPeriodoCommandHandlerTest extends ReservasTestCase
             $data_final,
             $quarto,
             1,
-            [1 => 12.34]
+            [1 => 12.34],
+            null
         );
         $return = $handler->handle($command);
 

@@ -127,7 +127,7 @@ class DisponPorPeriodoControllerTest extends ReservasTestCase
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
-            'quarto_id' => 1,
+            'quarto_id' => 7,
             'data_inicial' => date('Y-m-d'),
             'data_final' => date('Y-m-d'),
             'qtde' => 1,

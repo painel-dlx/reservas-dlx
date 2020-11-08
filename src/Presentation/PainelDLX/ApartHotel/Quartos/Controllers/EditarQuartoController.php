@@ -72,7 +72,7 @@ class EditarQuartoController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
@@ -104,9 +104,9 @@ class EditarQuartoController extends PainelDLXController
             $this->view->setAtributo('quarto', $quarto);
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('/vendor/ckeditor/ckeditor/ckeditor.js');
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js');
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('/vendor/ckeditor/ckeditor/ckeditor.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('public/js/apart-hotel-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (QuartoNaoEncontradoException | UserException $e) {
             $tipo = $e instanceof QuartoNaoEncontradoException ? 'atencao' : 'erro';
 

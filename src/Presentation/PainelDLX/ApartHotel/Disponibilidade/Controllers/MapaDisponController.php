@@ -77,7 +77,7 @@ class MapaDisponController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
@@ -86,6 +86,7 @@ class MapaDisponController extends PainelDLXController
      * @return ResponseInterface
      * @throws PaginaMestraInvalidaException
      * @throws TemplateInvalidoException
+     * @throws Exception
      */
     public function calendario(ServerRequestInterface $request): ResponseInterface
     {
@@ -133,8 +134,8 @@ class MapaDisponController extends PainelDLXController
             ]);
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js');
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('public/js/apart-hotel-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (UserException $e) {
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [

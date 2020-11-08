@@ -98,7 +98,7 @@ class MapaDisponControllerTest extends ReservasTestCase
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getParsedBody')->willReturn([
-            'quarto' => 1,
+            'quarto' => 7,
             'dia' => '2019-01-30',
             'qtde' => 3,
             'valor' => [

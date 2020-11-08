@@ -71,17 +71,16 @@ class CadastrarQuartoController extends PainelDLXController
         TransactionInterface $transaction
     ) {
         parent::__construct($view, $commandBus, $session);
-        $this->view->addArquivoCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', false, VERSAO_UI_PAINEL_DLX_RESERVAS);
+        $this->view->adicionarCss('/vendor/painel-dlx/ui-painel-dlx-reservas/css/aparthotel.tema.css', VERSAO_UI_PAINEL_DLX_RESERVAS);
         $this->transaction = $transaction;
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @return ResponseInterface
      * @throws PaginaMestraInvalidaException
      * @throws TemplateInvalidoException
      */
-    public function formNovoQuarto(ServerRequestInterface $request): ResponseInterface
+    public function formNovoQuarto(): ResponseInterface
     {
         /** @var Quarto $quarto */
         $quarto = $this->session->get('editando:quarto');
@@ -101,9 +100,9 @@ class CadastrarQuartoController extends PainelDLXController
             $this->view->addTemplate('quartos/form_quarto');
 
             // JS
-            $this->view->addArquivoJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js');
-            $this->view->addArquivoJS('/vendor/ckeditor/ckeditor/ckeditor.js');
-            $this->view->addArquivoJS('public/js/apart-hotel-min.js');
+            $this->view->adicionarJS('/vendor/dlepera88-jquery/jquery-form-ajax/jquery.formajax.plugin-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('/vendor/ckeditor/ckeditor/ckeditor.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
+            $this->view->adicionarJS('public/js/apart-hotel-min.js', VERSAO_UI_PAINEL_DLX_RESERVAS);
         } catch (UserException $e) {
             $this->view->addTemplate('common/mensagem_usuario');
             $this->view->setAtributo('mensagem', [
