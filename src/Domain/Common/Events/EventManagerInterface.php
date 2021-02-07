@@ -33,7 +33,7 @@ interface EventManagerInterface
      * @param string ...$listeners
      * @return EventManagerInterface
      */
-    public function addLitener(string $nome_evento, string ... $listeners): EventManagerInterface;
+    public function addListener(string $nome_evento, string ... $listeners): EventManagerInterface;
 
     /**
      * @param Event $event
