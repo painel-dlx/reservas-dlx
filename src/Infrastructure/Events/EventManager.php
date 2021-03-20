@@ -55,13 +55,24 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
-    public function addLitener(string $nome_evento, string ...$listeners): EventManagerInterface
+    public function addListener(string $nome_evento, string ...$listeners): EventManagerInterface
     {
         foreach ($listeners as $listener) {
             $this->listeners[$nome_evento][] = $listener;
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $nome_evento
+     * @param string ...$listeners
+     * @return EventManagerInterface
+     * @deprecated use o método addListener. Esse método foi criado com nome incorreto.
+     */
+    public function addLitener(string $nome_evento, string ...$listeners): EventManagerInterface
+    {
+        return $this->addListener($nome_evento, ... $listeners);
     }
 
     /**

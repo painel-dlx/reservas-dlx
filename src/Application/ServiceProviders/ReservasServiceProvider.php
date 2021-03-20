@@ -111,13 +111,13 @@ class ReservasServiceProvider extends AbstractServiceProvider
             function () use ($container) {
                 $event_manager = new EventManager($container);
 
-                $event_manager->addLitener(
+                $event_manager->addListener(
                     PagamentoPedidoConfirmado::class,
                     MascararDadosCartao::class,
                     EnviarEmailConfirmacaoPedido::class
                 );
 
-                $event_manager->addLitener(
+                $event_manager->addListener(
                     PedidoCancelado::class,
                     MascararDadosCartao::class,
                     EnviarEmailPedidoCancelado::class
